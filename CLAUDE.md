@@ -114,6 +114,54 @@ Run `./scripts/build-all.sh` or manually:
 - Rust 2024 edition idioms
 - Use inline format args: `format!("{name}")` not `format!("{}", name)`
 
+## DEPLOYMENT CHECKLIST - MANDATORY
+
+**DO NOT BREAK THE LIVE DEMO.** Always use `./scripts/build-release.sh` for deployments.
+
+### Common Mistakes (DO NOT REPEAT)
+
+1. **Missing `--public-url /tt-rs/`** - GitHub Pages serves at `/<repo>/` subdirectory
+   - Symptom: Blank page, 404 errors for .wasm, .js, .css files
+   - Solution: Always use `./scripts/build-release.sh` which includes validation
+   - NEVER run `trunk build --release` directly for deployment
+
+2. **Missing `.nojekyll` file** - GitHub Jekyll processing breaks WASM
+   - Symptom: Files with underscores don't load
+   - Solution: Script automatically creates this file
+
+3. **Forgetting to copy to docs/** - Build goes to dist/, not docs/
+   - Solution: Script handles this automatically
+
+### Deployment Steps
+
+```bash
+# 1. ALWAYS use the release script
+./scripts/build-release.sh
+
+# 2. The script will:
+#    - Build with --public-url /tt-rs/
+#    - Copy to docs/
+#    - Create .nojekyll
+#    - VALIDATE paths contain /tt-rs/ prefix
+#    - FAIL if validation fails
+
+# 3. Commit and push
+git add docs/
+git commit -m "Deploy to GitHub Pages"
+git push
+
+# 4. Verify live demo works at:
+#    https://wrightmikea.github.io/tt-rs/
+```
+
+### Before Any Deployment
+
+- [ ] Read [learnings.md](documentation/learnings.md) if encountering issues
+- [ ] Use `./scripts/build-release.sh` (NOT manual trunk commands)
+- [ ] Verify script validation passes
+- [ ] Test locally if possible
+- [ ] Check live demo after push
+
 ## Documentation
 
 - [architecture.md](documentation/architecture.md) - System design
