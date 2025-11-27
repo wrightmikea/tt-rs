@@ -4,6 +4,10 @@
 
 A modern Rust/WebAssembly reimplementation of ToonTalk, an interactive visual programming environment for learning computational thinking through animated metaphors.
 
+![tt-rs Screenshot](images/screenshot1.png?ts=1732739024000)
+
+**[Live Demo](https://wrightmikea.github.io/tt-rs/)**
+
 ## About
 
 tt-rs brings programming-by-demonstration to modern web browsers. Users create programs by training robots that watch and learn from their actions. The system uses concrete metaphors - birds carry messages, boxes hold data, scales compare values - making abstract computing concepts tangible and accessible.
@@ -12,7 +16,7 @@ This is a derived work based on ToonTalk, originally created by Ken Kahn.
 
 ## Status
 
-Early development - project structure and documentation in place.
+Early development - Number widgets with rational arithmetic implemented.
 
 ## Documentation
 
