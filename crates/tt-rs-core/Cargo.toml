@@ -1,0 +1,10 @@
+[package]
+name = "tt-rs-core"
+description = "Core traits and types for tt-rs widgets"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+yew = { workspace = true }

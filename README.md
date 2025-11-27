@@ -4,7 +4,7 @@
 
 A modern Rust/WebAssembly reimplementation of ToonTalk, an interactive visual programming environment for learning computational thinking through animated metaphors.
 
-![tt-rs Screenshot](images/screenshot1.png?ts=1732739024000)
+![tt-rs Screenshot](images/screenshot1.png?ts=1732742307000)
 
 **[Live Demo](https://wrightmikea.github.io/tt-rs/)**
 

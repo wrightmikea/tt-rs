@@ -8,6 +8,23 @@ tt-rs ("Cartoon-oriented Talking Programming Application") is a Rust/WebAssembly
 
 This is a derived work based on ToonTalk by Ken Kahn. See COPYRIGHT and LICENSE files.
 
+## IMPORTANT: Always Use Project Scripts
+
+**Always use project scripts for building and serving.** This prevents regressions and ensures reproducible builds.
+
+```bash
+# Development server (DEDICATED PORT: 1140)
+./scripts/serve.sh           # Start dev server at http://127.0.0.1:1140
+
+# Quality checks (run before every commit)
+./scripts/build-all.sh       # Build + test + clippy + fmt
+
+# Production build for GitHub Pages
+./scripts/build-release.sh   # Build and copy to docs/
+```
+
+**Before starting development:** Read [learnings.md](documentation/learnings.md) for solutions to common issues.
+
 ## Build & Development Commands
 
 ```bash
@@ -15,93 +32,92 @@ This is a derived work based on ToonTalk by Ken Kahn. See COPYRIGHT and LICENSE 
 rustup target add wasm32-unknown-unknown
 cargo install trunk wasm-bindgen-cli
 
-# Development server (DEDICATED PORT: 1140)
-trunk serve --port 1140  # Dev server at http://127.0.0.1:1140
+# Manual commands (prefer scripts above)
 cargo test               # Run all tests
 cargo test test_name     # Run specific test
-cargo watch -x test      # Watch mode
 
 # Kill any existing server on dedicated port
 lsof -ti:1140 | xargs kill -9 2>/dev/null
 
-# Production
-trunk build --release    # Build optimized WASM
-
 # Quality (run before every commit)
 cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings
 cargo fmt --all
-cargo doc --open         # Generate documentation
+sw-checklist .           # Check modularity and standards
 ```
 
 **Note:** This project uses port 1140 exclusively to avoid conflicts with other projects.
 
-**Important:** Run clippy with `--target wasm32-unknown-unknown` to avoid false dead_code warnings. See [wasm-bindgen issue #1297](https://github.com/rustwasm/wasm-bindgen/issues/1297).
+**Important:** Run clippy with `--target wasm32-unknown-unknown` to avoid false dead_code warnings.
 
-## Architecture
+## Workspace Architecture
 
-### Core Domain Concepts
-
-- **Widgets** - Base trait for all visual objects (numbers, boxes, robots, birds/nests, scales)
-- **Robots** - Programs trained by demonstration; they watch user actions and learn to repeat them
-- **Birds/Nests** - Actor-model message passing (birds carry messages to nests)
-- **Boxes** - Container widgets holding other widgets
-- **Scales** - Comparison widgets
-
-### Module Structure (planned)
+This project uses a Rust workspace with focused crates for modularity:
 
 ```
-src/
-├── domain/        # Core business logic (widgets, robots, patterns)
-├── execution/     # Robot execution engine, scheduling
-├── presentation/  # Yew components for UI
-├── rendering/     # Three.js/SVG graphics bindings
-├── storage/       # LocalStorage/IndexedDB persistence
-├── audio/         # Text-to-speech, sound effects
-└── bindings/      # JavaScript interop (minimal)
+tt-rs/
+├── Cargo.toml          # Workspace definition
+├── scripts/            # Build and serve scripts
+│   ├── serve.sh        # Development server
+│   ├── build-all.sh    # Quality checks
+│   └── build-release.sh # Production build
+├── crates/
+│   ├── tt-rs-core/     # Core Widget trait, WidgetId, MatchResult (2 modules)
+│   ├── tt-rs-number/   # Number widget with rational arithmetic (6 modules)
+│   ├── tt-rs-ui/       # UI components - Footer (2 modules)
+│   └── tt-rs-app/      # Main WASM app entry point (2 modules)
+│       ├── index.html  # Trunk entry point
+│       ├── favicon.ico
+│       └── assets/     # CSS stylesheets
+├── docs/               # GitHub Pages deployment
+└── documentation/      # Project documentation
 ```
 
-### Technology Stack
+### Crate Responsibilities
 
-- **Rust** compiled to WebAssembly
+- **tt-rs-core**: Widget trait, WidgetId, MatchResult - no dependencies
+- **tt-rs-number**: Number widget (rational arithmetic, pattern matching)
+- **tt-rs-ui**: Reusable UI components (Footer with build info)
+- **tt-rs-app**: Application entry point, ties everything together, contains web assets
+
+### Modularity Guidelines (sw-checklist)
+
+- Functions: max 50 LOC (warn >25)
+- Modules: max 7 functions (warn >4)
+- Crates: max 7 modules (warn >4)
+- Projects: max 7 crates (warn >4)
+
+Keep modules focused to leave room for future features.
+
+## Technology Stack
+
+- **Rust 2024 edition** - Latest stable with improved linting and language features
 - **Yew** for reactive UI components
-- **Three.js** (via wasm-bindgen) for 3D graphics
+- **Trunk** for WASM bundling (run from tt-rs-app crate)
+- **Three.js** (planned) for 3D graphics
 - **SVG/CSS** for 2D graphics and animations
 
 ## Development Guidelines
 
-### Code Quality Standards
-
-- Zero clippy warnings (use `-D warnings`)
-- All public APIs must have doc comments
-- Rust 2024 edition idioms
-- Use inline format args: `format!("{name}")` not `format!("{}", name)`
-- Files under 500 lines (prefer 200-300)
-- Functions under 50 lines (prefer 10-30)
-- Maximum 3 TODO comments per file; convert persistent TODOs to GitHub issues
-
-### Rust/WASM Specific
-
-- All business logic in Rust; JavaScript only for WASM loading
-- Use `wasm-bindgen` for JS interop, `web-sys` for DOM
-- Write tests in Rust using `wasm-bindgen-test`, not JavaScript
-- Use `thiserror` for error types with descriptive messages
-
 ### Pre-Commit Checklist
 
+Run `./scripts/build-all.sh` or manually:
+
 1. `cargo test` - all tests pass
-2. `cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings` - zero warnings
-3. `cargo fmt --all` - code formatted
-4. Update documentation if features changed
+2. `cargo clippy --target wasm32-unknown-unknown --all-features -- -D warnings`
+3. `cargo fmt --all`
+4. `sw-checklist .` - check modularity standards
 
-## Reference Implementation
+### Code Quality
 
-The original JavaScript ToonTalk Reborn is at https://github.com/ToonTalk/ToonTalk with wiki documentation. When implementing features, refer to that codebase for behavior reference.
+- Zero clippy warnings
+- All public APIs have doc comments
+- Rust 2024 edition idioms
+- Use inline format args: `format!("{name}")` not `format!("{}", name)`
 
 ## Documentation
 
-- [architecture.md](documentation/architecture.md) - System design and module structure
-- [prd.md](documentation/prd.md) - Product requirements and user stories
-- [design.md](documentation/design.md) - Technical design decisions
+- [architecture.md](documentation/architecture.md) - System design
+- [prd.md](documentation/prd.md) - Product requirements
+- [design.md](documentation/design.md) - Technical design
 - [plan.md](documentation/plan.md) - Implementation roadmap
-- [process.md](documentation/process.md) - Development workflow
-- [ai_agent_instructions.md](documentation/ai_agent_instructions.md) - AI coding assistant guidelines
+- [learnings.md](documentation/learnings.md) - **Solutions to issues encountered** (read this first!)

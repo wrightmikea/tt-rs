@@ -1,15 +1,19 @@
-[package]
-name = "tt-rs"
+[workspace]
+resolver = "2"
+members = [
+    "crates/tt-rs-core",
+    "crates/tt-rs-number",
+    "crates/tt-rs-ui",
+    "crates/tt-rs-app",
+]
+
+[workspace.package]
 version = "0.1.0"
 edition = "2024"
-description = "Cartoon-oriented Talking Programming Application - a visual programming environment"
 license = "BSD-3-Clause"
 repository = "https://github.com/wrightmikea/tt-rs"
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
-[dependencies]
+[workspace.dependencies]
 yew = { version = "0.21", features = ["csr"] }
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = [
@@ -20,12 +24,8 @@ web-sys = { version = "0.3", features = [
     "Node",
     "Window",
 ] }
-gloo = "0.11"
 log = "0.4"
 wasm-logger = "0.2"
-
-[dev-dependencies]
-wasm-bindgen-test = "0.3"
 
 [profile.release]
 opt-level = "s"

@@ -1,0 +1,13 @@
+[package]
+name = "tt-rs-ui"
+description = "UI components for tt-rs"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+yew = { workspace = true }
+
+[build-dependencies]
+chrono = "0.4"

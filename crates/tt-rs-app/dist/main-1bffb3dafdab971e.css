@@ -83,3 +83,25 @@ html, body {
     color: #333;
     font-family: "Courier New", monospace;
 }
+
+/* Footer */
+.app-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #4a90d9;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.app-footer a {
+    color: #fff9c4;
+    text-decoration: none;
+}
+
+.app-footer a:hover {
+    text-decoration: underline;
+}

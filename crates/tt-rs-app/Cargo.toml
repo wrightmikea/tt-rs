@@ -1,0 +1,19 @@
+[package]
+name = "tt-rs-app"
+description = "tt-rs WASM application entry point"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+tt-rs-core = { path = "../tt-rs-core" }
+tt-rs-number = { path = "../tt-rs-number" }
+tt-rs-ui = { path = "../tt-rs-ui" }
+yew = { workspace = true }
+wasm-bindgen = { workspace = true }
+log = { workspace = true }
+wasm-logger = { workspace = true }
