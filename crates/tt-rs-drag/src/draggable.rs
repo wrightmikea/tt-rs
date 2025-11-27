@@ -3,6 +3,7 @@
 use crate::Position;
 use tt_rs_core::WidgetId;
 use wasm_bindgen::JsCast;
+use wasm_bindgen::closure::Closure;
 use web_sys::MouseEvent;
 use yew::prelude::*;
 
@@ -15,80 +16,95 @@ pub struct DraggableProps {
     pub children: Children,
 }
 
-/// State for drag operation.
-#[derive(Default)]
+/// State for drag operation stored in RefCell for interior mutability.
+#[derive(Default, Clone)]
 struct DragState {
     dragging: bool,
     start_mouse: Position,
     start_pos: Position,
 }
 
+/// Type alias for the pair of closures used for drag event listeners.
+type DragClosures = (
+    Closure<dyn FnMut(MouseEvent)>,
+    Closure<dyn FnMut(MouseEvent)>,
+);
+
 /// A wrapper component that makes its children draggable.
 #[function_component(Draggable)]
 pub fn draggable(props: &DraggableProps) -> Html {
-    let drag_state = use_state(DragState::default);
+    // Use Rc<RefCell<>> for shared mutable state across closures
+    let drag_state = use_mut_ref(DragState::default);
+
+    // Track current position for rendering
+    let current_pos = props.position;
 
     let style = format!(
         "position: absolute; left: {}px; top: {}px;",
-        props.position.x, props.position.y
+        current_pos.x, current_pos.y
     );
+
+    // Store closures for cleanup
+    let closures: UseStateHandle<Option<DragClosures>> = use_state(|| None);
 
     let on_mouse_down = {
         let drag_state = drag_state.clone();
-        let position = props.position;
-        Callback::from(move |e: MouseEvent| {
-            e.prevent_default();
-            drag_state.set(DragState {
-                dragging: true,
-                start_mouse: Position::new(e.client_x() as f64, e.client_y() as f64),
-                start_pos: position,
-            });
-        })
-    };
-
-    let on_mouse_move = {
-        let drag_state = drag_state.clone();
+        let closures = closures.clone();
         let on_move = props.on_move.clone();
         let widget_id = props.widget_id;
         Callback::from(move |e: MouseEvent| {
-            if drag_state.dragging {
-                let dx = e.client_x() as f64 - drag_state.start_mouse.x;
-                let dy = e.client_y() as f64 - drag_state.start_mouse.y;
-                let new_pos = drag_state.start_pos.offset(dx, dy);
-                on_move.emit((widget_id, new_pos));
-            }
-        })
-    };
+            e.prevent_default();
 
-    let on_mouse_up = {
-        let drag_state = drag_state.clone();
-        Callback::from(move |_: MouseEvent| {
-            if drag_state.dragging {
-                drag_state.set(DragState::default());
+            // Set drag state
+            {
+                let mut state = drag_state.borrow_mut();
+                state.dragging = true;
+                state.start_mouse = Position::new(e.client_x() as f64, e.client_y() as f64);
+                state.start_pos = current_pos;
             }
-        })
-    };
 
-    // Attach global mouse listeners when dragging
-    use_effect_with(drag_state.dragging, move |dragging| {
-        if *dragging {
             let window = web_sys::window().unwrap();
             let document = window.document().unwrap();
 
-            // Clone for closure
-            let on_move = on_mouse_move.clone();
-            let on_up = on_mouse_up.clone();
+            // Create move handler
+            let drag_state_move = drag_state.clone();
+            let on_move_clone = on_move.clone();
+            let move_closure = Closure::wrap(Box::new(move |e: MouseEvent| {
+                let state = drag_state_move.borrow();
+                if state.dragging {
+                    let dx = e.client_x() as f64 - state.start_mouse.x;
+                    let dy = e.client_y() as f64 - state.start_mouse.y;
+                    let new_pos = state.start_pos.offset(dx, dy);
+                    on_move_clone.emit((widget_id, new_pos));
+                }
+            }) as Box<dyn FnMut(_)>);
 
-            let move_closure =
-                wasm_bindgen::closure::Closure::wrap(Box::new(move |e: MouseEvent| {
-                    on_move.emit(e);
-                }) as Box<dyn FnMut(_)>);
+            // Create up handler
+            let drag_state_up = drag_state.clone();
+            let closures_up = closures.clone();
+            let document_up = document.clone();
+            let up_closure = Closure::wrap(Box::new(move |_e: MouseEvent| {
+                // Stop dragging
+                {
+                    let mut state = drag_state_up.borrow_mut();
+                    state.dragging = false;
+                }
 
-            let up_closure = wasm_bindgen::closure::Closure::wrap(Box::new(move |e: MouseEvent| {
-                on_up.emit(e);
-            })
-                as Box<dyn FnMut(_)>);
+                // Remove event listeners
+                if let Some((ref move_cl, ref up_cl)) = *closures_up {
+                    let _ = document_up.remove_event_listener_with_callback(
+                        "mousemove",
+                        move_cl.as_ref().unchecked_ref(),
+                    );
+                    let _ = document_up.remove_event_listener_with_callback(
+                        "mouseup",
+                        up_cl.as_ref().unchecked_ref(),
+                    );
+                }
+                closures_up.set(None);
+            }) as Box<dyn FnMut(_)>);
 
+            // Add event listeners
             document
                 .add_event_listener_with_callback(
                     "mousemove",
@@ -99,11 +115,10 @@ pub fn draggable(props: &DraggableProps) -> Html {
                 .add_event_listener_with_callback("mouseup", up_closure.as_ref().unchecked_ref())
                 .unwrap();
 
-            move_closure.forget();
-            up_closure.forget();
-        }
-        || {}
-    });
+            // Store closures to keep them alive and for cleanup
+            closures.set(Some((move_closure, up_closure)));
+        })
+    };
 
     html! {
         <div
