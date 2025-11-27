@@ -1038,11 +1038,22 @@ name = "tt-rs-app"
 version = "0.1.0"
 dependencies = [
  "log",
+ "tt-rs-box",
  "tt-rs-core",
+ "tt-rs-drag",
  "tt-rs-number",
+ "tt-rs-text",
  "tt-rs-ui",
  "wasm-bindgen",
  "wasm-logger",
+ "yew",
+]
+
+[[package]]
+name = "tt-rs-box"
+version = "0.1.0"
+dependencies = [
+ "tt-rs-core",
  "yew",
 ]
 
@@ -1054,7 +1065,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "tt-rs-drag"
+version = "0.1.0"
+dependencies = [
+ "log",
+ "tt-rs-core",
+ "wasm-bindgen",
+ "web-sys",
+ "yew",
+]
+
+[[package]]
 name = "tt-rs-number"
+version = "0.1.0"
+dependencies = [
+ "tt-rs-core",
+ "yew",
+]
+
+[[package]]
+name = "tt-rs-text"
 version = "0.1.0"
 dependencies = [
  "tt-rs-core",
