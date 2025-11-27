@@ -1046,6 +1046,7 @@ dependencies = [
  "tt-rs-ui",
  "wasm-bindgen",
  "wasm-logger",
+ "web-sys",
  "yew",
 ]
 

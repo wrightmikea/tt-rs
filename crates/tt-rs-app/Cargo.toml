@@ -18,5 +18,6 @@ tt-rs-drag = { path = "../tt-rs-drag" }
 tt-rs-ui = { path = "../tt-rs-ui" }
 yew = { workspace = true }
 wasm-bindgen = { workspace = true }
+web-sys = { version = "0.3", features = ["Document", "Element", "Window", "DomTokenList"] }
 log = { workspace = true }
 wasm-logger = { workspace = true }

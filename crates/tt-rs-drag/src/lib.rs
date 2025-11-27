@@ -3,5 +3,5 @@
 mod draggable;
 mod position;
 
-pub use draggable::Draggable;
+pub use draggable::{Draggable, DropEvent};
 pub use position::Position;

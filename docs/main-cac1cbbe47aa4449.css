@@ -139,6 +139,24 @@ html, body {
     color: #bdbdbd;
 }
 
+/* Widgets inside box holes - smaller display */
+.widget.in-hole {
+    transform: scale(0.7);
+    box-shadow: none;
+    margin: 0;
+    padding: 0.25rem 0.5rem;
+}
+
+.widget.in-hole:hover {
+    transform: scale(0.7);
+    box-shadow: none;
+}
+
+.box-hole.drop-target {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-color: #4caf50;
+}
+
 .box-erased {
     font-size: 1.5rem;
     font-weight: bold;

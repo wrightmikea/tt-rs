@@ -1,11 +1,24 @@
 //! Draggable component wrapper.
 
 use crate::Position;
+use std::cell::RefCell;
+use std::rc::Rc;
 use tt_rs_core::WidgetId;
 use wasm_bindgen::JsCast;
 use wasm_bindgen::closure::Closure;
 use web_sys::MouseEvent;
 use yew::prelude::*;
+
+/// Information about a drop event.
+#[derive(Debug, Clone, Copy)]
+pub struct DropEvent {
+    /// The ID of the widget that was dropped.
+    pub widget_id: WidgetId,
+    /// The final position of the widget.
+    pub position: Position,
+    /// The mouse position where the drop occurred.
+    pub mouse_position: Position,
+}
 
 /// Props for the Draggable component.
 #[derive(Properties, PartialEq)]
@@ -13,6 +26,9 @@ pub struct DraggableProps {
     pub widget_id: WidgetId,
     pub position: Position,
     pub on_move: Callback<(WidgetId, Position)>,
+    /// Optional callback for when the drag ends (drop occurs).
+    #[prop_or_default]
+    pub on_drop: Option<Callback<DropEvent>>,
     pub children: Children,
 }
 
@@ -44,13 +60,15 @@ pub fn draggable(props: &DraggableProps) -> Html {
         current_pos.x, current_pos.y
     );
 
-    // Store closures for cleanup
-    let closures: UseStateHandle<Option<DragClosures>> = use_state(|| None);
+    // Store closures using use_mut_ref instead of use_state
+    // This prevents Yew from dropping them during re-renders
+    let closures: Rc<RefCell<Option<DragClosures>>> = use_mut_ref(|| None);
 
     let on_mouse_down = {
         let drag_state = drag_state.clone();
         let closures = closures.clone();
         let on_move = props.on_move.clone();
+        let on_drop = props.on_drop.clone();
         let widget_id = props.widget_id;
         Callback::from(move |e: MouseEvent| {
             e.prevent_default();
@@ -83,25 +101,49 @@ pub fn draggable(props: &DraggableProps) -> Html {
             let drag_state_up = drag_state.clone();
             let closures_up = closures.clone();
             let document_up = document.clone();
-            let up_closure = Closure::wrap(Box::new(move |_e: MouseEvent| {
+            let on_drop_clone = on_drop.clone();
+            let up_closure = Closure::wrap(Box::new(move |e: MouseEvent| {
+                // Get current position before stopping drag
+                let final_pos = {
+                    let state = drag_state_up.borrow();
+                    let dx = e.client_x() as f64 - state.start_mouse.x;
+                    let dy = e.client_y() as f64 - state.start_mouse.y;
+                    state.start_pos.offset(dx, dy)
+                };
+                let mouse_pos = Position::new(e.client_x() as f64, e.client_y() as f64);
+
                 // Stop dragging
                 {
                     let mut state = drag_state_up.borrow_mut();
                     state.dragging = false;
                 }
 
-                // Remove event listeners
-                if let Some((ref move_cl, ref up_cl)) = *closures_up {
-                    let _ = document_up.remove_event_listener_with_callback(
-                        "mousemove",
-                        move_cl.as_ref().unchecked_ref(),
-                    );
-                    let _ = document_up.remove_event_listener_with_callback(
-                        "mouseup",
-                        up_cl.as_ref().unchecked_ref(),
-                    );
+                // Remove event listeners FIRST
+                {
+                    let closures_ref = closures_up.borrow();
+                    if let Some((ref move_cl, ref up_cl)) = *closures_ref {
+                        let _ = document_up.remove_event_listener_with_callback(
+                            "mousemove",
+                            move_cl.as_ref().unchecked_ref(),
+                        );
+                        let _ = document_up.remove_event_listener_with_callback(
+                            "mouseup",
+                            up_cl.as_ref().unchecked_ref(),
+                        );
+                    }
                 }
-                closures_up.set(None);
+
+                // Emit drop event AFTER removing listeners
+                if let Some(ref on_drop_cb) = on_drop_clone {
+                    on_drop_cb.emit(DropEvent {
+                        widget_id,
+                        position: final_pos,
+                        mouse_position: mouse_pos,
+                    });
+                }
+
+                // Clear closures LAST (after all other operations)
+                *closures_up.borrow_mut() = None;
             }) as Box<dyn FnMut(_)>);
 
             // Add event listeners
@@ -115,8 +157,8 @@ pub fn draggable(props: &DraggableProps) -> Html {
                 .add_event_listener_with_callback("mouseup", up_closure.as_ref().unchecked_ref())
                 .unwrap();
 
-            // Store closures to keep them alive and for cleanup
-            closures.set(Some((move_closure, up_closure)));
+            // Store closures to keep them alive
+            *closures.borrow_mut() = Some((move_closure, up_closure));
         })
     };
 

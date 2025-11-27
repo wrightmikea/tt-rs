@@ -29,6 +29,17 @@ impl Number {
         self.denominator == 1
     }
 
+    /// Returns the display value as a string.
+    pub fn display_value(&self) -> String {
+        if self.erasure == ErasureLevel::Value {
+            "?".to_string()
+        } else if self.is_integer() {
+            self.numerator.to_string()
+        } else {
+            format!("{}/{}", self.numerator, self.denominator)
+        }
+    }
+
     /// Applies this number's operator to another.
     pub fn apply_to(&self, other: &Number) -> Option<Number> {
         let (n, d) = apply_op(self.operator, self, other)?;
