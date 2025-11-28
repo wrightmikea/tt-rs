@@ -43,6 +43,13 @@ html, body {
     z-index: 100;
 }
 
+.draggable.dragging {
+    cursor: grabbing;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
 /* Base widget styles */
 .widget {
     border-radius: 8px;
@@ -72,20 +79,57 @@ html, body {
     min-width: 60px;
 }
 
-.number-operator {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #e65100;
-    margin-right: 0.5rem;
-    min-width: 1rem;
-    text-align: center;
-}
-
+/* Plain number value - just shows the number */
 .number-value {
     font-size: 1.5rem;
     font-weight: bold;
     color: #333;
     font-family: "Courier New", monospace;
+    text-align: center;
+    width: 100%;
+}
+
+/* Tool widget styling - distinct from plain numbers */
+.widget.number.tool {
+    background: linear-gradient(135deg, #ffecb3 0%, #ffe082 100%);
+    border: 2px solid #ff8f00;
+}
+
+/* Tool content - shows operator and value */
+.tool-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-operator {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #e65100;
+    margin-right: 0.25rem;
+}
+
+.tool-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+    font-family: "Courier New", monospace;
+}
+
+/* Copy source stack effect - shows multiple copies behind using box-shadow */
+.widget.number.copy-source {
+    position: relative;
+    /* Stack effect: multiple layers behind to show "infinite copies" */
+    box-shadow:
+        /* First layer - darkest */
+        5px 5px 0 0 #fff59d,
+        5px 5px 0 2px #c68400,
+        /* Second layer - medium */
+        10px 10px 0 0 #fff9c4,
+        10px 10px 0 2px #c68400,
+        /* Third layer - lightest */
+        15px 15px 0 0 #fffde7,
+        15px 15px 0 2px #c68400;
 }
 
 /* Text widget */
@@ -152,9 +196,45 @@ html, body {
     box-shadow: none;
 }
 
-.box-hole.drop-target {
+/* When dragging is happening, highlight all empty box holes as valid targets */
+body.dragging-active .box-hole {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-color: #1976d2;
+    border-style: dashed;
+    animation: pulse-border 1s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+    0%, 100% { border-color: #1976d2; }
+    50% { border-color: #64b5f6; }
+}
+
+/* Stronger highlight when directly over a drop target during drag */
+body.dragging-active .box-hole.drop-target {
     background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
     border-color: #4caf50;
+    border-style: solid;
+    border-width: 3px;
+    animation: none;
+}
+
+/* Normal hover state when not dragging */
+.box-hole:hover {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-color: #1976d2;
+    border-width: 3px;
+}
+
+/* Number widget highlighting during drag - show as valid arithmetic target */
+body.dragging-active .widget.number {
+    border-style: dashed;
+    border-color: #ff9800;
+    animation: pulse-number-border 1s ease-in-out infinite;
+}
+
+@keyframes pulse-number-border {
+    0%, 100% { border-color: #ff9800; box-shadow: 2px 2px 8px rgba(255, 152, 0, 0.3); }
+    50% { border-color: #ffc107; box-shadow: 3px 3px 12px rgba(255, 193, 7, 0.5); }
 }
 
 .box-erased {

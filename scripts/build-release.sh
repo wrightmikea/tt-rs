@@ -6,7 +6,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
-APP_CRATE="$PROJECT_ROOT/crates/tt-rs-app"
+APP_CRATE="$PROJECT_ROOT/components/app/crates/tt-rs-app"
 DOCS_DIR="$PROJECT_ROOT/docs"
 
 cd "$APP_CRATE"
