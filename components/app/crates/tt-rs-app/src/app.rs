@@ -118,6 +118,11 @@ impl BoxState {
         self.contents.get(&hole_index).copied()
     }
 
+    /// Remove widget from a hole (for vacuum erase).
+    fn clear_hole(&mut self, hole_index: usize) -> Option<WidgetId> {
+        self.contents.remove(&hole_index)
+    }
+
     fn render(&self, widgets: &HashMap<WidgetId, WidgetItem>) -> Html {
         if self.erased {
             html! {
@@ -183,7 +188,10 @@ fn demo_widgets() -> Vec<WidgetItem> {
 
 /// Creates sample boxes.
 fn demo_boxes() -> Vec<BoxState> {
-    vec![]
+    vec![
+        BoxState::new(2), // A box with 2 holes
+        BoxState::new(3), // A box with 3 holes
+    ]
 }
 
 /// Application state.
@@ -396,32 +404,38 @@ pub fn app() -> Html {
             let mouse_x = event.mouse_position.x;
             let mouse_y = event.mouse_position.y;
 
-            // Check if we're dropping a vacuum on a number (to erase it)
+            // Check if we're dropping a vacuum on a box hole (to erase its contents)
             if new_state
                 .widgets
                 .get(&widget_id)
                 .map(|w| w.is_vacuum())
                 .unwrap_or(false)
             {
-                if let Some(target_id) = find_number_at(mouse_x, mouse_y) {
-                    if target_id != widget_id {
-                        if let Some(WidgetItem::Number(n)) = new_state.widgets.get(&target_id) {
-                            if !n.is_copy_source() {
-                                // Erase the number - replace with erased pattern
-                                let erased = Number::erased();
-                                new_state
-                                    .widgets
-                                    .insert(target_id, WidgetItem::Number(erased));
-                                // Remove the vacuum (consumed)
-                                new_state.widgets.remove(&widget_id);
-                                new_state.positions.remove(&widget_id);
-                                log::info!("Vacuum erased number {}", target_id);
-                                state.set(new_state);
-                                return;
-                            }
+                // First check if we're over a box hole
+                if let Some((box_id, hole_index)) = find_box_hole_at(mouse_x, mouse_y) {
+                    if let Some(box_state) = new_state.boxes.get_mut(&box_id) {
+                        if let Some(erased_widget_id) = box_state.clear_hole(hole_index) {
+                            // Remove the widget from widget_in_box tracking
+                            new_state.widget_in_box.remove(&erased_widget_id);
+                            // Remove the widget entirely
+                            new_state.widgets.remove(&erased_widget_id);
+                            log::info!(
+                                "Vacuum erased widget {} from box {} hole {}",
+                                erased_widget_id,
+                                box_id,
+                                hole_index
+                            );
+                            // Vacuum stays where it is (persistent tool)
+                            new_state.positions.insert(widget_id, event.position);
+                            state.set(new_state);
+                            return;
                         }
                     }
                 }
+                // Vacuum dropped elsewhere - just move it
+                new_state.positions.insert(widget_id, event.position);
+                state.set(new_state);
+                return;
             }
 
             // Check if we're dropping a number onto a scales pan
