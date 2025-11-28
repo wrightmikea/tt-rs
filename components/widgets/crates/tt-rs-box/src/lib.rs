@@ -3,8 +3,18 @@
 //! In ToonTalk, a Box is a container with numbered holes that can hold
 //! other widgets. Boxes are fundamental for organizing and structuring
 //! data in visual programs.
+//!
+//! # Module Organization
+//!
+//! - [`ToonBox`] - struct and constructors
+//! - [`Hole`] - hole struct and operations
+//! - `ops` - accessor and query methods
+//! - `mutators` - mutation methods
 
 mod hole;
+mod mutators;
+mod ops;
+mod rendering;
 mod toon_box;
 mod widget_impl;
 

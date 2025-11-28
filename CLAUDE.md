@@ -47,58 +47,27 @@ sw-checklist .           # Check modularity and standards
 
 **Note:** This project uses port 1140 exclusively to avoid conflicts with other projects.
 
-**Important:** Run clippy with `--target wasm32-unknown-unknown` to avoid false dead_code warnings.
+**Important:** Run clippy with `--target wasm32-unknown-unknown` - without this target, clippy reports false `dead_code` warnings for methods used only in WASM runtime.
 
 ## Multi-Component Architecture
 
-This project uses a **multi-component architecture** where each component is an independent Cargo workspace. This enables:
-- Running `sw-checklist` independently on each component
-- Maximum 5 crates per component for modularity
-- Independent builds and testing per component
+This project uses a **multi-component architecture** where each component is an independent Cargo workspace:
 
 ```
-tt-rs/
-├── scripts/                    # Root build scripts (delegate to components)
-│   ├── serve.sh               # Development server (port 1140)
-│   ├── build-all.sh           # Build all components
-│   └── build-release.sh       # Production build for GitHub Pages
-├── components/
-│   ├── core/                  # Core abstractions (Widget trait, IDs)
-│   │   ├── Cargo.toml         # Workspace definition
-│   │   ├── scripts/build.sh   # Component build script
-│   │   └── crates/tt-rs-core/
-│   ├── widgets/               # Widget implementations
-│   │   ├── Cargo.toml         # Workspace definition
-│   │   ├── scripts/build.sh
-│   │   └── crates/
-│   │       ├── tt-rs-number/  # Number widget (rational arithmetic)
-│   │       ├── tt-rs-text/    # Text widget
-│   │       └── tt-rs-box/     # Box widget (container with holes)
-│   ├── dnd/                   # Drag-and-drop system
-│   │   ├── Cargo.toml
-│   │   ├── scripts/build.sh
-│   │   └── crates/
-│   │       ├── tt-rs-drag/    # Draggable component
-│   │       └── tt-rs-ui/      # UI components (Footer)
-│   └── app/                   # Main application
-│       ├── Cargo.toml
-│       ├── scripts/
-│       │   ├── build.sh
-│       │   └── serve.sh       # Trunk serve on port 1140
-│       └── crates/tt-rs-app/
-│           ├── index.html     # Trunk entry point
-│           ├── favicon.ico
-│           └── assets/
-├── docs/                      # GitHub Pages deployment
-└── documentation/             # Project documentation
+components/
+├── core/     → Widget trait, WidgetId, MatchResult (no dependencies)
+├── widgets/  → Number, Text, Box implementations (depends on core)
+├── dnd/      → Drag-and-drop, UI components (depends on core)
+└── app/      → WASM entry point, Trunk config (depends on all above)
 ```
 
-### Component Responsibilities
+**Dependency flow**: `core` ← `widgets` ← `dnd` ← `app`
 
-- **core**: Widget trait, WidgetId, MatchResult - no external dependencies
-- **widgets**: Widget implementations (Number, Text, Box) - depends on core
-- **dnd**: Drag-and-drop system, UI components - depends on core
-- **app**: Application entry point, ties everything together - depends on all
+### Key Files
+
+- `components/app/crates/tt-rs-app/index.html` - Trunk entry point
+- `components/core/crates/tt-rs-core/src/widget_trait.rs` - Core `Widget` trait
+- `docs/` - GitHub Pages deployment (built output, not source)
 
 ### Building Components
 
@@ -106,15 +75,12 @@ tt-rs/
 # Build all components (recommended)
 ./scripts/build-all.sh
 
-# Build individual component
+# Build/test individual component
 ./components/core/scripts/build.sh
-./components/widgets/scripts/build.sh
-./components/dnd/scripts/build.sh
-./components/app/scripts/build.sh
+cd components/widgets && cargo test
 
 # Run sw-checklist on individual components
 cd components/core && sw-checklist
-cd components/widgets && sw-checklist
 ```
 
 ### Modularity Guidelines (sw-checklist)
@@ -125,6 +91,23 @@ cd components/widgets && sw-checklist
 - Projects: max 7 crates (warn >4)
 
 Keep modules focused to leave room for future features.
+
+## Core Abstraction: Widget Trait
+
+All visual programming objects implement the `Widget` trait (`components/core/crates/tt-rs-core/src/widget_trait.rs`):
+
+```rust
+pub trait Widget: std::fmt::Debug {
+    fn type_name(&self) -> &'static str;  // "number", "box", "text"
+    fn id(&self) -> WidgetId;             // Unique identifier
+    fn copy(&self) -> Box<dyn Widget>;    // Deep copy with new ID
+    fn matches(&self, other: &dyn Widget) -> MatchResult;  // Pattern matching
+    fn render(&self) -> Html;             // Yew component rendering
+    fn description(&self) -> String;      // Human-readable text
+}
+```
+
+**Implemented widgets**: Number (rational arithmetic), Text, Box (container with holes)
 
 ## Technology Stack
 

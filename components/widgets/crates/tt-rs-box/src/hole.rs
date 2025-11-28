@@ -3,6 +3,8 @@
 use tt_rs_core::WidgetId;
 use yew::Html;
 
+// Note: Html import used in HoleContent struct
+
 /// A hole in a box that can optionally contain a widget.
 #[derive(Debug, Clone)]
 pub struct Hole {
@@ -27,14 +29,6 @@ impl Hole {
         Self {
             index,
             content: None,
-        }
-    }
-
-    /// Creates a new hole with content.
-    pub fn with_content(index: usize, widget_id: WidgetId, html: Html) -> Self {
-        Self {
-            index,
-            content: Some(HoleContent { widget_id, html }),
         }
     }
 
