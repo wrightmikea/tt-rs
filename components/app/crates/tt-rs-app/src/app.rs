@@ -303,10 +303,17 @@ impl AppState {
         let start_y = 50.0;
 
         for (i, widget) in widgets_vec.into_iter().enumerate() {
-            let col = i % cols;
-            let row = i / cols;
-            let x = start_x + (col as f64) * spacing_x;
-            let y = start_y + (row as f64) * spacing_y;
+            // Robot gets special position: just right of the /2 stack
+            let (x, y) = if matches!(widget, WidgetItem::Robot(_)) {
+                (start_x + 4.0 * spacing_x, start_y) // col 4, row 0 (right of /2)
+            } else {
+                let col = i % cols;
+                let row = i / cols;
+                (
+                    start_x + (col as f64) * spacing_x,
+                    start_y + (row as f64) * spacing_y,
+                )
+            };
             positions.insert(widget.id(), Position::new(x, y));
             widgets.insert(widget.id(), widget);
         }
