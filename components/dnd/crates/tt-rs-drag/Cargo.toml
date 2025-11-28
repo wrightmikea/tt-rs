@@ -1,0 +1,13 @@
+[package]
+name = "tt-rs-drag"
+description = "tt-rs drag-and-drop interaction system"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
+yew = { workspace = true }
+web-sys = { workspace = true }
+wasm-bindgen = { workspace = true }

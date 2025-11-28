@@ -49,35 +49,73 @@ sw-checklist .           # Check modularity and standards
 
 **Important:** Run clippy with `--target wasm32-unknown-unknown` to avoid false dead_code warnings.
 
-## Workspace Architecture
+## Multi-Component Architecture
 
-This project uses a Rust workspace with focused crates for modularity:
+This project uses a **multi-component architecture** where each component is an independent Cargo workspace. This enables:
+- Running `sw-checklist` independently on each component
+- Maximum 5 crates per component for modularity
+- Independent builds and testing per component
 
 ```
 tt-rs/
-├── Cargo.toml          # Workspace definition
-├── scripts/            # Build and serve scripts
-│   ├── serve.sh        # Development server
-│   ├── build-all.sh    # Quality checks
-│   └── build-release.sh # Production build
-├── crates/
-│   ├── tt-rs-core/     # Core Widget trait, WidgetId, MatchResult (2 modules)
-│   ├── tt-rs-number/   # Number widget with rational arithmetic (6 modules)
-│   ├── tt-rs-ui/       # UI components - Footer (2 modules)
-│   └── tt-rs-app/      # Main WASM app entry point (2 modules)
-│       ├── index.html  # Trunk entry point
-│       ├── favicon.ico
-│       └── assets/     # CSS stylesheets
-├── docs/               # GitHub Pages deployment
-└── documentation/      # Project documentation
+├── scripts/                    # Root build scripts (delegate to components)
+│   ├── serve.sh               # Development server (port 1140)
+│   ├── build-all.sh           # Build all components
+│   └── build-release.sh       # Production build for GitHub Pages
+├── components/
+│   ├── core/                  # Core abstractions (Widget trait, IDs)
+│   │   ├── Cargo.toml         # Workspace definition
+│   │   ├── scripts/build.sh   # Component build script
+│   │   └── crates/tt-rs-core/
+│   ├── widgets/               # Widget implementations
+│   │   ├── Cargo.toml         # Workspace definition
+│   │   ├── scripts/build.sh
+│   │   └── crates/
+│   │       ├── tt-rs-number/  # Number widget (rational arithmetic)
+│   │       ├── tt-rs-text/    # Text widget
+│   │       └── tt-rs-box/     # Box widget (container with holes)
+│   ├── dnd/                   # Drag-and-drop system
+│   │   ├── Cargo.toml
+│   │   ├── scripts/build.sh
+│   │   └── crates/
+│   │       ├── tt-rs-drag/    # Draggable component
+│   │       └── tt-rs-ui/      # UI components (Footer)
+│   └── app/                   # Main application
+│       ├── Cargo.toml
+│       ├── scripts/
+│       │   ├── build.sh
+│       │   └── serve.sh       # Trunk serve on port 1140
+│       └── crates/tt-rs-app/
+│           ├── index.html     # Trunk entry point
+│           ├── favicon.ico
+│           └── assets/
+├── docs/                      # GitHub Pages deployment
+└── documentation/             # Project documentation
 ```
 
-### Crate Responsibilities
+### Component Responsibilities
 
-- **tt-rs-core**: Widget trait, WidgetId, MatchResult - no dependencies
-- **tt-rs-number**: Number widget (rational arithmetic, pattern matching)
-- **tt-rs-ui**: Reusable UI components (Footer with build info)
-- **tt-rs-app**: Application entry point, ties everything together, contains web assets
+- **core**: Widget trait, WidgetId, MatchResult - no external dependencies
+- **widgets**: Widget implementations (Number, Text, Box) - depends on core
+- **dnd**: Drag-and-drop system, UI components - depends on core
+- **app**: Application entry point, ties everything together - depends on all
+
+### Building Components
+
+```bash
+# Build all components (recommended)
+./scripts/build-all.sh
+
+# Build individual component
+./components/core/scripts/build.sh
+./components/widgets/scripts/build.sh
+./components/dnd/scripts/build.sh
+./components/app/scripts/build.sh
+
+# Run sw-checklist on individual components
+cd components/core && sw-checklist
+cd components/widgets && sw-checklist
+```
 
 ### Modularity Guidelines (sw-checklist)
 

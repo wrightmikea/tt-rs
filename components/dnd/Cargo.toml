@@ -1,0 +1,27 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/tt-rs-drag",
+    "crates/tt-rs-ui",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "BSD-3-Clause"
+repository = "https://github.com/wrightmikea/tt-rs"
+
+[workspace.dependencies]
+yew = { version = "0.21", features = ["csr"] }
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+    "console", "Document", "Element", "EventTarget",
+    "HtmlElement", "MouseEvent", "Node", "Window", "DomRect", "DomTokenList",
+] }
+tt-rs-core = { path = "../core/crates/tt-rs-core" }
+chrono = "0.4"
+log = "0.4"
+
+[profile.release]
+opt-level = "s"
+lto = true

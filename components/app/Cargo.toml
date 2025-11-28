@@ -1,0 +1,31 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/tt-rs-app",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "BSD-3-Clause"
+repository = "https://github.com/wrightmikea/tt-rs"
+
+[workspace.dependencies]
+yew = { version = "0.21", features = ["csr"] }
+wasm-bindgen = "0.2"
+web-sys = { version = "0.3", features = [
+    "console", "Document", "Element", "EventTarget",
+    "HtmlElement", "MouseEvent", "Node", "Window", "DomTokenList",
+] }
+log = "0.4"
+wasm-logger = "0.2"
+tt-rs-core = { path = "../core/crates/tt-rs-core" }
+tt-rs-number = { path = "../widgets/crates/tt-rs-number" }
+tt-rs-text = { path = "../widgets/crates/tt-rs-text" }
+tt-rs-box = { path = "../widgets/crates/tt-rs-box" }
+tt-rs-drag = { path = "../dnd/crates/tt-rs-drag" }
+tt-rs-ui = { path = "../dnd/crates/tt-rs-ui" }
+
+[profile.release]
+opt-level = "s"
+lto = true
