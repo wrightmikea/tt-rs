@@ -222,11 +222,78 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Wait for nest action
   - Concurrent deliveries
 
-## Phase 5: Additional Widgets
+## Phase 5: Concurrency and Processes
+
+**Goal**: Implement houses, trucks, and bombs for multiple concurrent processes.
+
+### 5.1 House Widget
+
+- [ ] Implement `House` struct
+  - Contains robots and boxes
+  - Unique address in city
+  - Visual appearance (picture)
+
+- [ ] Implement house rendering
+  - 3D/SVG house graphic
+  - Interior workspace view
+  - Status indicator (active/idle)
+
+- [ ] House interactions
+  - Enter house (view interior)
+  - Exit house (return to city)
+  - Give items to house
+
+### 5.2 Truck Widget (Process Spawner)
+
+- [ ] Implement `Truck` struct
+  - Cargo hold (robot + box)
+  - Ready/not-ready state
+  - Optional notebook (module)
+  - Optional picture (house appearance)
+
+- [ ] Implement truck behavior
+  - Drop robot into truck
+  - Drop box into truck
+  - Truck drives off when ready
+  - Creates new house at empty location
+
+- [ ] Implement truck rendering
+  - SVG truck graphic
+  - Cargo indicators
+  - Driving animation
+
+### 5.3 Bomb Widget (Process Terminator)
+
+- [ ] Implement `Bomb` struct
+  - Target house reference
+  - Armed/disarmed state
+
+- [ ] Implement bomb behavior
+  - Drop on house to arm
+  - Explode and destroy house
+  - Clean up process resources
+
+- [ ] Implement bomb rendering
+  - SVG bomb graphic
+  - Explosion animation
+
+### 5.4 City View
+
+- [ ] Implement city overview
+  - Grid/map of houses
+  - Street addresses
+  - Bird flight paths visible
+
+- [ ] Helicopter navigation (optional)
+  - Fly over city
+  - Land at house
+  - Pick up and move items
+
+## Phase 6: Additional Widgets
 
 **Goal**: Complete the widget set.
 
-### 5.1 Scale Widget
+### 6.1 Scale Widget
 
 - [ ] Implement `Scale` struct
   - Left/right sides
@@ -242,7 +309,7 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Numeric comparison
   - Other comparisons (size, etc.)
 
-### 5.2 Sensor Widget
+### 6.2 Sensor Widget
 
 - [ ] Implement `Sensor` struct
   - Event type selection
@@ -257,7 +324,7 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Mouse events
   - Touch events
 
-### 5.3 Element Widget
+### 6.3 Element Widget
 
 - [ ] Implement `Element` struct
   - HTML content
@@ -274,7 +341,7 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Import text
   - Handle external content
 
-### 5.4 Tools
+### 6.4 Tools
 
 - [ ] Implement Wand (magic wand)
   - Copy on touch
@@ -285,11 +352,11 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Erase mode
   - Visual feedback
 
-## Phase 6: Modern Graphics
+## Phase 7: Modern Graphics
 
 **Goal**: Upgrade visuals with Three.js and advanced animations.
 
-### 6.1 Three.js Integration
+### 7.1 Three.js Integration
 
 - [ ] Set up Three.js bindings
   - Scene management
@@ -301,7 +368,7 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Boxes with volume
   - Shadows and lighting
 
-### 6.2 Advanced Animations
+### 7.2 Advanced Animations
 
 - [ ] Bird flight paths
   - Bezier curve paths
@@ -318,7 +385,7 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Bounce effect
   - Weight visualization
 
-### 6.3 Visual Polish
+### 7.3 Visual Polish
 
 - [ ] Particle effects
   - Copy sparkles
@@ -330,36 +397,36 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Robot events
   - Ambient sounds (optional)
 
-## Phase 7: User Experience
+## Phase 8: User Experience
 
 **Goal**: Polish the user interface and interactions.
 
-### 7.1 Workspace Improvements
+### 8.1 Workspace Improvements
 
 - [ ] Zoom and pan
 - [ ] Grid snapping (optional)
 - [ ] Multiple workspaces
 - [ ] Workspace tabs
 
-### 7.2 Editing Features
+### 8.2 Editing Features
 
 - [ ] Undo/redo system
 - [ ] Cut/copy/paste
 - [ ] Multi-select operations
 - [ ] Context menus
 
-### 7.3 Help System
+### 8.3 Help System
 
 - [ ] Tooltips
 - [ ] Guided tours
 - [ ] Example programs
 - [ ] Interactive manual
 
-## Phase 8: Audio and Speech
+## Phase 9: Audio and Speech
 
 **Goal**: Add the "talking" capabilities.
 
-### 8.1 Sound Effects
+### 9.1 Sound Effects
 
 - [ ] Interaction sounds
   - Widget pickup/drop
@@ -371,7 +438,7 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Pattern match
   - Completion
 
-### 8.2 Text-to-Speech
+### 9.2 Text-to-Speech
 
 - [ ] Pre-generated assets
   - Common instructions
@@ -383,47 +450,47 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
   - Custom voice settings
   - Language support
 
-## Phase 9: Ecosystem
+## Phase 10: Ecosystem
 
 **Goal**: Enable sharing and community features.
 
-### 9.1 Import/Export
+### 10.1 Import/Export
 
 - [ ] ToonTalk Reborn format import
 - [ ] Export to file
 - [ ] Import from file
 
-### 9.2 Sharing
+### 10.2 Sharing
 
 - [ ] URL-based sharing
 - [ ] Embed code generation
 - [ ] Screenshot/GIF export
 
-### 9.3 Cloud Storage
+### 10.3 Cloud Storage
 
 - [ ] Account system (optional)
 - [ ] Cloud save/load
 - [ ] Program gallery
 
-## Phase 10: Documentation and Release
+## Phase 11: Documentation and Release
 
 **Goal**: Prepare for public release.
 
-### 10.1 Documentation
+### 11.1 Documentation
 
 - [ ] User guide
 - [ ] Educator guide
 - [ ] API documentation (for contributors)
 - [ ] Tutorial videos
 
-### 10.2 Testing
+### 11.2 Testing
 
 - [ ] Complete unit test coverage
 - [ ] Integration test suite
 - [ ] Cross-browser testing
 - [ ] Performance benchmarks
 
-### 10.3 Release
+### 11.3 Release
 
 - [ ] Production build optimization
 - [ ] Deploy to web hosting
@@ -443,26 +510,29 @@ Phase 3 ------+---------------+
               |               |
               v               |
 Phase 4 ------+---------------+
+              |               |
+              v               |
+Phase 5 ------+---------------+  (Concurrency)
                               |
-Phase 5 ----------------------+
+Phase 6 ----------------------+  (Additional Widgets)
                               |
-Phase 6 ----------------------+
+Phase 7 ----------------------+  (Modern Graphics)
                               |
-Phase 7 ----------------------+
+Phase 8 ----------------------+  (User Experience)
                               |
-Phase 8 ----------------------+
+Phase 9 ----------------------+  (Audio and Speech)
                               |
-Phase 9 ----------------------+
+Phase 10 ---------------------+  (Ecosystem)
                               |
                               v
-                        Phase 10
+                        Phase 11
 ```
 
 Notes:
-- Phases 1-4 are sequential (each depends on previous)
-- Phase 5 can partially overlap with Phase 4
-- Phases 6-9 can be worked on in parallel after Phase 5
-- Phase 10 requires all previous phases
+- Phases 1-5 are sequential (each depends on previous)
+- Phase 5 (Concurrency) can partially overlap with Phase 4 (Bird/Nest)
+- Phases 6-10 can be worked on in parallel after Phase 5
+- Phase 11 (Documentation and Release) requires all previous phases
 
 ## Success Criteria
 
@@ -474,6 +544,14 @@ Notes:
 - Robots can execute recorded actions
 - Birds can carry messages to nests
 - Work can be saved and loaded
+
+### Extended MVP (Phase 5)
+
+- Houses contain working robots
+- Multiple concurrent processes (houses) run simultaneously
+- Trucks spawn new houses (processes)
+- Bombs terminate houses (processes)
+- City view shows all running processes
 
 ### Full Release (All Phases)
 

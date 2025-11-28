@@ -10,16 +10,33 @@ tt-rs is a modern reimplementation of ToonTalk, an interactive visual programmin
 
 ## Background
 
-### Original ToonTalk
+### Original ToonTalk (Desktop C++ Version ~1995-2009)
 
 ToonTalk was designed to make programming concepts accessible to children by mapping every abstract computational aspect to a concrete, animated metaphor:
 
-- **Computation** = A city with houses
-- **Active objects/agents** = Houses
-- **Methods/clauses** = Robots trained by demonstration
+**Core Metaphors (Computational → Visual):**
+- **Computation/Program** = A city with houses
+- **Process/Agent** = A house (contains robots working on boxes)
+- **Method/Clause** = Robot trained by demonstration
 - **Messages** = Items carried by birds to nests
-- **Data structures** = Boxes with compartments
+- **Data structures** = Boxes with compartments (holes)
 - **Comparison** = Scales that tip based on weight/value
+- **Pattern matching** = Robot's thought bubble (conditions)
+
+**Navigation and City Management:**
+- **Helicopter** = Navigation tool for flying over the city, landing at houses
+- **City** = The entire program/computation with multiple houses (processes)
+- **Streets/Avenues** = Addresses for locating houses
+
+**Process Management:**
+- **Truck** = Process spawner (drop robot + box into truck → new house is built)
+- **Bomb** = Process terminator (destroys a house/terminates an agent)
+
+**Tools:**
+- **Magician's Wand** = Copy tool (creates duplicates of any widget)
+- **Dusty (Vacuum)** = Erase/remove tool (three modes: suck, erase, spit)
+- **Pumpy (Bike Pump)** = Resize tool (make widgets larger/smaller)
+- **Notebook** = Program storage, also serves as module/package when dropped in truck
 
 The system was influenced by:
 - The Janus programming language (concurrent constraint logic programming)
@@ -28,13 +45,21 @@ The system was influenced by:
 
 ToonTalk was successfully used by children as young as 3 years old.
 
-### ToonTalk Reborn (JavaScript)
+### ToonTalk Reborn (JavaScript ~2014-2017)
 
 In 2014, a JavaScript/HTML5 version was created, making ToonTalk accessible in web browsers. This version:
 - Uses jQuery and jQuery UI
 - Stores programs as JSON
 - Supports Google Drive integration
 - Includes primitive Lego-like graphics
+
+**Features Changed/Removed from Original:**
+- **No City/Helicopter**: The immersive 3D city navigation was removed
+- **No Houses**: Processes run on a flat workspace instead of in houses
+- **No Trucks**: Process spawning mechanism was simplified
+- **No Bombs**: Process termination handled differently
+- **Simplified Vacuum**: Doesn't have suck/erase/spit modes
+- **Flat 2D interface**: No 3D graphics or flying navigation
 
 ### Why tt-rs?
 
@@ -101,6 +126,9 @@ The JavaScript implementation has accumulated technical debt and relies on aging
 | FR1.6 | Sensors (keyboard, mouse, touch events) | Must Have |
 | FR1.7 | Elements (HTML/SVG content) | Should Have |
 | FR1.8 | Function birds (mathematical functions) | Should Have |
+| FR1.9 | Houses (process containers) | Should Have |
+| FR1.10 | Trucks (process spawners) | Should Have |
+| FR1.11 | Bombs (process terminators) | Should Have |
 
 #### FR2: Tools
 
@@ -108,7 +136,9 @@ The JavaScript implementation has accumulated technical debt and relies on aging
 |----|-------------|----------|
 | FR2.1 | Magic Wand for copying objects | Must Have |
 | FR2.2 | Dusty the Vacuum for removing/erasing objects | Must Have |
-| FR2.3 | Selection tool for multi-select operations | Should Have |
+| FR2.3 | Pumpy the Bike Pump for resizing objects | Should Have |
+| FR2.4 | Selection tool for multi-select operations | Should Have |
+| FR2.5 | Notebook for program storage and modules | Should Have |
 
 #### FR3: Robot Programming
 
@@ -123,43 +153,55 @@ The JavaScript implementation has accumulated technical debt and relies on aging
 | FR3.7 | Generalize patterns using erasure | Must Have |
 | FR3.8 | Robot teams (alternative behaviors) | Should Have |
 
-#### FR4: Workspace
+#### FR4: Concurrency and Processes
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| FR4.1 | Drag and drop widgets | Must Have |
-| FR4.2 | Resize widgets | Must Have |
-| FR4.3 | Widget backside access (flip to configure) | Must Have |
-| FR4.4 | Multiple workspaces | Should Have |
-| FR4.5 | Zoom and pan | Should Have |
-| FR4.6 | Undo/Redo | Should Have |
+| FR4.1 | Houses as visual process containers | Should Have |
+| FR4.2 | Multiple concurrent processes (houses) | Should Have |
+| FR4.3 | Spawn new process via truck (drop robot+box) | Should Have |
+| FR4.4 | Terminate process via bomb | Should Have |
+| FR4.5 | Inter-process communication via birds/nests | Must Have |
+| FR4.6 | City view showing all houses/processes | Could Have |
+| FR4.7 | Helicopter navigation between houses | Could Have |
 
-#### FR5: Persistence
-
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR5.1 | Save to browser local storage | Must Have |
-| FR5.2 | Load from local storage | Must Have |
-| FR5.3 | Export to file | Must Have |
-| FR5.4 | Import from file | Must Have |
-| FR5.5 | Cloud storage integration | Could Have |
-| FR5.6 | Share via URL | Could Have |
-
-#### FR6: Audio/Speech
+#### FR5: Workspace
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| FR6.1 | Sound effects for interactions | Should Have |
-| FR6.2 | Text-to-speech for instructions/feedback | Could Have |
-| FR6.3 | Pre-generated speech assets | Could Have |
-| FR6.4 | Dynamic TTS during execution | Could Have |
+| FR5.1 | Drag and drop widgets | Must Have |
+| FR5.2 | Resize widgets | Must Have |
+| FR5.3 | Widget backside access (flip to configure) | Must Have |
+| FR5.4 | Multiple workspaces | Should Have |
+| FR5.5 | Zoom and pan | Should Have |
+| FR5.6 | Undo/Redo | Should Have |
 
-#### FR7: Compatibility
+#### FR6: Persistence
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
-| FR7.1 | Import ToonTalk Reborn JSON programs | Should Have |
-| FR7.2 | Export to ToonTalk Reborn format | Could Have |
+| FR6.1 | Save to browser local storage | Must Have |
+| FR6.2 | Load from local storage | Must Have |
+| FR6.3 | Export to file | Must Have |
+| FR6.4 | Import from file | Must Have |
+| FR6.5 | Cloud storage integration | Could Have |
+| FR6.6 | Share via URL | Could Have |
+
+#### FR7: Audio/Speech
+
+| ID | Requirement | Priority |
+|----|-------------|----------|
+| FR7.1 | Sound effects for interactions | Should Have |
+| FR7.2 | Text-to-speech for instructions/feedback | Could Have |
+| FR7.3 | Pre-generated speech assets | Could Have |
+| FR7.4 | Dynamic TTS during execution | Could Have |
+
+#### FR8: Compatibility
+
+| ID | Requirement | Priority |
+|----|-------------|----------|
+| FR8.1 | Import ToonTalk Reborn JSON programs | Should Have |
+| FR8.2 | Export to ToonTalk Reborn format | Could Have |
 
 ### Non-Functional Requirements
 
@@ -330,17 +372,40 @@ The JavaScript implementation has accumulated technical debt and relies on aging
 
 ### Glossary
 
+**Core Concepts:**
 - **Widget**: Any visual object in the application (number, box, robot, etc.)
 - **Backside**: The configuration/programming interface of a widget
 - **Robot**: An automated agent that performs recorded actions
 - **Training**: The process of teaching a robot by demonstration
+- **Thought Bubble**: The robot's conditions (pattern) that must match before it works
+
+**Communication:**
 - **Bird**: A messenger that carries items to its associated nest
 - **Nest**: A receiver of messages delivered by its bird
+
+**Data:**
 - **Box**: A container with numbered compartments (holes)
+- **Number**: A rational number with optional arithmetic operator
+- **Text**: A text string widget
+
+**Comparison:**
 - **Scale**: A comparison widget that tips based on placed values
-- **Sensor**: A widget that responds to browser events
-- **Wand**: A tool for copying widgets
-- **Vacuum (Dusty)**: A tool for removing/erasing widgets
+
+**Process/Concurrency (from Original ToonTalk):**
+- **House**: A process container where robots work on boxes
+- **City**: The entire program consisting of multiple houses (processes)
+- **Truck**: Process spawner (load with robot+box to create new house)
+- **Bomb**: Process terminator (destroys a house)
+- **Helicopter**: Navigation tool for flying between houses (city view)
+
+**Tools:**
+- **Wand (Magic Wand)**: A tool for copying widgets
+- **Vacuum (Dusty)**: A tool for removing/erasing widgets (three modes: suck, erase, spit)
+- **Pump (Pumpy)**: A tool for resizing widgets
+- **Notebook**: Program storage; when dropped in truck, becomes module/package
+
+**Events:**
+- **Sensor**: A widget that responds to browser events (keyboard, mouse, touch)
 
 ### References
 
