@@ -5,9 +5,14 @@ use tt_rs_core::WidgetId;
 /// Result of a comparison on the scales.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum CompareResult {
+    /// No values to compare - scales wobble indeterminately
     #[default]
+    Indeterminate,
+    /// Left and right values are equal
     Balanced,
+    /// Left value is greater than right
     LeftHeavier,
+    /// Right value is greater than left
     RightHeavier,
 }
 
@@ -29,7 +34,7 @@ impl Scales {
             id: WidgetId::new(),
             left_value: None,
             right_value: None,
-            result: CompareResult::Balanced,
+            result: CompareResult::Balanced, // Start stationary until first interaction
         }
     }
 
@@ -64,15 +69,27 @@ impl Scales {
     pub fn clear(&mut self) {
         self.left_value = None;
         self.right_value = None;
-        self.result = CompareResult::Balanced;
+        self.result = CompareResult::Indeterminate; // After clearing, wobble
     }
 
     fn recalculate(&mut self) {
         self.result = match (self.left_value, self.right_value) {
             (Some(l), Some(r)) if l > r => CompareResult::LeftHeavier,
             (Some(l), Some(r)) if r > l => CompareResult::RightHeavier,
-            _ => CompareResult::Balanced,
+            (Some(_), Some(_)) => CompareResult::Balanced,
+            (Some(_), None) | (None, Some(_)) => CompareResult::Indeterminate, // One value = wobble
+            (None, None) => CompareResult::Balanced, // No values = stationary
         };
+    }
+
+    /// Creates a copy of this scales widget with a new ID.
+    pub fn copy_scales(&self) -> Scales {
+        Scales {
+            id: WidgetId::new(),
+            left_value: self.left_value,
+            right_value: self.right_value,
+            result: self.result,
+        }
     }
 }
 

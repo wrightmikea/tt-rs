@@ -349,6 +349,27 @@ body.dragging-active .widget.number {
     /* Right pan is lower when right-heavy */
 }
 
+/* Wobbling scales animation - used when scales are indeterminate (missing values) */
+.widget.scales.wobbling {
+    animation: wobble-scales 0.8s ease-in-out infinite;
+    transform-origin: center top;
+}
+
+.widget.scales.wobbling .scales-image {
+    animation: wobble-image 0.8s ease-in-out infinite;
+    transform-origin: center 30%;
+}
+
+@keyframes wobble-scales {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+
+@keyframes wobble-image {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+}
+
 /* Vacuum tool widget */
 .widget.vacuum {
     background: transparent;
@@ -379,4 +400,133 @@ body.dragging-active .widget.number:not(.copy-source) {
 .widget.number .number-value:empty::after {
     content: "?";
     color: #999;
+}
+
+/* Wand (magic wand) tool widget */
+.widget.wand {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0.25rem;
+    width: 80px;
+    height: 80px;
+}
+
+.widget.wand:hover {
+    transform: scale(1.1);
+    box-shadow: none;
+}
+
+.wand-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Robot widget */
+.widget.robot {
+    background: linear-gradient(135deg, #e1bee7 0%, #ce93d8 100%);
+    border: 3px solid #7b1fa2;
+    border-radius: 12px;
+    padding: 0.5rem;
+    min-width: 80px;
+    min-height: 100px;
+}
+
+.widget.robot:hover {
+    border-color: #9c27b0;
+}
+
+.widget.robot.training {
+    background: linear-gradient(135deg, #ffecb3 0%, #ffe082 100%);
+    border-color: #ff8f00;
+    animation: pulse-training 1.5s ease-in-out infinite;
+}
+
+.widget.robot.working {
+    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+    border-color: #388e3c;
+    animation: pulse-working 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse-training {
+    0%, 100% { box-shadow: 0 0 5px rgba(255, 143, 0, 0.5); }
+    50% { box-shadow: 0 0 15px rgba(255, 143, 0, 0.8); }
+}
+
+@keyframes pulse-working {
+    0%, 100% { box-shadow: 0 0 5px rgba(56, 142, 60, 0.5); }
+    50% { box-shadow: 0 0 10px rgba(56, 142, 60, 0.8); }
+}
+
+.robot-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.robot-head {
+    display: flex;
+    gap: 8px;
+    padding: 4px 8px;
+    background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+    border-radius: 8px;
+    border: 2px solid #9c27b0;
+}
+
+.robot-eye {
+    width: 12px;
+    height: 12px;
+    background: #333;
+    border-radius: 50%;
+    position: relative;
+}
+
+.robot-eye::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+}
+
+/* Robot eyes glow when training */
+.widget.robot.training .robot-eye {
+    background: #ff9800;
+    box-shadow: 0 0 5px #ff9800;
+}
+
+/* Robot eyes glow green when working */
+.widget.robot.working .robot-eye {
+    background: #4caf50;
+    box-shadow: 0 0 5px #4caf50;
+}
+
+.robot-torso {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.robot-status {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #4a148c;
+}
+
+.robot-actions {
+    font-size: 0.65rem;
+    color: #7b1fa2;
+}
+
+/* Robot in box hole */
+.widget.robot.in-hole {
+    min-width: 30px;
+    min-height: 40px;
+    font-size: 0.6rem;
 }

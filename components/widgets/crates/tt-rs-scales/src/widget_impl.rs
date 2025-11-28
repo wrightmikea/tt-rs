@@ -27,6 +27,7 @@ impl Widget for Scales {
 
     fn render(&self) -> Html {
         let (tilt_class, image_src) = match self.result {
+            CompareResult::Indeterminate => ("wobbling", "images/tt-scales.svg"),
             CompareResult::Balanced => ("balanced", "images/tt-scales.svg"),
             CompareResult::LeftHeavier => ("left-heavy", "images/tt-scales-left.svg"),
             CompareResult::RightHeavier => ("right-heavy", "images/tt-scales-right.svg"),
@@ -57,6 +58,7 @@ impl Widget for Scales {
 
     fn description(&self) -> String {
         match self.result {
+            CompareResult::Indeterminate => "wobbling scales".to_string(),
             CompareResult::Balanced => "balanced scales".to_string(),
             CompareResult::LeftHeavier => "scales tipping left".to_string(),
             CompareResult::RightHeavier => "scales tipping right".to_string(),

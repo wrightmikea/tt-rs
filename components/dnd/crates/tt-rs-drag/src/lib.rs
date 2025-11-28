@@ -5,5 +5,5 @@ mod draggable;
 mod position;
 
 pub use copy_source::{CopySource, CopySourceClickEvent};
-pub use draggable::{DragStartEvent, Draggable, DropEvent};
+pub use draggable::{DragEndEvent, DragStartEvent, Draggable, DropEvent};
 pub use position::Position;

@@ -1,0 +1,11 @@
+[package]
+name = "tt-rs-wand"
+description = "Magic wand tool for tt-rs - copies widgets on touch"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
+yew = { workspace = true }

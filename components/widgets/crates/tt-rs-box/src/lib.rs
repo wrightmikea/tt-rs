@@ -15,6 +15,8 @@ mod hole;
 mod mutators;
 mod ops;
 mod rendering;
+#[cfg(test)]
+mod tests;
 mod toon_box;
 mod widget_impl;
 

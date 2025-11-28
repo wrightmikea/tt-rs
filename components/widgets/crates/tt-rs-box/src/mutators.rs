@@ -29,4 +29,22 @@ impl ToonBox {
             false
         }
     }
+
+    /// Resizes the box to have the specified number of holes.
+    ///
+    /// If increasing size, new empty holes are appended.
+    /// If decreasing size, excess holes are removed from the end.
+    pub fn resize(&mut self, new_size: usize) {
+        let current_size = self.holes.len();
+        if new_size > current_size {
+            // Add new empty holes
+            for i in current_size..new_size {
+                self.holes.push(Hole::new(i));
+            }
+        } else if new_size < current_size {
+            // Remove excess holes from the end
+            self.holes.truncate(new_size);
+        }
+        // If new_size == current_size, do nothing
+    }
 }

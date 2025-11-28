@@ -34,6 +34,13 @@ pub struct DragStartEvent {
     pub position: Position,
 }
 
+/// Information about a drag end event (when drag stops, regardless of drop).
+#[derive(Debug, Clone, Copy)]
+pub struct DragEndEvent {
+    /// The ID of the widget that stopped dragging.
+    pub widget_id: WidgetId,
+}
+
 /// Information about a drop event.
 #[derive(Debug, Clone, Copy)]
 pub struct DropEvent {
@@ -57,6 +64,9 @@ pub struct DraggableProps {
     /// Optional callback for when the drag ends (drop occurs).
     #[prop_or_default]
     pub on_drop: Option<Callback<DropEvent>>,
+    /// Optional callback for when drag ends (regardless of drop).
+    #[prop_or_default]
+    pub on_drag_end: Option<Callback<DragEndEvent>>,
     pub children: Children,
 }
 
@@ -109,6 +119,7 @@ pub fn draggable(props: &DraggableProps) -> Html {
         let on_move = props.on_move.clone();
         let on_drag_start = props.on_drag_start.clone();
         let on_drop = props.on_drop.clone();
+        let on_drag_end = props.on_drag_end.clone();
         let widget_id = props.widget_id;
         let is_dragging = is_dragging.clone();
         Callback::from(move |e: MouseEvent| {
@@ -155,6 +166,7 @@ pub fn draggable(props: &DraggableProps) -> Html {
             let closures_up = closures.clone();
             let document_up = document.clone();
             let on_drop_clone = on_drop.clone();
+            let on_drag_end_clone = on_drag_end.clone();
             let is_dragging_up = is_dragging.clone();
             let up_closure = Closure::wrap(Box::new(move |e: MouseEvent| {
                 // Get current position before stopping drag
@@ -166,17 +178,13 @@ pub fn draggable(props: &DraggableProps) -> Html {
                 };
                 let mouse_pos = Position::new(e.client_x() as f64, e.client_y() as f64);
 
-                // Stop dragging
+                // Stop dragging (internal state only)
                 {
                     let mut state = drag_state_up.borrow_mut();
                     state.dragging = false;
                 }
 
-                // Clear dragging state for CSS
-                is_dragging_up.set(false);
-                set_body_dragging(false);
-
-                // Remove event listeners FIRST
+                // Remove event listeners first
                 {
                     let closures_ref = closures_up.borrow();
                     if let Some((ref move_cl, ref up_cl)) = *closures_ref {
@@ -191,7 +199,9 @@ pub fn draggable(props: &DraggableProps) -> Html {
                     }
                 }
 
-                // Emit drop event AFTER removing listeners
+                // IMPORTANT: Emit drop event BEFORE clearing is_dragging CSS state
+                // This ensures pointer-events: none is still active when on_drop
+                // uses element_from_point() to find drop targets underneath
                 if let Some(ref on_drop_cb) = on_drop_clone {
                     on_drop_cb.emit(DropEvent {
                         widget_id,
@@ -199,6 +209,15 @@ pub fn draggable(props: &DraggableProps) -> Html {
                         mouse_position: mouse_pos,
                     });
                 }
+
+                // Emit drag end event (always fires when drag stops)
+                if let Some(ref on_end_cb) = on_drag_end_clone {
+                    on_end_cb.emit(DragEndEvent { widget_id });
+                }
+
+                // NOW clear dragging state for CSS (after drop handlers have run)
+                is_dragging_up.set(false);
+                set_body_dragging(false);
 
                 // Clear closures LAST (after all other operations)
                 *closures_up.borrow_mut() = None;

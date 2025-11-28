@@ -64,48 +64,89 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
 
 ### 2.1 Number Widget
 
-- [ ] Implement `Number` struct
-  - Rational number storage (num-rational)
-  - Arithmetic operator (+, -, *, /)
-  - Erasure levels
+- [x] Implement `Number` struct
+  - [x] Rational number storage (num-rational)
+  - [x] Arithmetic operator (+, -, *, /)
+  - [ ] Erasure levels
 
-- [ ] Implement number rendering
-  - SVG-based display
-  - Operator indicator
-  - Proper formatting (fractions, decimals)
+- [x] Implement number rendering
+  - [x] CSS-based display
+  - [x] Operator indicator (for tools)
+  - [x] Proper formatting
 
-- [ ] Implement number operations
-  - Drop number on number (apply operator)
-  - Edit operator (backside)
+- [x] Implement number operations
+  - [x] Drop number on number (apply operator)
+  - [ ] Edit operator (backside)
 
 - [ ] Implement number matching
-  - Exact match
-  - Sign match (erased)
-  - Type match (fully erased)
+  - [ ] Exact match
+  - [ ] Sign match (erased)
+  - [ ] Type match (fully erased)
 
 ### 2.2 Box Widget
 
-- [ ] Implement `BoxWidget` struct
-  - Configurable hole count
-  - Contents array
-  - Horizontal/vertical orientation
+- [x] Implement `BoxWidget` struct
+  - [x] Configurable hole count
+  - [x] Contents array
+  - [ ] Horizontal/vertical orientation
 
-- [ ] Implement box rendering
-  - 3D-effect container
-  - Dividers between holes
-  - Contents rendering
+- [x] Implement box rendering
+  - [x] 3D-effect container
+  - [x] Dividers between holes
+  - [x] Contents rendering
 
-- [ ] Implement box interactions
-  - Drop widget into hole
-  - Remove widget from hole
-  - Resize box (add/remove holes)
+- [x] Implement box interactions
+  - [x] Drop widget into hole
+  - [x] Remove widget from hole (via vacuum tool)
+  - [x] Resize box (add/remove holes via keyboard 0-9)
 
 - [ ] Implement box matching
-  - Structure matching
-  - Contents matching (recursive)
-  - Partial matches
+  - [ ] Structure matching
+  - [ ] Contents matching (recursive)
+  - [ ] Partial matches
 
-### 2.3 Persistence (Basic)
+### 2.3 Box Operations (Original ToonTalk)
+
+- [x] Keyboard-based hole control
+  - [x] Type 0-9 while holding box to set hole count
+  - [x] Excess contents drop when reducing holes
+  - [x] Zero-hole box support
+
+- [x] Box joining
+  - [x] Drop box on edge of another box to join
+  - [x] Combined box has sum of holes
+
+- [x] Box splitting
+  - [x] Drop box on number to split
+  - [x] e.g., 5-hole box on 3 → 3-hole + 2-hole boxes
+  - [ ] Array indexing via splitting
+
+- [ ] Box labels
+  - [ ] Add descriptive labels under holes
+  - [ ] Labels are visual only (robots ignore them)
+
+- [ ] Text explosion
+  - [ ] Drop text on blank box → individual letter holes
+  - [ ] e.g., "cat" on blank box → 3 holes with "c", "a", "t"
+
+### 2.4 Scales in Box Holes (Comparison)
+
+- [ ] Scales as comparison operator
+  - [ ] Place scales in middle hole of box
+  - [ ] Scales compare values in adjacent holes
+  - [ ] Tilt toward larger number or later alphabetically
+
+- [ ] Scales states
+  - [ ] Balanced (values equal)
+  - [ ] Left-heavy (left value larger)
+  - [ ] Right-heavy (right value larger)
+  - [ ] Tottering (adjacent to empty hole)
+
+- [ ] Scales interaction with robots
+  - [ ] Robot can check scales state for conditionals
+  - [ ] Keyboard controls: +/- to cycle states, . to freeze, space to re-compare
+
+### 2.5 Persistence (Basic)
 
 - [ ] Implement JSON serialization
   - Number to/from JSON
@@ -123,36 +164,37 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
 
 ### 3.1 Robot Widget
 
-- [ ] Implement `Robot` struct
-  - Conditions (frontside, backside)
-  - Action body
-  - State machine
-  - Chaining (next robot)
+- [x] Implement `Robot` struct
+  - [ ] Conditions (frontside, backside)
+  - [x] Action body
+  - [x] State machine (Idle/Training/Working)
+  - [ ] Chaining (next robot)
 
-- [ ] Implement robot rendering
-  - Idle state
-  - Training state
-  - Working state
-  - Different visual states
+- [x] Implement robot rendering
+  - [x] Idle state
+  - [x] Training state
+  - [x] Working state
+  - [x] Different visual states (CSS animations)
 
 ### 3.2 Action Recording
 
-- [ ] Implement `ActionSequence`
+- [x] Implement `ActionSequence` (Vec<Action>)
 
-- [ ] Implement action types
-  - PickUp
-  - Drop
-  - Copy
-  - Remove
-  - Edit
+- [x] Implement action types
+  - [x] PickUp
+  - [x] Drop
+  - [x] Copy
+  - [x] Remove
+  - [x] ApplyArithmetic (number operations)
 
-- [ ] Implement path recording
-  - Context-relative paths
-  - Handle nested structures
+- [x] Implement path recording
+  - [x] Widget paths (widget:id)
+  - [x] Box hole paths (box:id:hole:index)
+  - [ ] Handle nested structures
 
-- [ ] Training mode UI
-  - Start/stop training
-  - Visual feedback during training
+- [x] Training mode UI
+  - [x] Click to start/stop training
+  - [x] Visual feedback during training (yellow glow animation)
 
 ### 3.3 Pattern Matching
 
@@ -168,19 +210,19 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
 
 ### 3.4 Robot Execution
 
-- [ ] Implement execution engine
-  - Step through actions
-  - Path resolution
-  - Binding application
+- [x] Implement execution engine
+  - [x] Step through actions
+  - [x] Path resolution (parse_widget_path, parse_box_hole_path)
+  - [ ] Binding application
 
 - [ ] Watched execution
   - Step-by-step with animation
   - Speed control
   - Visual highlighting
 
-- [ ] Unwatched execution
-  - Full speed
-  - Batch updates
+- [x] Unwatched execution
+  - [x] Full speed execution
+  - [x] Batch updates
 
 ## Phase 4: Bird/Nest Messaging
 
@@ -295,19 +337,20 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
 
 ### 6.1 Scale Widget
 
-- [ ] Implement `Scale` struct
-  - Left/right sides
-  - Comparison logic
+- [x] Implement `Scale` struct
+  - [x] Left/right sides
+  - [x] Comparison logic (numeric)
 
-- [ ] Implement scale rendering
-  - Balance beam
-  - Tipping animation
-  - Physics-based movement
+- [x] Implement scale rendering
+  - [x] Balance beam (SVG image)
+  - [x] Tipping animation (CSS classes)
+  - [ ] Physics-based movement (future enhancement)
 
-- [ ] Implement scale behavior
-  - Compare dropped items
-  - Numeric comparison
-  - Other comparisons (size, etc.)
+- [x] Implement scale behavior (basic)
+  - [x] Compare dropped numbers
+  - [x] Numeric comparison
+  - [ ] Text comparison (alphabetical)
+  - [ ] Scales in box holes (see 2.4)
 
 ### 6.2 Sensor Widget
 
@@ -343,14 +386,14 @@ This document outlines the phased implementation plan for tt-rs. The plan is str
 
 ### 6.4 Tools
 
-- [ ] Implement Wand (magic wand)
-  - Copy on touch
-  - Visual feedback
+- [x] Implement Wand (magic wand)
+  - [x] Copy on touch
+  - [x] Visual feedback
 
-- [ ] Implement Vacuum (Dusty)
-  - Remove mode
-  - Erase mode
-  - Visual feedback
+- [x] Implement Vacuum (Dusty)
+  - [x] Remove mode (deletes widgets)
+  - [ ] Erase mode (multi-level erasure)
+  - [x] Visual feedback
 
 ## Phase 7: Modern Graphics
 

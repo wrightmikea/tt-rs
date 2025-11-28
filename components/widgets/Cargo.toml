@@ -6,6 +6,8 @@ members = [
     "crates/tt-rs-box",
     "crates/tt-rs-scales",
     "crates/tt-rs-vacuum",
+    "crates/tt-rs-wand",
+    "crates/tt-rs-robot",
 ]
 
 [workspace.package]

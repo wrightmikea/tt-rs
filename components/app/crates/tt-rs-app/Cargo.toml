@@ -16,10 +16,13 @@ tt-rs-text = { path = "../../../widgets/crates/tt-rs-text" }
 tt-rs-box = { path = "../../../widgets/crates/tt-rs-box" }
 tt-rs-scales = { path = "../../../widgets/crates/tt-rs-scales" }
 tt-rs-vacuum = { path = "../../../widgets/crates/tt-rs-vacuum" }
+tt-rs-wand = { path = "../../../widgets/crates/tt-rs-wand" }
+tt-rs-robot = { path = "../../../widgets/crates/tt-rs-robot" }
 tt-rs-drag = { path = "../../../dnd/crates/tt-rs-drag" }
 tt-rs-ui = { path = "../../../dnd/crates/tt-rs-ui" }
 yew = { workspace = true }
 wasm-bindgen = { workspace = true }
 web-sys = { workspace = true }
+js-sys = { workspace = true }
 log = { workspace = true }
 wasm-logger = { workspace = true }
