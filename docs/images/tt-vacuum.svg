@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Handheld Vacuum - ToonTalk style -->
+
+  <!-- Main body -->
+  <path d="M55 25 L75 15 Q85 12 88 20 L90 30 Q92 38 85 42 L70 48 L55 45 Z"
+        fill="#4A5568" stroke="#2D3748" stroke-width="2"/>
+
+  <!-- Handle grip area -->
+  <rect x="72" y="18" width="12" height="20" rx="3" fill="#2D3748" stroke="#1A202C" stroke-width="1"/>
+
+  <!-- Handle opening -->
+  <rect x="75" y="22" width="6" height="12" rx="2" fill="#1A202C"/>
+
+  <!-- Body highlight -->
+  <ellipse cx="65" cy="32" rx="8" ry="12" fill="#718096" opacity="0.5"/>
+
+  <!-- Red buttons -->
+  <circle cx="60" cy="28" r="3" fill="#E53E3E"/>
+  <circle cx="78" cy="40" r="2.5" fill="#E53E3E"/>
+  <rect x="68" y="44" width="4" height="3" rx="1" fill="#E53E3E"/>
+
+  <!-- Nozzle/tube section -->
+  <path d="M55 45 L45 55 L35 70 L30 75" stroke="#4A5568" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M55 45 L45 55 L35 70 L30 75" stroke="#718096" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- Floor head -->
+  <rect x="18" y="78" width="28" height="10" rx="2" fill="#4A5568" stroke="#2D3748" stroke-width="1"/>
+  <rect x="20" y="85" width="24" height="4" fill="#2D3748"/>
+
+  <!-- Floor head details -->
+  <rect x="22" y="80" width="6" height="3" rx="1" fill="#718096"/>
+  <rect x="36" y="80" width="6" height="3" rx="1" fill="#718096"/>
+
+  <!-- Hand holding it (simplified) -->
+  <ellipse cx="82" cy="35" rx="6" ry="8" fill="#FFDAB9" stroke="#DEB887" stroke-width="1"/>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Balance Scale - Right Heavy (right pan lower) -->
+
+  <!-- Base -->
+  <ellipse cx="50" cy="92" rx="18" ry="5" fill="#8B4513"/>
+  <rect x="42" y="88" width="16" height="4" fill="#DAA520"/>
+
+  <!-- Center post -->
+  <rect x="47" y="25" width="6" height="65" fill="#DAA520" stroke="#B8860B" stroke-width="1"/>
+
+  <!-- Decorative finial on top -->
+  <ellipse cx="50" cy="22" rx="4" ry="3" fill="#DAA520" stroke="#B8860B" stroke-width="1"/>
+  <circle cx="50" cy="18" r="3" fill="#DAA520" stroke="#B8860B" stroke-width="1"/>
+
+  <!-- Balance beam - tilted: right side down, left side up -->
+  <line x1="10" y1="22" x2="90" y2="38" stroke="#B8860B" stroke-width="5" stroke-linecap="round"/>
+  <line x1="10" y1="22" x2="90" y2="38" stroke="#DAA520" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Center pivot -->
+  <circle cx="50" cy="30" r="4" fill="#B8860B" stroke="#8B4513" stroke-width="1"/>
+  <circle cx="50" cy="30" r="2" fill="#87CEEB"/>
+
+  <!-- Left chain (pan is higher) -->
+  <line x1="10" y1="22" x2="10" y2="42" stroke="#8B4513" stroke-width="2"/>
+  <line x1="15" y1="22" x2="15" y2="42" stroke="#8B4513" stroke-width="2"/>
+  <line x1="20" y1="22" x2="20" y2="42" stroke="#8B4513" stroke-width="2"/>
+
+  <!-- Right chain (pan is lower) -->
+  <line x1="80" y1="38" x2="80" y2="62" stroke="#8B4513" stroke-width="2"/>
+  <line x1="85" y1="38" x2="85" y2="62" stroke="#8B4513" stroke-width="2"/>
+  <line x1="90" y1="38" x2="90" y2="62" stroke="#8B4513" stroke-width="2"/>
+
+  <!-- Left pan (higher - lighter) -->
+  <ellipse cx="15" cy="47" rx="14" ry="4" fill="#DAA520" stroke="#B8860B" stroke-width="1"/>
+  <path d="M1 47 Q15 57 29 47" fill="#DAA520" stroke="#B8860B" stroke-width="1"/>
+
+  <!-- Right pan (lower - heavier) -->
+  <ellipse cx="85" cy="67" rx="14" ry="4" fill="#DAA520" stroke="#B8860B" stroke-width="1"/>
+  <path d="M71 67 Q85 77 99 67" fill="#DAA520" stroke="#B8860B" stroke-width="1"/>
+</svg>

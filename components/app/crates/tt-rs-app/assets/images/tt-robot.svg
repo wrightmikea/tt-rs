@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Cartoon Robot - ToonTalk style -->
+
+  <!-- Antenna base -->
+  <rect x="47" y="8" width="6" height="8" fill="#C53030"/>
+
+  <!-- Left antenna -->
+  <line x1="35" y1="5" x2="42" y2="15" stroke="#4A5568" stroke-width="2"/>
+  <circle cx="33" cy="3" r="4" fill="#C53030"/>
+
+  <!-- Center antenna -->
+  <line x1="50" y1="2" x2="50" y2="8" stroke="#4A5568" stroke-width="2"/>
+  <circle cx="50" cy="0" r="3" fill="#C53030"/>
+
+  <!-- Right antenna -->
+  <line x1="65" y1="5" x2="58" y2="15" stroke="#4A5568" stroke-width="2"/>
+  <circle cx="67" cy="3" r="4" fill="#C53030"/>
+
+  <!-- Head -->
+  <rect x="30" y="15" width="40" height="30" rx="5" fill="#63B3ED" stroke="#2B6CB0" stroke-width="2"/>
+
+  <!-- Ear pieces -->
+  <ellipse cx="28" cy="30" rx="5" ry="7" fill="#C53030" stroke="#9B2C2C" stroke-width="1"/>
+  <ellipse cx="72" cy="30" rx="5" ry="7" fill="#C53030" stroke="#9B2C2C" stroke-width="1"/>
+
+  <!-- Eyes -->
+  <circle cx="40" cy="28" r="7" fill="white" stroke="#2D3748" stroke-width="1"/>
+  <circle cx="60" cy="28" r="7" fill="white" stroke="#2D3748" stroke-width="1"/>
+  <circle cx="41" cy="29" r="4" fill="#2D3748"/>
+  <circle cx="61" cy="29" r="4" fill="#2D3748"/>
+
+  <!-- Eyebrows -->
+  <path d="M34 20 Q40 18 46 21" stroke="#2D3748" stroke-width="2" fill="none"/>
+  <path d="M54 21 Q60 18 66 20" stroke="#2D3748" stroke-width="2" fill="none"/>
+
+  <!-- Mouth -->
+  <rect x="38" y="36" width="24" height="6" rx="2" fill="white" stroke="#2D3748" stroke-width="1"/>
+  <line x1="42" y1="36" x2="42" y2="42" stroke="#2D3748" stroke-width="1"/>
+  <line x1="50" y1="36" x2="50" y2="42" stroke="#2D3748" stroke-width="1"/>
+  <line x1="58" y1="36" x2="58" y2="42" stroke="#2D3748" stroke-width="1"/>
+
+  <!-- Neck -->
+  <rect x="45" y="45" width="10" height="5" fill="#4A5568"/>
+
+  <!-- Body -->
+  <rect x="32" y="50" width="36" height="28" rx="4" fill="#63B3ED" stroke="#2B6CB0" stroke-width="2"/>
+
+  <!-- Chest panel -->
+  <rect x="40" y="55" width="20" height="12" rx="2" fill="#ECC94B" stroke="#D69E2E" stroke-width="1"/>
+  <text x="50" y="64" text-anchor="middle" font-size="8" fill="#C53030" font-weight="bold">TT</text>
+
+  <!-- Body buttons -->
+  <rect x="36" y="70" width="5" height="4" rx="1" fill="#C53030"/>
+  <rect x="43" y="70" width="5" height="4" rx="1" fill="#ECC94B"/>
+  <rect x="50" y="70" width="5" height="4" rx="1" fill="#ECC94B"/>
+  <rect x="57" y="70" width="5" height="4" rx="1" fill="#48BB78"/>
+
+  <!-- Arms -->
+  <rect x="22" y="52" width="8" height="16" rx="3" fill="#63B3ED" stroke="#2B6CB0" stroke-width="1"/>
+  <rect x="70" y="52" width="8" height="16" rx="3" fill="#63B3ED" stroke="#2B6CB0" stroke-width="1"/>
+
+  <!-- Hands -->
+  <ellipse cx="26" cy="72" rx="5" ry="6" fill="#C53030" stroke="#9B2C2C" stroke-width="1"/>
+  <ellipse cx="74" cy="72" rx="5" ry="6" fill="#C53030" stroke="#9B2C2C" stroke-width="1"/>
+
+  <!-- Legs -->
+  <rect x="36" y="78" width="10" height="10" fill="#63B3ED" stroke="#2B6CB0" stroke-width="1"/>
+  <rect x="54" y="78" width="10" height="10" fill="#63B3ED" stroke="#2B6CB0" stroke-width="1"/>
+
+  <!-- Feet -->
+  <rect x="33" y="88" width="14" height="10" rx="2" fill="#C53030" stroke="#9B2C2C" stroke-width="1"/>
+  <rect x="53" y="88" width="14" height="10" rx="2" fill="#C53030" stroke="#9B2C2C" stroke-width="1"/>
+</svg>

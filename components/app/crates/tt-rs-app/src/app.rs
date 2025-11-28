@@ -4,8 +4,10 @@ use std::collections::HashMap;
 use tt_rs_core::{Widget, WidgetId};
 use tt_rs_drag::{CopySource, CopySourceClickEvent, Draggable, DropEvent, Position};
 use tt_rs_number::{ArithOperator, Number};
+use tt_rs_scales::Scales;
 use tt_rs_text::Text;
 use tt_rs_ui::Footer;
+use tt_rs_vacuum::Vacuum;
 use web_sys::Element;
 use yew::prelude::*;
 
@@ -15,6 +17,8 @@ use yew::prelude::*;
 enum WidgetItem {
     Number(Number),
     Text(Text),
+    Scales(Scales),
+    Vacuum(Vacuum),
 }
 
 impl WidgetItem {
@@ -22,6 +26,8 @@ impl WidgetItem {
         match self {
             WidgetItem::Number(n) => n.id(),
             WidgetItem::Text(t) => t.id(),
+            WidgetItem::Scales(s) => s.id(),
+            WidgetItem::Vacuum(v) => v.id(),
         }
     }
 
@@ -29,6 +35,8 @@ impl WidgetItem {
         match self {
             WidgetItem::Number(n) => n.render(),
             WidgetItem::Text(t) => t.render(),
+            WidgetItem::Scales(s) => s.render(),
+            WidgetItem::Vacuum(v) => v.render(),
         }
     }
 
@@ -50,7 +58,18 @@ impl WidgetItem {
                     </div>
                 }
             }
+            WidgetItem::Scales(_) => {
+                html! { <div class="widget scales in-hole">{"[scales]"}</div> }
+            }
+            WidgetItem::Vacuum(_) => {
+                html! { <div class="widget vacuum in-hole">{"[vacuum]"}</div> }
+            }
         }
+    }
+
+    /// Returns true if this widget is a vacuum tool.
+    fn is_vacuum(&self) -> bool {
+        matches!(self, WidgetItem::Vacuum(_))
     }
 }
 
@@ -133,36 +152,32 @@ impl BoxState {
     }
 }
 
-/// Creates sample widgets for the "Make 10" tutorial.
+/// Creates sample widgets for the demo.
 ///
 /// Tutorial: Start with 0, use the tools to make it equal 10!
-/// Solution paths:
-/// - 0 + 5 + 5 = 10 (add 5 twice)
-/// - 0 + 5 × 2 = 10 (add 5, then multiply by 2)
-/// - 0 + 1 + 1 + 1 + 1 + 1 × 2 = 10 (five 1s, then double)
+/// New: Use scales to compare numbers, vacuum to erase values.
 fn demo_widgets() -> Vec<WidgetItem> {
     vec![
         // Value sources (copy sources with Add operator - just show the number)
-        // "1" - adds 1 when dropped on target
         WidgetItem::Number(Number::new(1).as_copy_source()),
-        // "5" - adds 5 when dropped on target
         WidgetItem::Number(Number::new(5).as_copy_source()),
         // Operation tools (non-Add operators - show the operation)
-        // "×2" - multiplies target by 2
         WidgetItem::Number(
             Number::new(2)
                 .with_operator(ArithOperator::Multiply)
                 .as_copy_source(),
         ),
-        // "÷2" - divides target by 2
         WidgetItem::Number(
             Number::new(2)
                 .with_operator(ArithOperator::Divide)
                 .as_copy_source(),
         ),
         // The target number to manipulate - starts at 0
-        // Goal: make it equal 10!
         WidgetItem::Number(Number::new(0)),
+        // Scales for comparing numbers
+        WidgetItem::Scales(Scales::new()),
+        // Vacuum tool for erasing values
+        WidgetItem::Vacuum(Vacuum::new()),
     ]
 }
 
@@ -289,6 +304,46 @@ fn find_box_hole_element(element: &Element) -> Option<Element> {
     None
 }
 
+/// Which pan of a scales was targeted.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ScalesPan {
+    Left,
+    Right,
+}
+
+/// Find which scales pan (if any) is under the given mouse position.
+fn find_scales_pan_at(x: f64, y: f64) -> Option<(WidgetId, ScalesPan)> {
+    let window = web_sys::window()?;
+    let document = window.document()?;
+
+    let element = document.element_from_point(x as f32, y as f32)?;
+    let pan_element = find_scales_pan_element(&element)?;
+
+    let scales_id_str = pan_element.get_attribute("data-scales-id")?;
+    let pan_str = pan_element.get_attribute("data-pan")?;
+
+    let scales_id = scales_id_str.parse::<u64>().ok().map(WidgetId::from_u64)?;
+    let pan = match pan_str.as_str() {
+        "left" => ScalesPan::Left,
+        "right" => ScalesPan::Right,
+        _ => return None,
+    };
+
+    Some((scales_id, pan))
+}
+
+/// Walk up the DOM tree to find a scales-pan element.
+fn find_scales_pan_element(element: &Element) -> Option<Element> {
+    let mut current = Some(element.clone());
+    while let Some(el) = current {
+        if el.class_list().contains("scales-pan") {
+            return Some(el);
+        }
+        current = el.parent_element();
+    }
+    None
+}
+
 /// Main application component.
 #[function_component(App)]
 pub fn app() -> Html {
@@ -338,13 +393,63 @@ pub fn app() -> Html {
         Callback::from(move |event: DropEvent| {
             let mut new_state = (*state).clone();
             let widget_id = event.widget_id;
+            let mouse_x = event.mouse_position.x;
+            let mouse_y = event.mouse_position.y;
 
-            // First, check if we're dropping a number onto another number
-            if let Some(target_id) = find_number_at(event.mouse_position.x, event.mouse_position.y)
+            // Check if we're dropping a vacuum on a number (to erase it)
+            if new_state
+                .widgets
+                .get(&widget_id)
+                .map(|w| w.is_vacuum())
+                .unwrap_or(false)
             {
-                // Make sure we're not dropping onto ourselves
+                if let Some(target_id) = find_number_at(mouse_x, mouse_y) {
+                    if target_id != widget_id {
+                        if let Some(WidgetItem::Number(n)) = new_state.widgets.get(&target_id) {
+                            if !n.is_copy_source() {
+                                // Erase the number - replace with erased pattern
+                                let erased = Number::erased();
+                                new_state
+                                    .widgets
+                                    .insert(target_id, WidgetItem::Number(erased));
+                                // Remove the vacuum (consumed)
+                                new_state.widgets.remove(&widget_id);
+                                new_state.positions.remove(&widget_id);
+                                log::info!("Vacuum erased number {}", target_id);
+                                state.set(new_state);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Check if we're dropping a number onto a scales pan
+            if let Some((scales_id, pan)) = find_scales_pan_at(mouse_x, mouse_y) {
+                if let Some(WidgetItem::Number(n)) = new_state.widgets.get(&widget_id) {
+                    if !n.is_copy_source() {
+                        let value = n.numerator(); // Use numerator for comparison
+                        if let Some(WidgetItem::Scales(scales)) =
+                            new_state.widgets.get_mut(&scales_id)
+                        {
+                            match pan {
+                                ScalesPan::Left => scales.set_left(value),
+                                ScalesPan::Right => scales.set_right(value),
+                            }
+                            // Remove the dropped number
+                            new_state.widgets.remove(&widget_id);
+                            new_state.positions.remove(&widget_id);
+                            log::info!("Placed {} on {:?} pan of scales", value, pan);
+                            state.set(new_state);
+                            return;
+                        }
+                    }
+                }
+            }
+
+            // Check if we're dropping a number onto another number
+            if let Some(target_id) = find_number_at(mouse_x, mouse_y) {
                 if target_id != widget_id {
-                    // Get both numbers - clone them to avoid borrow issues
                     let dropped_num = match new_state.widgets.get(&widget_id) {
                         Some(WidgetItem::Number(n)) => Some(n.clone()),
                         _ => None,
@@ -355,14 +460,11 @@ pub fn app() -> Html {
                     };
 
                     if let (Some(dropped), Some(mut target)) = (dropped_num, target_num) {
-                        // Don't allow dropping onto copy sources
                         if target.is_copy_source() {
                             state.set(new_state);
                             return;
                         }
-                        // Apply the arithmetic operation
                         if target.apply(&dropped).is_some() {
-                            // Operation succeeded - update target and remove dropped
                             new_state
                                 .widgets
                                 .insert(target_id, WidgetItem::Number(target.clone()));
@@ -375,7 +477,6 @@ pub fn app() -> Html {
                                 target.display_value()
                             );
                         } else {
-                            // Division by zero - don't consume the number
                             log::warn!("Division by zero attempted");
                         }
                         state.set(new_state);
@@ -385,19 +486,14 @@ pub fn app() -> Html {
             }
 
             // Check if we're dropping onto a box hole
-            if let Some((box_id, hole_index)) =
-                find_box_hole_at(event.mouse_position.x, event.mouse_position.y)
-            {
-                // Check if this is a widget (not a box) and the box exists with an empty hole
+            if let Some((box_id, hole_index)) = find_box_hole_at(mouse_x, mouse_y) {
                 if new_state.widgets.contains_key(&widget_id) {
                     if let Some(box_state) = new_state.boxes.get_mut(&box_id) {
                         if box_state.widget_in_hole(hole_index).is_none() {
-                            // Place widget in the hole
                             box_state.place_in_hole(hole_index, widget_id);
                             new_state
                                 .widget_in_box
                                 .insert(widget_id, (box_id, hole_index));
-                            // Remove from free-floating positions
                             new_state.positions.remove(&widget_id);
                             state.set(new_state);
                             return;

@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Spider Web (Browser) - ToonTalk style -->
+
+  <!-- Background -->
+  <rect x="2" y="2" width="96" height="96" rx="12" fill="#87CEEB"/>
+
+  <!-- Radial threads (spokes) -->
+  <line x1="50" y1="50" x2="50" y2="5" stroke="#1A365D" stroke-width="2"/>
+  <line x1="50" y1="50" x2="50" y2="95" stroke="#1A365D" stroke-width="2"/>
+  <line x1="50" y1="50" x2="5" y2="50" stroke="#1A365D" stroke-width="2"/>
+  <line x1="50" y1="50" x2="95" y2="50" stroke="#1A365D" stroke-width="2"/>
+  <line x1="50" y1="50" x2="15" y2="15" stroke="#1A365D" stroke-width="2"/>
+  <line x1="50" y1="50" x2="85" y2="85" stroke="#1A365D" stroke-width="2"/>
+  <line x1="50" y1="50" x2="85" y2="15" stroke="#1A365D" stroke-width="2"/>
+  <line x1="50" y1="50" x2="15" y2="85" stroke="#1A365D" stroke-width="2"/>
+
+  <!-- Spiral threads (curved) - outer ring -->
+  <path d="M50 10 Q70 10 82 18" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M82 18 Q95 30 90 50" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M90 50 Q95 70 82 82" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M82 82 Q70 95 50 90" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M50 90 Q30 95 18 82" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M18 82 Q5 70 10 50" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M10 50 Q5 30 18 18" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M18 18 Q30 5 50 10" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+
+  <!-- Middle ring -->
+  <path d="M50 22 Q62 22 72 28" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M72 28 Q82 38 78 50" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M78 50 Q82 62 72 72" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M72 72 Q62 82 50 78" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M50 78 Q38 82 28 72" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M28 72 Q18 62 22 50" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M22 50 Q18 38 28 28" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M28 28 Q38 18 50 22" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+
+  <!-- Inner ring -->
+  <path d="M50 35 Q56 35 62 40" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M62 40 Q68 46 65 50" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M65 50 Q68 56 62 62" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M62 62 Q56 68 50 65" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M50 65 Q44 68 38 62" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M38 62 Q32 56 35 50" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M35 50 Q32 44 38 38" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+  <path d="M38 38 Q44 32 50 35" fill="none" stroke="#1A365D" stroke-width="1.5"/>
+
+  <!-- Sparkle highlights -->
+  <polygon points="12,12 14,16 12,20 10,16" fill="white" opacity="0.8"/>
+  <polygon points="88,20 90,24 88,28 86,24" fill="white" opacity="0.8"/>
+  <polygon points="15,80 17,84 15,88 13,84" fill="white" opacity="0.8"/>
+  <polygon points="85,75 87,79 85,83 83,79" fill="white" opacity="0.8"/>
+</svg>

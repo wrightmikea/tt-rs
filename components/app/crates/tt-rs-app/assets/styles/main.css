@@ -265,3 +265,118 @@ body.dragging-active .widget.number {
 .app-footer a:hover {
     text-decoration: underline;
 }
+
+/* Scales widget */
+.widget.scales {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0.5rem;
+    position: relative;
+    width: 120px;
+    height: 120px;
+}
+
+.widget.scales:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.scales-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.scales-pans {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    pointer-events: none;
+}
+
+.scales-pan {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 25px;
+    pointer-events: auto;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.scales-pan:hover {
+    background-color: rgba(255, 193, 7, 0.3);
+}
+
+.scales-pan.left {
+    /* Left half of scales */
+}
+
+.scales-pan.right {
+    /* Right half of scales */
+}
+
+.pan-value {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #333;
+    font-family: "Courier New", monospace;
+    text-shadow: 1px 1px 2px white;
+}
+
+/* Tilted scales - visual only, drop zones stay the same */
+.widget.scales.left-heavy .scales-pan.left {
+    /* Left pan is lower when left-heavy */
+}
+
+.widget.scales.left-heavy .scales-pan.right {
+    /* Right pan is higher when left-heavy */
+}
+
+.widget.scales.right-heavy .scales-pan.left {
+    /* Left pan is higher when right-heavy */
+}
+
+.widget.scales.right-heavy .scales-pan.right {
+    /* Right pan is lower when right-heavy */
+}
+
+/* Vacuum tool widget */
+.widget.vacuum {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0.25rem;
+    width: 80px;
+    height: 80px;
+}
+
+.widget.vacuum:hover {
+    transform: scale(1.1);
+    box-shadow: none;
+}
+
+.vacuum-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Highlight numbers when vacuum is being dragged over them */
+body.dragging-active .widget.number:not(.copy-source) {
+    border-style: dashed;
+}
+
+/* Erased number display */
+.widget.number .number-value:empty::after {
+    content: "?";
+    color: #999;
+}

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Blue Bird - ToonTalk style -->
+
+  <!-- Tail feathers -->
+  <path d="M75 55 L92 50 L88 55 L95 55 L88 60 L92 62 L75 60 Z" fill="#4299E1" stroke="#2B6CB0" stroke-width="1"/>
+
+  <!-- Body -->
+  <ellipse cx="50" cy="55" rx="28" ry="22" fill="#63B3ED" stroke="#2B6CB0" stroke-width="2"/>
+
+  <!-- Wing -->
+  <path d="M35 45 Q25 55 30 70 Q45 65 55 50 Q45 42 35 45" fill="#4299E1" stroke="#2B6CB0" stroke-width="1"/>
+  <path d="M38 52 Q32 58 35 65" stroke="#2B6CB0" stroke-width="1" fill="none"/>
+  <path d="M42 50 Q38 58 40 64" stroke="#2B6CB0" stroke-width="1" fill="none"/>
+
+  <!-- Belly -->
+  <ellipse cx="52" cy="62" rx="15" ry="12" fill="#EDF2F7"/>
+
+  <!-- Head -->
+  <circle cx="30" cy="35" r="18" fill="#63B3ED" stroke="#2B6CB0" stroke-width="2"/>
+
+  <!-- Head cap (darker blue) -->
+  <path d="M15 30 Q30 15 45 30 Q38 35 30 35 Q22 35 15 30" fill="#2B6CB0"/>
+
+  <!-- Eye mask -->
+  <path d="M18 32 Q30 28 42 32 Q42 40 30 42 Q18 40 18 32" fill="#1A365D"/>
+
+  <!-- Eye -->
+  <circle cx="30" cy="35" r="6" fill="white" stroke="#1A365D" stroke-width="1"/>
+  <circle cx="31" cy="36" r="4" fill="#1A365D"/>
+  <circle cx="32" cy="35" r="1.5" fill="white"/>
+
+  <!-- Cheek -->
+  <ellipse cx="38" cy="42" rx="4" ry="3" fill="#FEB2B2" opacity="0.6"/>
+
+  <!-- Beak -->
+  <path d="M12 38 L20 40 L12 43 Z" fill="#ED8936" stroke="#C05621" stroke-width="1"/>
+
+  <!-- Legs -->
+  <line x1="45" y1="75" x2="42" y2="88" stroke="#C05621" stroke-width="2"/>
+  <line x1="55" y1="75" x2="58" y2="88" stroke="#C05621" stroke-width="2"/>
+
+  <!-- Feet -->
+  <path d="M38 88 L42 88 L44 92 L42 88 L46 90" stroke="#C05621" stroke-width="2" fill="none"/>
+  <path d="M54 88 L58 88 L60 92 L58 88 L62 90" stroke="#C05621" stroke-width="2" fill="none"/>
+</svg>
