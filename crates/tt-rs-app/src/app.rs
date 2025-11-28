@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 use tt_rs_core::{Widget, WidgetId};
-use tt_rs_drag::{Draggable, DropEvent, Position};
+use tt_rs_drag::{CopySource, CopySourceClickEvent, Draggable, DropEvent, Position};
 use tt_rs_number::{ArithOperator, Number};
 use tt_rs_text::Text;
 use tt_rs_ui::Footer;
@@ -11,6 +11,7 @@ use yew::prelude::*;
 
 /// A widget item with its type for rendering.
 #[derive(Clone)]
+#[allow(dead_code)]
 enum WidgetItem {
     Number(Number),
     Text(Text),
@@ -55,6 +56,7 @@ impl WidgetItem {
 
 /// A box with its holes that can contain widgets.
 #[derive(Clone)]
+#[allow(dead_code)]
 struct BoxState {
     id: WidgetId,
     num_holes: usize,
@@ -63,6 +65,7 @@ struct BoxState {
     erased: bool,
 }
 
+#[allow(dead_code)]
 impl BoxState {
     fn new(num_holes: usize) -> Self {
         Self {
@@ -130,26 +133,42 @@ impl BoxState {
     }
 }
 
-/// Creates sample widgets for demonstration.
+/// Creates sample widgets for the "Make 10" tutorial.
+///
+/// Tutorial: Start with 0, use the tools to make it equal 10!
+/// Solution paths:
+/// - 0 + 5 + 5 = 10 (add 5 twice)
+/// - 0 + 5 × 2 = 10 (add 5, then multiply by 2)
+/// - 0 + 1 + 1 + 1 + 1 + 1 × 2 = 10 (five 1s, then double)
 fn demo_widgets() -> Vec<WidgetItem> {
     vec![
-        WidgetItem::Number(Number::new(5)),
-        WidgetItem::Number(Number::new(3).with_operator(ArithOperator::Subtract)),
-        WidgetItem::Number(Number::new(2).with_operator(ArithOperator::Multiply)),
-        WidgetItem::Number(Number::new(4).with_operator(ArithOperator::Divide)),
-        WidgetItem::Number(Number::rational(1, 2)),
-        WidgetItem::Number(Number::rational(3, 4)),
-        WidgetItem::Number(Number::erased()),
-        WidgetItem::Text(Text::new("Hello")),
-        WidgetItem::Text(Text::new("World")),
-        WidgetItem::Text(Text::new("ToonTalk")),
-        WidgetItem::Text(Text::erased()),
+        // Value sources (copy sources with Add operator - just show the number)
+        // "1" - adds 1 when dropped on target
+        WidgetItem::Number(Number::new(1).as_copy_source()),
+        // "5" - adds 5 when dropped on target
+        WidgetItem::Number(Number::new(5).as_copy_source()),
+        // Operation tools (non-Add operators - show the operation)
+        // "×2" - multiplies target by 2
+        WidgetItem::Number(
+            Number::new(2)
+                .with_operator(ArithOperator::Multiply)
+                .as_copy_source(),
+        ),
+        // "÷2" - divides target by 2
+        WidgetItem::Number(
+            Number::new(2)
+                .with_operator(ArithOperator::Divide)
+                .as_copy_source(),
+        ),
+        // The target number to manipulate - starts at 0
+        // Goal: make it equal 10!
+        WidgetItem::Number(Number::new(0)),
     ]
 }
 
 /// Creates sample boxes.
 fn demo_boxes() -> Vec<BoxState> {
-    vec![BoxState::new(3), BoxState::new(5), BoxState::erased()]
+    vec![]
 }
 
 /// Application state.
@@ -228,6 +247,36 @@ fn find_box_hole_at(x: f64, y: f64) -> Option<(WidgetId, usize)> {
     Some((box_id, hole_index))
 }
 
+/// Find which number widget (if any) is under the given mouse position.
+fn find_number_at(x: f64, y: f64) -> Option<WidgetId> {
+    let window = web_sys::window()?;
+    let document = window.document()?;
+
+    // Get the element at the mouse position
+    let element = document.element_from_point(x as f32, y as f32)?;
+
+    // Check if it's a number widget or inside one
+    let number_element = find_number_element(&element)?;
+
+    // Get the widget ID from data attribute
+    let widget_id_str = number_element.get_attribute("data-widget-id")?;
+    let widget_id = widget_id_str.parse::<u64>().ok().map(WidgetId::from_u64)?;
+
+    Some(widget_id)
+}
+
+/// Walk up the DOM tree to find a number widget element.
+fn find_number_element(element: &Element) -> Option<Element> {
+    let mut current = Some(element.clone());
+    while let Some(el) = current {
+        if el.class_list().contains("number") && el.has_attribute("data-widget-id") {
+            return Some(el);
+        }
+        current = el.parent_element();
+    }
+    None
+}
+
 /// Walk up the DOM tree to find a box-hole element.
 fn find_box_hole_element(element: &Element) -> Option<Element> {
     let mut current = Some(element.clone());
@@ -246,6 +295,33 @@ pub fn app() -> Html {
     // Application state
     let state = use_state(AppState::new);
 
+    // Callback for when a copy source is clicked - create a copy as a new draggable widget
+    let on_copy_source_click = {
+        let state = state.clone();
+        Callback::from(move |event: CopySourceClickEvent| {
+            let mut new_state = (*state).clone();
+
+            // Get the copy source and create a copy
+            if let Some(WidgetItem::Number(n)) = new_state.widgets.get(&event.source_id) {
+                let copy_number = n.copy_number();
+                let copy_id = copy_number.id();
+
+                // Add the copy to state at the click position
+                new_state
+                    .widgets
+                    .insert(copy_id, WidgetItem::Number(copy_number));
+                new_state.positions.insert(copy_id, event.position);
+
+                log::info!(
+                    "Created copy {} from copy source {}",
+                    copy_id,
+                    event.source_id
+                );
+                state.set(new_state);
+            }
+        })
+    };
+
     // Callback for when a widget is moved
     let on_move = {
         let state = state.clone();
@@ -261,35 +337,97 @@ pub fn app() -> Html {
         let state = state.clone();
         Callback::from(move |event: DropEvent| {
             let mut new_state = (*state).clone();
+            let widget_id = event.widget_id;
+
+            // First, check if we're dropping a number onto another number
+            if let Some(target_id) = find_number_at(event.mouse_position.x, event.mouse_position.y)
+            {
+                // Make sure we're not dropping onto ourselves
+                if target_id != widget_id {
+                    // Get both numbers - clone them to avoid borrow issues
+                    let dropped_num = match new_state.widgets.get(&widget_id) {
+                        Some(WidgetItem::Number(n)) => Some(n.clone()),
+                        _ => None,
+                    };
+                    let target_num = match new_state.widgets.get(&target_id) {
+                        Some(WidgetItem::Number(n)) => Some(n.clone()),
+                        _ => None,
+                    };
+
+                    if let (Some(dropped), Some(mut target)) = (dropped_num, target_num) {
+                        // Don't allow dropping onto copy sources
+                        if target.is_copy_source() {
+                            state.set(new_state);
+                            return;
+                        }
+                        // Apply the arithmetic operation
+                        if target.apply(&dropped).is_some() {
+                            // Operation succeeded - update target and remove dropped
+                            new_state
+                                .widgets
+                                .insert(target_id, WidgetItem::Number(target.clone()));
+                            new_state.widgets.remove(&widget_id);
+                            new_state.positions.remove(&widget_id);
+                            log::info!(
+                                "Applied {} {} to target, result: {}",
+                                dropped.operator().symbol(),
+                                dropped.display_value(),
+                                target.display_value()
+                            );
+                        } else {
+                            // Division by zero - don't consume the number
+                            log::warn!("Division by zero attempted");
+                        }
+                        state.set(new_state);
+                        return;
+                    }
+                }
+            }
 
             // Check if we're dropping onto a box hole
             if let Some((box_id, hole_index)) =
                 find_box_hole_at(event.mouse_position.x, event.mouse_position.y)
             {
                 // Check if this is a widget (not a box) and the box exists with an empty hole
-                if new_state.widgets.contains_key(&event.widget_id)
+                if new_state.widgets.contains_key(&widget_id)
                     && let Some(box_state) = new_state.boxes.get_mut(&box_id)
                     && box_state.widget_in_hole(hole_index).is_none()
                 {
                     // Place widget in the hole
-                    box_state.place_in_hole(hole_index, event.widget_id);
+                    box_state.place_in_hole(hole_index, widget_id);
                     new_state
                         .widget_in_box
-                        .insert(event.widget_id, (box_id, hole_index));
+                        .insert(widget_id, (box_id, hole_index));
                     // Remove from free-floating positions
-                    new_state.positions.remove(&event.widget_id);
+                    new_state.positions.remove(&widget_id);
+                    state.set(new_state);
+                    return;
                 }
             }
 
+            // Default: drop on empty background - keep widget at drop position
+            new_state.positions.insert(widget_id, event.position);
             state.set(new_state);
         })
     };
 
-    // Get free-floating widgets (not in boxes)
-    let free_widgets: Vec<_> = state
+    // Separate copy sources from regular widgets
+    let copy_sources: Vec<_> = state
         .widgets
         .iter()
-        .filter(|(id, _)| !state.widget_in_box.contains_key(id))
+        .filter(|(id, widget)| {
+            !state.widget_in_box.contains_key(id)
+                && matches!(widget, WidgetItem::Number(n) if n.is_copy_source())
+        })
+        .collect();
+
+    let regular_widgets: Vec<_> = state
+        .widgets
+        .iter()
+        .filter(|(id, widget)| {
+            !state.widget_in_box.contains_key(id)
+                && !matches!(widget, WidgetItem::Number(n) if n.is_copy_source())
+        })
         .collect();
 
     html! {
@@ -313,9 +451,24 @@ pub fn app() -> Html {
                         }
                     }).collect::<Html>()
                 }
-                // Render free-floating widgets
+                // Render copy sources (static stacks that create copies on click)
                 {
-                    free_widgets.iter().map(|(id, widget)| {
+                    copy_sources.iter().map(|(id, widget)| {
+                        let pos = state.positions.get(id).copied().unwrap_or_default();
+                        html! {
+                            <CopySource
+                                widget_id={**id}
+                                position={pos}
+                                on_click={on_copy_source_click.clone()}
+                            >
+                                { widget.render() }
+                            </CopySource>
+                        }
+                    }).collect::<Html>()
+                }
+                // Render regular draggable widgets
+                {
+                    regular_widgets.iter().map(|(id, widget)| {
                         let pos = state.positions.get(id).copied().unwrap_or_default();
                         html! {
                             <Draggable

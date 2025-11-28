@@ -29,6 +29,13 @@ impl Number {
         self.denominator == 1
     }
 
+    /// Returns true if this number acts as a "tool" (non-Add operator).
+    /// Tools are dragged onto other numbers to transform them.
+    /// Plain numbers (Add operator) are values to be manipulated.
+    pub fn is_tool(&self) -> bool {
+        self.operator != ArithOperator::Add
+    }
+
     /// Returns the display value as a string.
     pub fn display_value(&self) -> String {
         if self.erasure == ErasureLevel::Value {

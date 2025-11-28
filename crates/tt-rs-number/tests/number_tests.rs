@@ -64,3 +64,45 @@ fn test_division_by_zero() {
     let b = Number::new(10);
     assert!(a.apply_to(&b).is_none());
 }
+
+// Tests for the mutating apply method (used in drag-drop)
+#[test]
+fn test_apply_addition_mutates() {
+    let mut target = Number::new(10);
+    let dropped = Number::new(5); // +5
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), 15);
+}
+
+#[test]
+fn test_apply_subtraction_mutates() {
+    let mut target = Number::new(10);
+    let dropped = Number::new(3).with_operator(ArithOperator::Subtract);
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), 7); // 10 - 3
+}
+
+#[test]
+fn test_apply_multiplication_mutates() {
+    let mut target = Number::new(4);
+    let dropped = Number::new(5).with_operator(ArithOperator::Multiply);
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), 20); // 4 * 5
+}
+
+#[test]
+fn test_apply_division_mutates() {
+    let mut target = Number::new(20);
+    let dropped = Number::new(4).with_operator(ArithOperator::Divide);
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), 5); // 20 / 4
+}
+
+#[test]
+fn test_apply_division_by_zero_returns_none() {
+    let mut target = Number::new(10);
+    let dropped = Number::new(0).with_operator(ArithOperator::Divide);
+    assert!(target.apply(&dropped).is_none());
+    // Target should remain unchanged
+    assert_eq!(target.numerator(), 10);
+}

@@ -20,6 +20,8 @@ impl Widget for Number {
             denominator: self.denominator,
             operator: self.operator,
             erasure: self.erasure,
+            // Copies are NOT copy sources - only the original stack produces copies
+            is_copy_source: false,
         })
     }
 
@@ -38,12 +40,40 @@ impl Widget for Number {
 
     fn render(&self) -> Html {
         let value_str = format_value(self);
-        let op = self.operator.symbol();
-        html! {
-            <div class="widget number">
-                <div class="number-operator">{op}</div>
-                <div class="number-value">{value_str}</div>
-            </div>
+        let widget_id = self.id.to_string();
+        let is_tool = self.is_tool();
+
+        // Build CSS class
+        let class = if self.is_copy_source {
+            if is_tool {
+                "widget number tool copy-source"
+            } else {
+                "widget number copy-source"
+            }
+        } else if is_tool {
+            "widget number tool"
+        } else {
+            "widget number"
+        };
+
+        if is_tool {
+            // Tools show operator and value (e.g., "+1", "×2")
+            let op = self.operator.symbol();
+            html! {
+                <div class={class} data-widget-id={widget_id} data-copy-source={self.is_copy_source.to_string()}>
+                    <div class="tool-content">
+                        <span class="tool-operator">{op}</span>
+                        <span class="tool-value">{value_str}</span>
+                    </div>
+                </div>
+            }
+        } else {
+            // Plain numbers show just the value
+            html! {
+                <div class={class} data-widget-id={widget_id} data-copy-source={self.is_copy_source.to_string()}>
+                    <div class="number-value">{value_str}</div>
+                </div>
+            }
         }
     }
 
