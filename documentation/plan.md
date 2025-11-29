@@ -41,7 +41,7 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 
 | Feature | Status | What's Missing |
 |---------|--------|----------------|
-| Bird/Nest Messaging | 🚧 Partial | Widgets exist, need pairing and message delivery |
+| Bird/Nest Messaging | ✅ Complete | Hatching, pairing, message delivery all working |
 | Robot Execution | 🚧 Partial | Pattern matching, bindings, watched execution |
 | Scales in Boxes | 🚧 Partial | Scales work standalone, not yet in box holes |
 | Erasure Levels | 🚧 Partial | Vacuum removes but doesn't create erased patterns |

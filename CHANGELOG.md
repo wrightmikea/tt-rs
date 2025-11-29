@@ -4,7 +4,8 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- refactor: Reorganize demo layout into vertical columns by category (`<latest>`)
+- docs: Add avatars.md and use-cases.md with user personas and examples (`<latest>`)
+- refactor: Reorganize demo layout into vertical columns by category (`adb1343`)
 - fix: Hide Bird/Nest widgets in tt1 mode, show only in tt2 (`b12356c`)
 - docs: Add CHANGELOG workflow guidance to prevent SHA loops (`77ea8e8`)
 - feat: Implement ToonTalk-compatible Bird/Nest messaging (`5be220b`)
