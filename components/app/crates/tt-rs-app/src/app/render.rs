@@ -32,7 +32,7 @@ pub fn render_app(
             <HelpPanel is_open={help_open} on_close={cbs.on_help_close.clone()} level={user_level} />
             <div class="workspace-content">
                 { render_boxes(state, cbs) }
-                { render_copy_sources(copy_sources, state, &cbs.on_copy_source_click) }
+                { render_copy_sources(copy_sources, state, &cbs.on_copy_source_click, &cbs.on_move) }
                 { render_widgets(regular, state, &cbs.on_move, &cbs.on_drop) }
             </div>
             <Footer />
@@ -57,12 +57,13 @@ fn render_copy_sources(
     srcs: &[(&WidgetId, &WidgetItem)],
     state: &AppState,
     on_click: &Callback<tt_rs_drag::CopySourceClickEvent>,
+    on_move: &Callback<(WidgetId, Position)>,
 ) -> Html {
     srcs.iter().map(|(id, w)| {
         let pos = state.positions.get(id).copied().unwrap_or_default();
         let tip = w.tooltip_info();
         html! {
-            <CopySource widget_id={**id} position={pos} on_click={on_click.clone()}>
+            <CopySource widget_id={**id} position={pos} on_click={on_click.clone()} on_move={on_move.clone()}>
                 <Tooltip title={tip.title} description={tip.description} hint={tip.hint} position={TooltipPosition::Right}>{ w.render() }</Tooltip>
             </CopySource>
         }

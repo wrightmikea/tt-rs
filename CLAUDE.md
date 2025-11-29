@@ -56,7 +56,24 @@ See [plan.md](documentation/plan.md) for detailed roadmap.
 ./scripts/check-live-demo.sh        # Verify live demo is up to date
 ./scripts/check-changelog.sh        # Verify CHANGELOG completeness
 ./scripts/update-readme-screenshots.sh  # Update screenshot timestamps
+
+# Claude slash commands
+/pre-commit                          # Run pre-commit checks and fix issues
+/check-quality                       # Run sw-checklist analysis
 ```
+
+## Claude Slash Commands
+
+Use these commands to invoke automated workflows:
+
+- `/pre-commit` - Run comprehensive pre-commit checks (build, live demo, changelog, screenshots)
+- `/check-quality` - Run sw-checklist modularity analysis
+
+**Screenshot Requirements** (documented in /pre-commit):
+- Use the HIGHEST/LATEST user level (currently tt2)
+- Expand the accordion for the MOST RECENTLY ADDED feature
+- Do NOT show "About" section - show actual feature help
+- Goal: Git history shows feature evolution over time
 
 **Before starting development:** Read [learnings.md](documentation/learnings.md) for solutions to common issues.
 
