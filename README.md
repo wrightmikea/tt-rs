@@ -6,7 +6,7 @@ A modern Rust/WebAssembly reimplementation of ToonTalk, an interactive visual pr
 
 ![tt-rs Screenshot](images/screenshot1.png?ts=1764445470000)
 
-**[Live Demo](https://wrightmikea.github.io/tt-rs/)**
+**[Live Demo](https://wrightmikea.github.io/tt-rs/?ts=1764446053000)**
 
 ## About
 
