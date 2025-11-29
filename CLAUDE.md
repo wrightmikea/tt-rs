@@ -58,7 +58,7 @@ See [plan.md](documentation/plan.md) for detailed roadmap.
 ./scripts/update-readme-screenshots.sh  # Update screenshot timestamps
 
 # Claude slash commands
-/checkpoint                          # Full workflow: validate, commit, deploy, push
+/my-checkpoint                       # Full workflow: validate, commit, deploy, push
 /pre-commit                          # Run pre-commit checks and fix issues
 /check-quality                       # Run sw-checklist analysis
 ```
@@ -67,9 +67,24 @@ See [plan.md](documentation/plan.md) for detailed roadmap.
 
 Use these commands to invoke automated workflows:
 
-- `/checkpoint` - **Full workflow**: validate, update screenshot if needed, commit, deploy, push
+- `/my-checkpoint` - **Full workflow**: validate, update screenshot if needed, commit, deploy, push
 - `/pre-commit` - Run pre-commit checks (build, live demo, changelog, screenshots)
 - `/check-quality` - Run sw-checklist modularity analysis
+
+## IMPORTANT: Commit Policy
+
+**DO NOT commit changes without explicit user approval.**
+
+When making code changes:
+1. Make the code change
+2. Run `./scripts/build-all.sh` to verify it builds
+3. **STOP and report** what was changed
+4. **WAIT for user** to either:
+   - Run `/my-checkpoint` to execute the full deployment workflow
+   - Explicitly say "commit" or "push"
+   - Give other instructions
+
+Never auto-commit or auto-push. The user controls when changes are committed.
 
 **Screenshot Requirements** (documented in /pre-commit):
 - Use the HIGHEST/LATEST user level (currently tt2)
