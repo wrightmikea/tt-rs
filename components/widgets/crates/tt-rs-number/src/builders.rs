@@ -47,10 +47,13 @@ impl Number {
     }
 
     /// Apply another number using the dropped number's operator.
+    /// After arithmetic, the target becomes a plain number (operator reset to Add).
     pub fn apply(&mut self, dropped: &Number) -> Option<()> {
         let (new_num, new_den) = apply_op(dropped.operator, dropped, self)?;
         self.numerator = new_num;
         self.denominator = new_den;
+        // Reset operator to Add - the result is a plain number, not a tool
+        self.operator = ArithOperator::Add;
         Some(())
     }
 }
