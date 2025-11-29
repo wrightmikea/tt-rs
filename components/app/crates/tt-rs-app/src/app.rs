@@ -9,7 +9,7 @@ use tt_rs_number::{ArithOperator, Number};
 use tt_rs_robot::{Action, Robot, RobotState};
 use tt_rs_scales::{CompareResult, Scales};
 use tt_rs_text::Text;
-use tt_rs_ui::Footer;
+use tt_rs_ui::{Footer, HelpButton, HelpPanel, Tooltip, TooltipPosition};
 use tt_rs_vacuum::Vacuum;
 use tt_rs_wand::Wand;
 use web_sys::Element;
@@ -42,6 +42,13 @@ macro_rules! debug_log {
             log::info!($($arg)*);
         }
     };
+}
+
+/// Tooltip information for a widget.
+struct TooltipInfo {
+    title: &'static str,
+    description: &'static str,
+    hint: &'static str,
 }
 
 /// A widget item with its type for rendering.
@@ -135,6 +142,69 @@ impl WidgetItem {
     /// Returns true if this widget is a robot.
     fn is_robot(&self) -> bool {
         matches!(self, WidgetItem::Robot(_))
+    }
+
+    /// Get tooltip information for this widget.
+    fn tooltip_info(&self) -> TooltipInfo {
+        match self {
+            WidgetItem::Number(n) => {
+                if n.is_copy_source() {
+                    match n.operator() {
+                        ArithOperator::Add => TooltipInfo {
+                            title: "Number Source",
+                            description: "Click to create a copy of this number.",
+                            hint: "Drag copies onto other numbers to add them.",
+                        },
+                        ArithOperator::Subtract => TooltipInfo {
+                            title: "Subtraction Tool",
+                            description: "Click to create a subtraction operation.",
+                            hint: "Drag onto a number to subtract this value.",
+                        },
+                        ArithOperator::Multiply => TooltipInfo {
+                            title: "Multiplication Tool",
+                            description: "Click to create a multiplication operation.",
+                            hint: "Drag onto a number to multiply by this value.",
+                        },
+                        ArithOperator::Divide => TooltipInfo {
+                            title: "Division Tool",
+                            description: "Click to create a division operation.",
+                            hint: "Drag onto a number to divide by this value.",
+                        },
+                    }
+                } else {
+                    TooltipInfo {
+                        title: "Number",
+                        description: "A numeric value you can manipulate.",
+                        hint: "Drop arithmetic tools on this to change its value.",
+                    }
+                }
+            }
+            WidgetItem::Text(_) => TooltipInfo {
+                title: "Text",
+                description: "A text string.",
+                hint: "Drag into box holes to store.",
+            },
+            WidgetItem::Scales(_) => TooltipInfo {
+                title: "Scales",
+                description: "Compare two numbers by dropping them on the pans.",
+                hint: "The scales tip toward the larger number.",
+            },
+            WidgetItem::Vacuum(_) => TooltipInfo {
+                title: "Vacuum",
+                description: "Erases items it touches.",
+                hint: "Drop on box holes to erase contents, or on numbers to delete them.",
+            },
+            WidgetItem::Wand(_) => TooltipInfo {
+                title: "Magic Wand",
+                description: "Creates copies of items it touches.",
+                hint: "Drop on any widget to create a duplicate.",
+            },
+            WidgetItem::Robot(_) => TooltipInfo {
+                title: "Robot",
+                description: "Learns by watching your actions and can repeat them.",
+                hint: "Click to start/stop training, click again to run.",
+            },
+        }
     }
 
     /// Returns a mutable reference to the robot if this is a robot widget.
@@ -810,12 +880,26 @@ pub fn app() -> Html {
     // Application state
     let state = use_state(AppState::new);
 
+    // Help panel visibility state
+    let help_open = use_state(|| false);
+
     // Track which box is currently being dragged (for keyboard hole control)
     // Using use_mut_ref for shared mutable state that persists across closures
     let dragged_box_id = use_mut_ref(|| None::<WidgetId>);
 
     // Track pending new box creation (number of holes) - box created when dragged box is dropped
     let pending_new_box = use_mut_ref(|| None::<usize>);
+
+    // Callbacks for help panel
+    let on_help_open = {
+        let help_open = help_open.clone();
+        Callback::from(move |_| help_open.set(true))
+    };
+
+    let on_help_close = {
+        let help_open = help_open.clone();
+        Callback::from(move |_| help_open.set(false))
+    };
 
     // Callback for when a box drag starts
     let on_box_drag_start = {
@@ -1553,6 +1637,8 @@ pub fn app() -> Html {
             <div class="workspace-header">
                 {"tt-rs - Visual Programming Environment"}
             </div>
+            <HelpButton on_click={on_help_open} />
+            <HelpPanel is_open={*help_open} on_close={on_help_close} />
             <div class="workspace-content">
                 // Render boxes first (so widgets can be dropped on them)
                 {
@@ -1567,7 +1653,14 @@ pub fn app() -> Html {
                                 on_drag_end={on_box_drag_end.clone()}
                                 on_drop={on_box_drop.clone()}
                             >
-                                { box_state.render(&state.widgets) }
+                                <Tooltip
+                                    title="Box"
+                                    description="A container with holes for storing items."
+                                    hint="Drag items into holes. Drop on numbers to split."
+                                    position={TooltipPosition::Right}
+                                >
+                                    { box_state.render(&state.widgets) }
+                                </Tooltip>
                             </Draggable>
                         }
                     }).collect::<Html>()
@@ -1576,13 +1669,21 @@ pub fn app() -> Html {
                 {
                     copy_sources.iter().map(|(id, widget)| {
                         let pos = state.positions.get(id).copied().unwrap_or_default();
+                        let tooltip = widget.tooltip_info();
                         html! {
                             <CopySource
                                 widget_id={**id}
                                 position={pos}
                                 on_click={on_copy_source_click.clone()}
                             >
-                                { widget.render() }
+                                <Tooltip
+                                    title={tooltip.title}
+                                    description={tooltip.description}
+                                    hint={tooltip.hint}
+                                    position={TooltipPosition::Right}
+                                >
+                                    { widget.render() }
+                                </Tooltip>
                             </CopySource>
                         }
                     }).collect::<Html>()
@@ -1591,6 +1692,7 @@ pub fn app() -> Html {
                 {
                     regular_widgets.iter().map(|(id, widget)| {
                         let pos = state.positions.get(id).copied().unwrap_or_default();
+                        let tooltip = widget.tooltip_info();
                         html! {
                             <Draggable
                                 widget_id={**id}
@@ -1598,7 +1700,14 @@ pub fn app() -> Html {
                                 on_move={on_move.clone()}
                                 on_drop={on_drop.clone()}
                             >
-                                { widget.render() }
+                                <Tooltip
+                                    title={tooltip.title}
+                                    description={tooltip.description}
+                                    hint={tooltip.hint}
+                                    position={TooltipPosition::Right}
+                                >
+                                    { widget.render() }
+                                </Tooltip>
                             </Draggable>
                         }
                     }).collect::<Html>()
