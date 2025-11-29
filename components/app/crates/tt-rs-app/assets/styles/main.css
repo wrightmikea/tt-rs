@@ -639,6 +639,11 @@ body.dragging-active .widget.number:not(.copy-source) {
     z-index: var(--z-tooltip-hover) !important;
 }
 
+/* Elevate copy source stacks when showing tooltip */
+.copy-source-stack:has(.tooltip-wrapper:hover) {
+    z-index: var(--z-tooltip-hover) !important;
+}
+
 .tooltip-content {
     position: absolute;
     min-width: 180px;
