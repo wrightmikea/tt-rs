@@ -22,7 +22,10 @@ If UI code has changed since last screenshot update:
 - Navigate to http://127.0.0.1:1140
 - Select highest user level (currently tt2)
 - Open help panel and expand latest feature section (currently Bird/Nest messaging)
-- Take screenshot and save to `images/screenshot1.png`
+- Get current epoch: `date +%s`
+- Delete old screenshot: `rm images/screenshot-*.png`
+- Take screenshot and save to `images/screenshot-<epoch>.png`
+- Update README.md link to point to new screenshot filename
 - Goal: Screenshot shows latest level with latest feature help expanded
 
 ### 4. Commit Code Changes
@@ -60,7 +63,7 @@ After push, verify:
 
 Before every push, ensure:
 - [ ] CHANGELOG.md has all commits (compare with `git log --oneline`)
-- [ ] screenshot1.png shows latest level (tt2) with latest feature help expanded
+- [ ] Screenshot (images/screenshot-*.png) shows latest level (tt2) with latest feature help expanded
 - [ ] Live demo (docs/) is rebuilt with `./scripts/build-release.sh`
 - [ ] All links in README.md and footer are working
 

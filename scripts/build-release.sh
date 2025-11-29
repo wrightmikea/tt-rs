@@ -20,6 +20,9 @@ rm -rf "$DOCS_DIR"/*
 cp -r dist/* "$DOCS_DIR"/
 touch "$DOCS_DIR/.nojekyll"
 
+# Copy service worker for cache bypass
+cp "$PROJECT_ROOT/scripts/sw.js" "$DOCS_DIR/sw.js"
+
 echo ""
 echo "=== Validating deployment ==="
 # Verify that all asset paths include /tt-rs/ prefix

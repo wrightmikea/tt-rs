@@ -14,5 +14,13 @@
     <link data-trunk rel="copy-dir" href="assets/images">
 </head>
 <body>
+<script>
+// Register service worker for cache bypass on GitHub Pages
+if ('serviceWorker' in navigator && location.hostname !== '127.0.0.1' && location.hostname !== 'localhost') {
+  navigator.serviceWorker.register('/tt-rs/sw.js')
+    .then(reg => console.log('SW registered'))
+    .catch(err => console.log('SW registration failed:', err));
+}
+</script>
 </body>
 </html>

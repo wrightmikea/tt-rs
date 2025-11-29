@@ -25,5 +25,13 @@ dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
     
 <link rel="modulepreload" href="/tt-rs/tt-rs-app-dc0bd985c02c8ea3.js" crossorigin="anonymous"><link rel="preload" href="/tt-rs/tt-rs-app-dc0bd985c02c8ea3_bg.wasm" crossorigin="anonymous" as="fetch" type="application/wasm"></head>
 <body>
+<script>
+// Register service worker for cache bypass
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/tt-rs/sw.js')
+    .then(reg => console.log('SW registered'))
+    .catch(err => console.log('SW registration failed:', err));
+}
+</script>
 </body>
 </html>
