@@ -5,6 +5,8 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
+- fix: Rename slash command file to my-checkpoint.md (`f1dac88`)
+- docs: Rename /checkpoint to /my-checkpoint, add commit policy (`2891408`)
 - deploy: Update live demo with icon spacing fix (`b366e00`)
 - fix: Increase row spacing between column icons (`54b1d04`)
 - docs: Regenerate CHANGELOG (`4540522`)
