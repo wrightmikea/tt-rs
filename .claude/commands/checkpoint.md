@@ -1,15 +1,22 @@
 Complete checkpoint: validate, commit, deploy, and push all changes.
 
-This command performs a full checkpoint workflow - from validation through deployment.
+This command ensures CHANGELOG, README.md, screenshot1.png, and live demo are all up-to-date.
 
 ## Steps to Execute
 
-### 1. Pre-commit Checks
+### 1. CHANGELOG Sync
+Compare `git log --oneline` with `CHANGELOG.md`:
+- Add any missing commits to the current date section
+- Replace previous `<latest>` with its actual SHA
+- Use `<latest>` for the newest commit entry
+- Commits should be in reverse chronological order (newest first)
+
+### 2. Pre-commit Checks
 Run `./scripts/pre-commit-checks.sh` and fix any issues:
 - Build failures: fix the code
 - CHANGELOG issues: update with proper SHAs and `<latest>` placeholder
 
-### 2. Screenshot Check
+### 3. Screenshot Check
 If UI code has changed since last screenshot update:
 - Start dev server: `./scripts/serve.sh`
 - Navigate to http://127.0.0.1:1140
@@ -18,33 +25,44 @@ If UI code has changed since last screenshot update:
 - Take screenshot and save to `images/screenshot1.png`
 - Goal: Screenshot shows latest level with latest feature help expanded
 
-### 3. Commit Code Changes
+### 4. Commit Code Changes
 If there are uncommitted changes:
 ```bash
 git add -A
 git commit -m "feat/fix/docs: <description>"
 ```
 
-### 4. Build Release
+### 5. Build Release
 ```bash
 ./scripts/build-release.sh
 ```
 Verify validation passes (PASS for all checks).
 
-### 5. Deploy Commit
+### 6. Deploy Commit
 ```bash
 git add docs/
 git commit -m "deploy: Update live demo with <description>"
 ```
 
-### 6. Push
+### 7. Push
 ```bash
 git push
 ```
 
-### 7. Verification
-- Live demo: https://wrightmikea.github.io/tt-rs/
-- README screenshot: Check GitHub repo page shows updated screenshot
+### 8. Verification
+After push, verify:
+- [ ] Live demo works: https://wrightmikea.github.io/tt-rs/
+- [ ] README screenshot shows current UI (tt2 with messaging help)
+- [ ] CHANGELOG includes all recent commits with correct SHAs
+- [ ] Footer "Changes" link shows updated changelog
+
+## Checklist Summary
+
+Before every push, ensure:
+- [ ] CHANGELOG.md has all commits (compare with `git log --oneline`)
+- [ ] screenshot1.png shows latest level (tt2) with latest feature help expanded
+- [ ] Live demo (docs/) is rebuilt with `./scripts/build-release.sh`
+- [ ] All links in README.md and footer are working
 
 ## Important Notes
 

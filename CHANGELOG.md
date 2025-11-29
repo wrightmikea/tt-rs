@@ -4,7 +4,19 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- docs: Add avatars.md and use-cases.md with user personas and examples (`<latest>`)
+- docs: Sync CHANGELOG with all recent commits and enhance checkpoint command (`<latest>`)
+- feat: Add /checkpoint command for full deployment workflow (`985c548`)
+- deploy: Update live demo with tooltip fix and new screenshot (`b812e32`)
+- fix: Tooltip z-index for copy sources and update screenshot (`413c400`)
+- feat: Share Claude slash commands in repository (`618d8a4`)
+- deploy: Update live demo with stack dragging and automation scripts (`4b3dc92`)
+- feat: Enable copy source (stack) dragging for palette reorganization (`b0674df`)
+- feat: Add automation scripts for pre-commit checks and maintenance (`a25c90c`)
+- deploy: Update live demo with fixes and documentation (`b6d25ff`)
+- fix: Box keyboard resize, z-index stacking, spacing and documentation (`99172f1`)
+- docs: Add mandatory live demo update requirement to development workflow (`01f79f5`)
+- deploy: Update live demo with avatars documentation and column layout (`ebb7279`)
+- docs: Add avatars.md and use-cases.md with user personas and examples (`5ef1a2d`)
 - refactor: Reorganize demo layout into vertical columns by category (`adb1343`)
 - fix: Hide Bird/Nest widgets in tt1 mode, show only in tt2 (`b12356c`)
 - docs: Add CHANGELOG workflow guidance to prevent SHA loops (`77ea8e8`)
