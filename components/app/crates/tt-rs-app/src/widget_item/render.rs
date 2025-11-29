@@ -16,6 +16,7 @@ pub fn render(item: &WidgetItem) -> Html {
         WidgetItem::Wand(w) => w.render(),
         WidgetItem::Robot(r) => r.render(),
         WidgetItem::Nest(nest) => nest.render(),
+        WidgetItem::Bird(bird) => bird.render(),
     }
 }
 
@@ -29,6 +30,7 @@ pub fn render_small(widget: &WidgetItem) -> Html {
         WidgetItem::Wand(_) => html! { <div class="widget wand in-hole">{"[wand]"}</div> },
         WidgetItem::Robot(_) => html! { <div class="widget robot in-hole">{"[robot]"}</div> },
         WidgetItem::Nest(_) => html! { <div class="widget nest in-hole">{"[nest]"}</div> },
+        WidgetItem::Bird(_) => html! { <div class="widget bird in-hole">{"[bird]"}</div> },
     }
 }
 

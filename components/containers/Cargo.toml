@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "crates/tt-rs-bird",
     "crates/tt-rs-box",
     "crates/tt-rs-nest",
 ]

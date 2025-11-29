@@ -77,6 +77,12 @@ const TOOLTIP_NEST: TooltipInfo = TooltipInfo {
     hint: "Birds deliver items here. Click to take the oldest message.",
 };
 
+const TOOLTIP_BIRD: TooltipInfo = TooltipInfo {
+    title: "Bird",
+    description: "Delivers messages to its home nest.",
+    hint: "Drop an item on a bird to send it to the nest.",
+};
+
 /// Get tooltip information for a widget item.
 pub fn tooltip_info(item: &WidgetItem) -> &'static TooltipInfo {
     match item {
@@ -93,5 +99,6 @@ pub fn tooltip_info(item: &WidgetItem) -> &'static TooltipInfo {
         WidgetItem::Wand(_) => &TOOLTIP_WAND,
         WidgetItem::Robot(_) => &TOOLTIP_ROBOT,
         WidgetItem::Nest(_) => &TOOLTIP_NEST,
+        WidgetItem::Bird(_) => &TOOLTIP_BIRD,
     }
 }

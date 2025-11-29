@@ -1,6 +1,7 @@
 //! Demo scene initialization.
 
 use std::collections::HashMap;
+use tt_rs_bird::Bird;
 use tt_rs_core::WidgetId;
 use tt_rs_drag::Position;
 use tt_rs_nest::Nest;
@@ -60,6 +61,7 @@ fn demo_widgets() -> Vec<WidgetItem> {
         WidgetItem::Number(Number::new(0)),
         WidgetItem::Scales(Scales::new()),
         WidgetItem::Nest(Nest::new().as_copy_source()),
+        WidgetItem::Bird(Bird::new().as_copy_source()),
         WidgetItem::Vacuum(Vacuum::new()),
         WidgetItem::Wand(Wand::new()),
         WidgetItem::Robot(Robot::new()),

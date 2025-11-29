@@ -3,6 +3,7 @@
 mod render;
 mod tooltip;
 
+use tt_rs_bird::Bird;
 use tt_rs_core::{Widget, WidgetId};
 use tt_rs_nest::Nest;
 use tt_rs_number::Number;
@@ -27,6 +28,7 @@ pub enum WidgetItem {
     Wand(Wand),
     Robot(Robot),
     Nest(Nest),
+    Bird(Bird),
 }
 
 impl WidgetItem {
@@ -39,6 +41,7 @@ impl WidgetItem {
             WidgetItem::Wand(w) => w.id(),
             WidgetItem::Robot(r) => r.id(),
             WidgetItem::Nest(nest) => nest.id(),
+            WidgetItem::Bird(bird) => bird.id(),
         }
     }
 
