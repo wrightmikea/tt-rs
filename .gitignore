@@ -3,3 +3,9 @@
 /dist
 **/dist
 Cargo.lock
+
+# Override global gitignore for .claude - share project commands
+!.claude/
+!.claude/commands/
+# But keep local settings private
+.claude/settings.local.json
