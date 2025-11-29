@@ -58,6 +58,7 @@ See [plan.md](documentation/plan.md) for detailed roadmap.
 ./scripts/update-readme-screenshots.sh  # Update screenshot timestamps
 
 # Claude slash commands
+/checkpoint                          # Full workflow: validate, commit, deploy, push
 /pre-commit                          # Run pre-commit checks and fix issues
 /check-quality                       # Run sw-checklist analysis
 ```
@@ -66,7 +67,8 @@ See [plan.md](documentation/plan.md) for detailed roadmap.
 
 Use these commands to invoke automated workflows:
 
-- `/pre-commit` - Run comprehensive pre-commit checks (build, live demo, changelog, screenshots)
+- `/checkpoint` - **Full workflow**: validate, update screenshot if needed, commit, deploy, push
+- `/pre-commit` - Run pre-commit checks (build, live demo, changelog, screenshots)
 - `/check-quality` - Run sw-checklist modularity analysis
 
 **Screenshot Requirements** (documented in /pre-commit):
