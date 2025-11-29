@@ -4,7 +4,8 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- docs: Add CHANGELOG workflow guidance to prevent SHA loops (`<latest>`)
+- fix: Hide Bird/Nest widgets in tt1 mode, show only in tt2 (`<latest>`)
+- docs: Add CHANGELOG workflow guidance to prevent SHA loops (`77ea8e8`)
 - feat: Implement ToonTalk-compatible Bird/Nest messaging (`5be220b`)
 - docs: Update plan.md, CLAUDE.md with recent progress and workflow emphasis (`d7db2f2`)
 - docs: Update README status and use project scripts (`99c4ef6`)

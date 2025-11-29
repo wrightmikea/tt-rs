@@ -29,7 +29,7 @@ pub fn app() -> Html {
 
     callbacks::setup_keydown_listener(cbs.on_keydown.clone());
 
-    let (copy_sources, regular_widgets) = partition_widgets(&state);
+    let (copy_sources, regular_widgets) = partition_widgets(&state, *user_level);
 
     render::render_app(
         &state,
@@ -43,21 +43,25 @@ pub fn app() -> Html {
 
 type WidgetRefs<'a> = Vec<(&'a WidgetId, &'a WidgetItem)>;
 
-fn partition_widgets(state: &AppState) -> (WidgetRefs<'_>, WidgetRefs<'_>) {
+fn partition_widgets(state: &AppState, level: UserLevel) -> (WidgetRefs<'_>, WidgetRefs<'_>) {
+    let is_visible = |w: &WidgetItem| -> bool {
+        match level {
+            UserLevel::Tt1 => !matches!(w, WidgetItem::Bird(_) | WidgetItem::Nest(_)),
+            UserLevel::Tt2 => true,
+        }
+    };
     let copy_sources: Vec<_> = state
         .widgets
         .iter()
         .filter(|(id, w)| {
-            !state.widget_in_box.contains_key(id)
-                && matches!(w, WidgetItem::Number(n) if n.is_copy_source())
+            !state.widget_in_box.contains_key(id) && is_visible(w) && w.is_copy_source()
         })
         .collect();
     let regular: Vec<_> = state
         .widgets
         .iter()
         .filter(|(id, w)| {
-            !state.widget_in_box.contains_key(id)
-                && !matches!(w, WidgetItem::Number(n) if n.is_copy_source())
+            !state.widget_in_box.contains_key(id) && is_visible(w) && !w.is_copy_source()
         })
         .collect();
     (copy_sources, regular)
