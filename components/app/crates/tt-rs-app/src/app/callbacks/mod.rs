@@ -8,6 +8,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use tt_rs_core::WidgetId;
 use tt_rs_drag::{CopySourceClickEvent, DragEndEvent, DragStartEvent, DropEvent, Position};
+use tt_rs_ui::UserLevel;
 use yew::prelude::*;
 
 use crate::state::AppState;
@@ -17,6 +18,7 @@ pub use keydown::setup_keydown_listener;
 pub struct Callbacks {
     pub on_help_open: Callback<()>,
     pub on_help_close: Callback<()>,
+    pub on_level_change: Callback<UserLevel>,
     pub on_box_drag_start: Callback<DragStartEvent>,
     pub on_box_drag_end: Callback<DragEndEvent>,
     pub on_box_drop: Callback<DropEvent>,
@@ -29,6 +31,7 @@ pub struct Callbacks {
 pub fn create_callbacks(
     state: UseStateHandle<AppState>,
     help_open: UseStateHandle<bool>,
+    user_level: UseStateHandle<UserLevel>,
     dragged_box_id: Rc<RefCell<Option<WidgetId>>>,
     pending_new_box: Rc<RefCell<Option<usize>>>,
 ) -> Callbacks {
@@ -41,6 +44,7 @@ pub fn create_callbacks(
             let h = help_open;
             Callback::from(move |_| h.set(false))
         },
+        on_level_change: { Callback::from(move |level: UserLevel| user_level.set(level)) },
         on_box_drag_start: box_handlers::create_box_drag_start(
             dragged_box_id.clone(),
             pending_new_box.clone(),

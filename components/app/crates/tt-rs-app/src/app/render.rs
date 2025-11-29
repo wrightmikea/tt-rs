@@ -2,7 +2,9 @@
 
 use tt_rs_core::WidgetId;
 use tt_rs_drag::{CopySource, Draggable, DropEvent, Position};
-use tt_rs_ui::{Footer, HelpButton, HelpPanel, Tooltip, TooltipPosition};
+use tt_rs_ui::{
+    Footer, HelpButton, HelpPanel, Tooltip, TooltipPosition, UserLevel, UserLevelSelector,
+};
 use yew::prelude::*;
 
 use super::callbacks::Callbacks;
@@ -15,15 +17,19 @@ type WidgetRefs<'a> = Vec<(&'a WidgetId, &'a WidgetItem)>;
 pub fn render_app(
     state: &AppState,
     help_open: bool,
+    user_level: UserLevel,
     cbs: &Callbacks,
     copy_sources: &WidgetRefs<'_>,
     regular: &WidgetRefs<'_>,
 ) -> Html {
     html! {
         <div class="workspace">
-            <div class="workspace-header">{"tt-rs - Visual Programming Environment"}</div>
+            <div class="workspace-header">
+                <span class="header-title">{"tt-rs - Visual Programming Environment"}</span>
+                <UserLevelSelector level={user_level} on_change={cbs.on_level_change.clone()} />
+            </div>
             <HelpButton on_click={cbs.on_help_open.clone()} />
-            <HelpPanel is_open={help_open} on_close={cbs.on_help_close.clone()} />
+            <HelpPanel is_open={help_open} on_close={cbs.on_help_close.clone()} level={user_level} />
             <div class="workspace-content">
                 { render_boxes(state, cbs) }
                 { render_copy_sources(copy_sources, state, &cbs.on_copy_source_click) }

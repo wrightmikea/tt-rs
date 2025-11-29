@@ -16,7 +16,7 @@ yew = { version = "0.21", features = ["csr"] }
 wasm-bindgen = "0.2"
 web-sys = { version = "0.3", features = [
     "console", "Document", "Element", "EventTarget",
-    "HtmlElement", "MouseEvent", "Node", "Window", "DomRect", "DomTokenList",
+    "HtmlElement", "HtmlSelectElement", "MouseEvent", "Node", "Window", "DomRect", "DomTokenList",
 ] }
 tt-rs-core = { path = "../core/crates/tt-rs-core" }
 chrono = "0.4"

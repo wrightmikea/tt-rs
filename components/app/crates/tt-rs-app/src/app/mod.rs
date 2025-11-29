@@ -4,6 +4,7 @@ mod callbacks;
 mod render;
 
 use tt_rs_core::WidgetId;
+use tt_rs_ui::UserLevel;
 use yew::prelude::*;
 
 use crate::state::AppState;
@@ -14,12 +15,14 @@ use crate::widget_item::WidgetItem;
 pub fn app() -> Html {
     let state = use_state(AppState::new);
     let help_open = use_state(|| false);
+    let user_level = use_state(UserLevel::default);
     let dragged_box_id = use_mut_ref(|| None::<WidgetId>);
     let pending_new_box = use_mut_ref(|| None::<usize>);
 
     let cbs = callbacks::create_callbacks(
         state.clone(),
         help_open.clone(),
+        user_level.clone(),
         dragged_box_id.clone(),
         pending_new_box.clone(),
     );
@@ -28,7 +31,14 @@ pub fn app() -> Html {
 
     let (copy_sources, regular_widgets) = partition_widgets(&state);
 
-    render::render_app(&state, *help_open, &cbs, &copy_sources, &regular_widgets)
+    render::render_app(
+        &state,
+        *help_open,
+        *user_level,
+        &cbs,
+        &copy_sources,
+        &regular_widgets,
+    )
 }
 
 type WidgetRefs<'a> = Vec<(&'a WidgetId, &'a WidgetItem)>;

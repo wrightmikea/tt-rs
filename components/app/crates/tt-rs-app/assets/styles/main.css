@@ -52,6 +52,43 @@ html, body {
     padding: 0.5rem 1rem;
     font-size: 1.2rem;
     font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    flex: 1;
+}
+
+/* User Level Selector */
+.user-level-selector {
+    margin-right: 3rem; /* Space for help button */
+}
+
+.user-level-selector select {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 2px solid white;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.user-level-selector select:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.user-level-selector select:focus {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.user-level-selector select option {
+    background-color: #4a90d9;
+    color: white;
 }
 
 .workspace-content {
@@ -83,7 +120,8 @@ html, body {
 .draggable:has(.widget.text) { z-index: var(--z-values); }
 .draggable:has(.widget.scales) { z-index: var(--z-comparison); }
 .draggable:has(.widget.robot),
-.draggable:has(.widget.nest) { z-index: var(--z-agents); }
+.draggable:has(.widget.nest),
+.draggable:has(.widget.bird) { z-index: var(--z-agents); }
 .draggable:has(.widget.vacuum),
 .draggable:has(.widget.wand) { z-index: var(--z-tools); }
 

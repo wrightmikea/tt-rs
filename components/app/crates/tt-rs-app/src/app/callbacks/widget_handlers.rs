@@ -37,6 +37,8 @@ pub fn create_widget_drop(state: UseStateHandle<AppState>) -> Callback<DropEvent
         if handle_robot_click(&mut s, id, &e)
             || handle_vacuum_drop(&mut s, id, mx, my, &e)
             || handle_wand_drop(&mut s, id, mx, my, &e)
+            || handle_bird_drop(&mut s, id, mx, my)
+            || handle_nest_drop(&mut s, id, mx, my)
             || handle_scales_drop(&mut s, id, mx, my)
             || handle_number_on_number(&mut s, id, mx, my)
             || handle_box_hole_drop(&mut s, id, mx, my, &e)

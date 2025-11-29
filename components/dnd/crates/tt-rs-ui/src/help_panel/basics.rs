@@ -1,8 +1,9 @@
 //! Basic tutorial content - getting started, numbers, boxes.
 
+use crate::user_level::UserLevel;
 use yew::prelude::*;
 
-pub fn getting_started_content() -> Html {
+pub fn getting_started_content(level: UserLevel) -> Html {
     html! {
         <div class="help-section">
             <p>{"Welcome to tt-rs, a visual programming environment!"}</p>
@@ -12,10 +13,28 @@ pub fn getting_started_content() -> Html {
                 <li>{"Drop items onto each other to combine them"}</li>
                 <li>{"Use tools to modify or copy items"}</li>
             </ul>
+            { level_specific_intro(level) }
             <p class="help-tip">
                 {"Try dragging the \"+1\" onto the \"0\" to add them together!"}
             </p>
         </div>
+    }
+}
+
+fn level_specific_intro(level: UserLevel) -> Html {
+    match level {
+        UserLevel::Tt1 => html! {
+            <p>
+                {"You're in "}<strong>{"tt1"}</strong>{" mode - learn the basics of \
+                 numbers, boxes, and tools."}
+            </p>
+        },
+        UserLevel::Tt2 => html! {
+            <p>
+                {"You're in "}<strong>{"tt2"}</strong>{" mode - explore messaging \
+                 with birds and nests!"}
+            </p>
+        },
     }
 }
 

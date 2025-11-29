@@ -60,7 +60,7 @@ pub fn robots_content() -> Html {
     }
 }
 
-pub fn tips_content() -> Html {
+pub fn tips_content(level: crate::user_level::UserLevel) -> Html {
     html! {
         <div class="help-section">
             <ul>
@@ -76,12 +76,26 @@ pub fn tips_content() -> Html {
                     <strong>{"Tools are persistent: "}</strong>
                     {"The vacuum and wand stay where you drop them"}
                 </li>
+                { level_specific_tips(level) }
                 <li>
                     <strong>{"Try things! "}</strong>
                     {"The best way to learn is to experiment"}
                 </li>
             </ul>
         </div>
+    }
+}
+
+fn level_specific_tips(level: crate::user_level::UserLevel) -> yew::Html {
+    use crate::user_level::UserLevel;
+    match level {
+        UserLevel::Tt1 => yew::html! {},
+        UserLevel::Tt2 => yew::html! {
+            <li>
+                <strong>{"Bird pairing: "}</strong>
+                {"Pair birds with nests before trying to send messages"}
+            </li>
+        },
     }
 }
 
