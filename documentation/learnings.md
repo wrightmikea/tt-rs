@@ -272,3 +272,41 @@ cargo fmt --all -- --check
 **Prevention:** The `build-release.sh` script validates that no absolute asset paths exist in the built HTML before deployment.
 
 ---
+
+## CHANGELOG Workflow: Avoiding Commit SHA Loops
+
+**Problem:** Updating a CHANGELOG entry with its own commit SHA creates an infinite loop - each amend changes the SHA, requiring another update.
+
+**Solution:** Use `<latest>` as a placeholder for the current commit's SHA.
+
+**Workflow:**
+
+1. **When adding a new entry:** Use `<latest>` as the SHA placeholder:
+   ```markdown
+   - feat: New feature description (`<latest>`)
+   ```
+
+2. **When committing:** Commit normally. The `<latest>` placeholder stays in the file.
+
+3. **On the NEXT commit:** Replace the previous `<latest>` with its actual SHA:
+   ```markdown
+   - feat: Another new feature (`<latest>`)
+   - feat: Previous feature (`abc1234`)  # <-- was <latest>, now has real SHA
+   ```
+
+**Key Rules:**
+- NEVER try to put the current commit's SHA in the CHANGELOG - it's impossible
+- NEVER amend commits just to update CHANGELOG SHAs - this changes the SHA
+- Only ONE `<latest>` should exist at a time (the most recent entry)
+- Replace `<latest>` with actual SHA when making the NEXT commit
+
+**Example CHANGELOG:**
+```markdown
+## 2025-11-29
+
+- feat: Bird/Nest messaging (`<latest>`)     # Current commit - placeholder
+- docs: Update documentation (`e41f2bf`)     # Previous commit - real SHA
+- fix: Asset path fix (`4345422`)            # Older commit - real SHA
+```
+
+---

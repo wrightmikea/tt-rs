@@ -250,6 +250,33 @@ Key concepts:
 - **Scales**: Visual comparison
 - **Erasure**: Generalize patterns by removing detail
 
+## CHANGELOG Workflow
+
+**CRITICAL: Avoid the SHA Loop**
+
+When updating CHANGELOG.md, NEVER try to include the current commit's SHA - this creates an infinite loop.
+
+**Workflow:**
+
+1. Use `<latest>` as placeholder for current commit SHA
+2. Replace previous `<latest>` with actual SHA when making the NEXT commit
+3. Only ONE `<latest>` should exist at a time
+
+**Example:**
+```markdown
+## 2025-11-29
+
+- feat: New feature (`<latest>`)           # Current commit - placeholder
+- docs: Previous change (`e41f2bf`)        # Previous commit - actual SHA
+```
+
+**Rules:**
+- NEVER amend commits just to update CHANGELOG SHAs
+- NEVER try to include current commit SHA in CHANGELOG
+- Replace `<latest>` only when making subsequent commits
+
+See [learnings.md](documentation/learnings.md#changelog-workflow-avoiding-commit-sha-loops) for detailed explanation.
+
 ## Documentation
 
 ### IMPORTANT: Read These First

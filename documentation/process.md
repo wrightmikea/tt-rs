@@ -228,6 +228,31 @@ main
 - `refactor/description` - Code improvements
 - `docs/description` - Documentation updates
 
+### CHANGELOG Workflow
+
+**CRITICAL: Avoid the SHA Loop**
+
+When updating CHANGELOG.md, NEVER try to include the current commit's SHA - this creates an infinite loop (amending changes the SHA).
+
+**Workflow:**
+
+1. Use `<latest>` as placeholder for current commit SHA
+2. Replace previous `<latest>` with actual SHA when making the NEXT commit
+3. Only ONE `<latest>` should exist at a time
+
+**Example:**
+```markdown
+## 2025-11-29
+
+- feat: New feature (`<latest>`)           # Current commit - placeholder
+- docs: Previous change (`e41f2bf`)        # Previous commit - actual SHA
+```
+
+**Rules:**
+- NEVER amend commits just to update CHANGELOG SHAs
+- NEVER try to include current commit SHA in CHANGELOG
+- Replace `<latest>` only when making subsequent commits
+
 ### Commit Messages
 
 Follow conventional commits:

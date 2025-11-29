@@ -4,8 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- feat: Implement ToonTalk-compatible Bird/Nest messaging (`<latest>`)
-- docs: Update plan.md, CLAUDE.md with recent progress and workflow emphasis (`e41f2bf`)
+- docs: Add CHANGELOG workflow guidance to prevent SHA loops (`<latest>`)
+- feat: Implement ToonTalk-compatible Bird/Nest messaging (`5be220b`)
+- docs: Update plan.md, CLAUDE.md with recent progress and workflow emphasis (`d7db2f2`)
 - docs: Update README status and use project scripts (`99c4ef6`)
 - fix: Use relative paths for Bird/Nest SVG assets (GitHub Pages fix) (`4345422`)
 - feat: Add CHANGELOG and compact footer with links (`aeafd1c`)
