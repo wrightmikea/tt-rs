@@ -1,0 +1,10 @@
+[package]
+name = "tt-rs-commands"
+version = "0.1.0"
+edition = "2024"
+description = "Command pattern implementation for tt-rs operations"
+
+[dependencies]
+tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
+tt-rs-state = { path = "../../../state/crates/tt-rs-state" }
+log = "0.4"

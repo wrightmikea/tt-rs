@@ -2,8 +2,8 @@
 
 mod copy_source;
 mod draggable;
-mod position;
 
 pub use copy_source::{CopySource, CopySourceClickEvent};
 pub use draggable::{DragEndEvent, DragStartEvent, Draggable, DropEvent};
-pub use position::Position;
+// Re-export Position from tt-rs-state for backwards compatibility
+pub use tt_rs_state::Position;

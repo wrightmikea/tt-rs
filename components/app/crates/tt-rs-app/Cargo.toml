@@ -20,6 +20,9 @@ tt-rs-wand = { path = "../../../widgets/crates/tt-rs-wand" }
 tt-rs-robot = { path = "../../../widgets/crates/tt-rs-robot" }
 tt-rs-drag = { path = "../../../dnd/crates/tt-rs-drag" }
 tt-rs-ui = { path = "../../../dnd/crates/tt-rs-ui" }
+tt-rs-hit-test = { path = "../../../handlers/crates/tt-rs-hit-test" }
+tt-rs-state = { path = "../../../state/crates/tt-rs-state" }
+tt-rs-commands = { path = "../../../commands/crates/tt-rs-commands" }
 yew = { workspace = true }
 wasm-bindgen = { workspace = true }
 web-sys = { workspace = true }

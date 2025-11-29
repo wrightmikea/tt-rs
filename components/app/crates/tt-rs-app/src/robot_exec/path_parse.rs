@@ -1,0 +1,25 @@
+//! Path parsing utilities for robot actions.
+
+use tt_rs_core::WidgetId;
+
+/// Parse "widget:123" -> WidgetId.
+pub fn parse_widget_path(path: &str) -> Option<WidgetId> {
+    let parts: Vec<&str> = path.split(':').collect();
+    if parts.len() == 2 && parts[0] == "widget" {
+        parts[1].parse::<u64>().ok().map(WidgetId::from_u64)
+    } else {
+        None
+    }
+}
+
+/// Parse "box:123:hole:0" -> (WidgetId, usize).
+pub fn parse_box_hole_path(path: &str) -> Option<(WidgetId, usize)> {
+    let parts: Vec<&str> = path.split(':').collect();
+    if parts.len() == 4 && parts[0] == "box" && parts[2] == "hole" {
+        let box_id = parts[1].parse::<u64>().ok().map(WidgetId::from_u64)?;
+        let hole = parts[3].parse::<usize>().ok()?;
+        Some((box_id, hole))
+    } else {
+        None
+    }
+}

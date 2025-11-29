@@ -8,6 +8,7 @@ repository.workspace = true
 
 [dependencies]
 tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
+tt-rs-state = { path = "../../../state/crates/tt-rs-state" }
 yew = { workspace = true }
 web-sys = { workspace = true }
 wasm-bindgen = { workspace = true }

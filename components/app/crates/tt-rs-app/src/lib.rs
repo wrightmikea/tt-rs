@@ -1,6 +1,12 @@
 //! tt-rs-app: Main WASM application entry point.
 
 mod app;
+mod box_state;
+mod demo;
+mod ops;
+mod robot_exec;
+mod state;
+mod widget_item;
 
 use app::App;
 

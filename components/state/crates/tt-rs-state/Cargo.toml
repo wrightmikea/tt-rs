@@ -1,0 +1,8 @@
+[package]
+name = "tt-rs-state"
+version = "0.1.0"
+edition = "2024"
+description = "State management traits and stores for tt-rs"
+
+[dependencies]
+tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
