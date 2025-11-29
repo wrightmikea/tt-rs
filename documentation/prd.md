@@ -4,81 +4,84 @@
 
 ## Executive Summary
 
-tt-rs is a modern reimplementation of ToonTalk, an interactive visual programming environment originally created by Ken Kahn in the 1990s. This project aims to bring the innovative programming-by-demonstration approach to modern web browsers using Rust, WebAssembly, and contemporary rendering technologies.
+tt-rs is a modern reimplementation of ToonTalk, an interactive visual programming environment originally created by Ken Kahn in the 1990s. This project brings the innovative programming-by-demonstration approach to modern web browsers using Rust, WebAssembly, and contemporary rendering technologies.
 
 **Note**: This is a derived work. See the COPYRIGHT file for full attribution.
 
 ## Background
 
-### Original ToonTalk (Desktop C++ Version ~1995-2009)
+### ToonTalk History
 
-ToonTalk was designed to make programming concepts accessible to children by mapping every abstract computational aspect to a concrete, animated metaphor:
+ToonTalk has evolved through three major versions:
 
-**Core Metaphors (Computational → Visual):**
-- **Computation/Program** = A city with houses
-- **Process/Agent** = A house (contains robots working on boxes)
-- **Method/Clause** = Robot trained by demonstration
-- **Messages** = Items carried by birds to nests
-- **Data structures** = Boxes with compartments (holes)
-- **Comparison** = Scales that tip based on weight/value
-- **Pattern matching** = Robot's thought bubble (conditions)
+#### Original ToonTalk (Desktop C++ ~1995-2009)
 
-**Navigation and City Management:**
-- **Helicopter** = Navigation tool for flying over the city, landing at houses
-- **City** = The entire program/computation with multiple houses (processes)
-- **Streets/Avenues** = Addresses for locating houses
+A 3D animated world where programming concepts are mapped to concrete metaphors:
 
-**Process Management:**
-- **Truck** = Process spawner (drop robot + box into truck → new house is built)
-- **Bomb** = Process terminator (destroys a house/terminates an agent)
+**Core Metaphors:**
+| Concept | Metaphor | Description |
+|---------|----------|-------------|
+| Program | City | Collection of running processes |
+| Process | House | Container where robots work |
+| Method | Robot | Trained by demonstration |
+| Message | Bird delivery | Asynchronous communication |
+| Data | Box with holes | Containers with compartments |
+| Comparison | Scales | Physical balance that tips |
+| Pattern | Erased widget | Generalized by removing detail |
+
+**Navigation & Process Management:**
+- **Helicopter**: Fly over the city to navigate between houses
+- **Truck**: Drop robot+box to spawn a new house (process)
+- **Bomb**: Destroys a house (terminates process)
+- **Notebook**: Store programs, serve as modules when dropped in truck
 
 **Tools:**
-- **Magician's Wand** = Copy tool (creates duplicates of any widget)
-- **Dusty (Vacuum)** = Erase/remove tool (three modes: suck, erase, spit)
-- **Pumpy (Bike Pump)** = Resize tool (make widgets larger/smaller)
-- **Notebook** = Program storage, also serves as module/package when dropped in truck
+- **Wand (Magic)**: Copy any widget
+- **Vacuum (Dusty)**: Remove/erase widgets (suck, erase, spit modes)
+- **Pump (Pumpy)**: Resize widgets
 
-The system was influenced by:
-- The Janus programming language (concurrent constraint logic programming)
-- The Actor model
-- Video games like "The Legend of Zelda" and "Robot Odyssey"
+The system was influenced by Janus (concurrent constraint logic programming), the Actor model, and video games like Zelda and Robot Odyssey. Successfully used by children as young as 3 years old.
 
-ToonTalk was successfully used by children as young as 3 years old.
+#### ToonTalk Reborn (JavaScript/jQuery ~2014-2017)
 
-### ToonTalk Reborn (JavaScript ~2014-2017)
+A web-based version that simplified some concepts for browser compatibility:
 
-In 2014, a JavaScript/HTML5 version was created, making ToonTalk accessible in web browsers. This version:
-- Uses jQuery and jQuery UI
-- Stores programs as JSON
-- Supports Google Drive integration
-- Includes primitive Lego-like graphics
+**Features Retained:**
+- Numbers, Boxes, Text, Robots, Birds, Nests, Scales
+- Wand and Vacuum tools
+- Robot training and execution
+- Pattern matching via erasure
+- Sensors for keyboard/mouse events
 
-**Features Changed/Removed from Original:**
-- **No City/Helicopter**: The immersive 3D city navigation was removed
-- **No Houses**: Processes run on a flat workspace instead of in houses
-- **No Trucks**: Process spawning mechanism was simplified
-- **No Bombs**: Process termination handled differently
-- **Simplified Vacuum**: Doesn't have suck/erase/spit modes
-- **Flat 2D interface**: No 3D graphics or flying navigation
+**Features Removed/Changed:**
+- No 3D city navigation
+- No houses (flat workspace instead)
+- No trucks, bombs, helicopter
+- Simplified vacuum (no suck/spit modes)
+- 2D interface only
 
-### Why tt-rs?
+**Technology:**
+- jQuery and jQuery UI
+- JSON program storage
+- Google Drive integration
+- Multilingual (100+ languages)
 
-The JavaScript implementation has accumulated technical debt and relies on aging technologies (jQuery, jQuery UI). This project aims to:
+#### tt-rs (Rust/WebAssembly ~2024-present)
 
-1. Modernize the technology stack
-2. Improve visual appeal with modern graphics
-3. Leverage Rust's type safety and performance
-4. Create a maintainable, well-documented codebase
-5. Add speech capabilities ("talking" in the name)
+This project aims to:
+1. Modernize the technology stack (Rust/WASM)
+2. Initially match ToonTalk Reborn capabilities
+3. Eventually restore original ToonTalk features
+4. Add new innovations (3D graphics, design patterns, AI assistance)
 
 ## Product Vision
 
 **For** children, educators, and curious adults
-**Who** want to learn programming concepts through visual, interactive exploration
+**Who** want to learn programming through visual, interactive exploration
 **tt-rs is** a web-based visual programming environment
 **That** teaches computational thinking through animated metaphors and programming by demonstration
-**Unlike** traditional text-based programming or simplified block-based coding
-**Our product** provides a deeply interactive, game-like experience where abstract concepts become tangible objects that can be manipulated, combined, and automated.
+**Unlike** text-based programming or simplified block coding
+**Our product** provides a deeply interactive, game-like experience where abstract concepts become tangible objects.
 
 ## Target Users
 
@@ -92,137 +95,174 @@ The JavaScript implementation has accumulated technical debt and relies on aging
 2. **Educators**
    - Teachers introducing computational thinking
    - After-school program leaders
-   - Parents doing homeschool education
+   - Homeschool parents
 
 3. **Curious Adults**
-   - People interested in alternative programming paradigms
-   - Those who find traditional programming intimidating
-   - Concurrent programming enthusiasts
+   - Alternative programming paradigm enthusiasts
+   - Those intimidated by traditional programming
+   - Concurrent programming learners
 
 ### Secondary Users
 
-1. **Researchers**
-   - Computer science education researchers
-   - Programming language researchers
-   - HCI researchers
+1. **Researchers**: CS education, programming languages, HCI
+2. **Developers**: Rust/WASM game development, educational software
 
-2. **Developers**
-   - Those interested in Rust/WASM game development
-   - Contributors to educational software
+## Requirements by Phase
 
-## Requirements
+### Phase 1: MVP (ToonTalk Reborn Parity)
 
-### Functional Requirements
+Goal: Match the core functionality of the 2017 JavaScript version.
 
-#### FR1: Core Widgets
+#### FR1: Core Widgets (MVP)
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR1.1 | Numbers with rational arithmetic (arbitrary precision) | Must Have |
-| FR1.2 | Boxes (containers with numbered compartments) | Must Have |
-| FR1.3 | Birds and Nests (message passing) | Must Have |
-| FR1.4 | Robots (programmable agents trained by demonstration) | Must Have |
-| FR1.5 | Scales (comparison operations) | Must Have |
-| FR1.6 | Sensors (keyboard, mouse, touch events) | Must Have |
-| FR1.7 | Elements (HTML/SVG content) | Should Have |
-| FR1.8 | Function birds (mathematical functions) | Should Have |
-| FR1.9 | Houses (process containers) | Should Have |
-| FR1.10 | Trucks (process spawners) | Should Have |
-| FR1.11 | Bombs (process terminators) | Should Have |
+| ID | Widget | Priority | Status |
+|----|--------|----------|--------|
+| FR1.1 | Number (rational arithmetic, operators) | Must Have | ✅ Done |
+| FR1.2 | Box (container with holes) | Must Have | ✅ Done |
+| FR1.3 | Text (string widget) | Must Have | ✅ Done |
+| FR1.4 | Robot (programmable agent) | Must Have | ✅ Done |
+| FR1.5 | Scales (comparison) | Must Have | ✅ Done |
+| FR1.6 | Bird (message carrier) | Must Have | ❌ Pending |
+| FR1.7 | Nest (message receiver) | Must Have | ❌ Pending |
+| FR1.8 | Sensor (event detection) | Should Have | ❌ Pending |
 
-#### FR2: Tools
+#### FR2: Tools (MVP)
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR2.1 | Magic Wand for copying objects | Must Have |
-| FR2.2 | Dusty the Vacuum for removing/erasing objects | Must Have |
-| FR2.3 | Pumpy the Bike Pump for resizing objects | Should Have |
-| FR2.4 | Selection tool for multi-select operations | Should Have |
-| FR2.5 | Notebook for program storage and modules | Should Have |
+| ID | Tool | Priority | Status |
+|----|------|----------|--------|
+| FR2.1 | Wand (copy) | Must Have | ✅ Done |
+| FR2.2 | Vacuum (remove) | Must Have | ✅ Done |
+| FR2.3 | Vacuum (erase - pattern creation) | Should Have | ❌ Pending |
 
-#### FR3: Robot Programming
+#### FR3: Robot Programming (MVP)
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR3.1 | Train robots by demonstrating actions | Must Have |
-| FR3.2 | Set frontside conditions (pattern matching) | Must Have |
-| FR3.3 | Set backside conditions (additional constraints) | Must Have |
-| FR3.4 | Chain robots (sequential execution) | Must Have |
-| FR3.5 | Run robots watched (step-by-step visualization) | Must Have |
-| FR3.6 | Run robots unwatched (full speed) | Must Have |
-| FR3.7 | Generalize patterns using erasure | Must Have |
-| FR3.8 | Robot teams (alternative behaviors) | Should Have |
+| ID | Feature | Priority | Status |
+|----|---------|----------|--------|
+| FR3.1 | Train by demonstration | Must Have | ✅ Done |
+| FR3.2 | Record action sequence | Must Have | ✅ Done |
+| FR3.3 | Execute unwatched | Must Have | ✅ Done |
+| FR3.4 | Pattern matching (conditions) | Must Have | ❌ Pending |
+| FR3.5 | Erasure for generalization | Must Have | ❌ Pending |
+| FR3.6 | Watched execution (animated) | Should Have | ❌ Pending |
+| FR3.7 | Robot chaining | Should Have | ❌ Pending |
 
-#### FR4: Concurrency and Processes
+#### FR4: Workspace (MVP)
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR4.1 | Houses as visual process containers | Should Have |
-| FR4.2 | Multiple concurrent processes (houses) | Should Have |
-| FR4.3 | Spawn new process via truck (drop robot+box) | Should Have |
-| FR4.4 | Terminate process via bomb | Should Have |
-| FR4.5 | Inter-process communication via birds/nests | Must Have |
-| FR4.6 | City view showing all houses/processes | Could Have |
-| FR4.7 | Helicopter navigation between houses | Could Have |
+| ID | Feature | Priority | Status |
+|----|---------|----------|--------|
+| FR4.1 | Drag and drop | Must Have | ✅ Done |
+| FR4.2 | Copy sources (palette) | Must Have | ✅ Done |
+| FR4.3 | Help panel | Must Have | ✅ Done |
+| FR4.4 | Widget tooltips | Should Have | ✅ Done |
 
-#### FR5: Workspace
+#### FR5: Persistence (MVP)
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR5.1 | Drag and drop widgets | Must Have |
-| FR5.2 | Resize widgets | Must Have |
-| FR5.3 | Widget backside access (flip to configure) | Must Have |
-| FR5.4 | Multiple workspaces | Should Have |
-| FR5.5 | Zoom and pan | Should Have |
-| FR5.6 | Undo/Redo | Should Have |
+| ID | Feature | Priority | Status |
+|----|---------|----------|--------|
+| FR5.1 | Save to localStorage | Must Have | ❌ Pending |
+| FR5.2 | Load from localStorage | Must Have | ❌ Pending |
+| FR5.3 | Export to file | Must Have | ❌ Pending |
+| FR5.4 | Import from file | Must Have | ❌ Pending |
 
-#### FR6: Persistence
+### Phase 2: Extended MVP
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR6.1 | Save to browser local storage | Must Have |
-| FR6.2 | Load from local storage | Must Have |
-| FR6.3 | Export to file | Must Have |
-| FR6.4 | Import from file | Must Have |
-| FR6.5 | Cloud storage integration | Could Have |
-| FR6.6 | Share via URL | Could Have |
+Goal: Polish and extend beyond basic ToonTalk Reborn.
 
-#### FR7: Audio/Speech
+#### FR6: Advanced Features
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR7.1 | Sound effects for interactions | Should Have |
-| FR7.2 | Text-to-speech for instructions/feedback | Could Have |
-| FR7.3 | Pre-generated speech assets | Could Have |
-| FR7.4 | Dynamic TTS during execution | Could Have |
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR6.1 | Backside views (widget configuration) | Should Have |
+| FR6.2 | Text explosion (text → letters in box) | Should Have |
+| FR6.3 | Box labels | Should Have |
+| FR6.4 | Scales in box holes | Should Have |
+| FR6.5 | Element widget (HTML/SVG) | Could Have |
+| FR6.6 | Import ToonTalk Reborn JSON | Should Have |
 
-#### FR8: Compatibility
+#### FR7: UX Improvements
 
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR8.1 | Import ToonTalk Reborn JSON programs | Should Have |
-| FR8.2 | Export to ToonTalk Reborn format | Could Have |
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR7.1 | Undo/redo | Should Have |
+| FR7.2 | Zoom and pan | Should Have |
+| FR7.3 | URL-based sharing | Could Have |
+| FR7.4 | Multiple workspaces | Could Have |
 
-### Non-Functional Requirements
+### Phase 3: Original ToonTalk Features
 
-#### NFR1: Performance
+Goal: Restore the full concurrency model from the original.
+
+#### FR8: Houses & City
+
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR8.1 | House widget (process container) | Should Have |
+| FR8.2 | City view (multiple houses) | Should Have |
+| FR8.3 | Enter/exit house navigation | Should Have |
+
+#### FR9: Process Management
+
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR9.1 | Truck (process spawner) | Should Have |
+| FR9.2 | Bomb (process terminator) | Should Have |
+| FR9.3 | Helicopter navigation | Could Have |
+
+#### FR10: Additional Tools
+
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR10.1 | Pumpy (resize tool) | Could Have |
+| FR10.2 | Notebook (program storage) | Could Have |
+| FR10.3 | Robot teams | Could Have |
+
+### Phase 4: Future Innovations
+
+Goal: Go beyond original ToonTalk with modern capabilities.
+
+#### FR11: Modern Graphics
+
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR11.1 | Three.js 3D rendering | Could Have |
+| FR11.2 | Physics-based animations | Could Have |
+| FR11.3 | VR/AR support | Could Have |
+
+#### FR12: Educational Enhancements
+
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR12.1 | Design pattern library | Could Have |
+| FR12.2 | AI-assisted training | Could Have |
+| FR12.3 | Classroom/collaboration mode | Could Have |
+
+#### FR13: Audio/Speech
+
+| ID | Feature | Priority |
+|----|---------|----------|
+| FR13.1 | Sound effects | Could Have |
+| FR13.2 | Text-to-speech | Could Have |
+
+## Non-Functional Requirements
+
+### NFR1: Performance
 
 | ID | Requirement | Target |
 |----|-------------|--------|
-| NFR1.1 | Initial load time | < 3 seconds on broadband |
+| NFR1.1 | Initial load time | < 3 seconds |
 | NFR1.2 | WASM binary size | < 2MB compressed |
-| NFR1.3 | Frame rate during animations | 60 FPS |
-| NFR1.4 | Robot execution speed (unwatched) | 10,000+ steps/second |
+| NFR1.3 | Animation frame rate | 60 FPS |
+| NFR1.4 | Robot execution speed | 10,000+ steps/second |
 
-#### NFR2: Compatibility
+### NFR2: Compatibility
 
 | ID | Requirement | Target |
 |----|-------------|--------|
-| NFR2.1 | Browser support | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+ |
-| NFR2.2 | Device support | Desktop, tablet (touch support) |
-| NFR2.3 | Screen sizes | 1024x768 minimum |
+| NFR2.1 | Browsers | Chrome 90+, Firefox 90+, Safari 15+, Edge 90+ |
+| NFR2.2 | Devices | Desktop, tablet (touch support) |
+| NFR2.3 | Screen size | 1024x768 minimum |
 
-#### NFR3: Accessibility
+### NFR3: Accessibility
 
 | ID | Requirement | Priority |
 |----|-------------|----------|
@@ -231,60 +271,21 @@ The JavaScript implementation has accumulated technical debt and relies on aging
 | NFR3.3 | High contrast mode | Could Have |
 | NFR3.4 | Configurable animation speed | Should Have |
 
-#### NFR4: Usability
+### NFR4: Code Quality
 
 | ID | Requirement | Target |
 |----|-------------|--------|
-| NFR4.1 | Time to first interaction | < 10 seconds |
-| NFR4.2 | Discoverable features | 80% without documentation |
-| NFR4.3 | Error recovery | Clear, non-technical messages |
-
-#### NFR5: Quality
-
-| ID | Requirement | Target |
-|----|-------------|--------|
-| NFR5.1 | Test coverage | > 80% for domain logic |
-| NFR5.2 | Crash rate | < 0.1% of sessions |
-| NFR5.3 | Memory leaks | None detectable |
-
-### Visual Design Requirements
-
-#### VR1: Modern Aesthetics
-
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| VR1.1 | Replace Lego-like graphics with modern 3D/SVG | Must Have |
-| VR1.2 | Consistent visual language across widgets | Must Have |
-| VR1.3 | Smooth animations for all state changes | Must Have |
-| VR1.4 | Appealing color palette | Must Have |
-
-#### VR2: Widget Visuals
-
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| VR2.1 | Numbers: Clean, readable typography | Must Have |
-| VR2.2 | Boxes: 3D appearance with clear compartments | Must Have |
-| VR2.3 | Birds: Animated flight paths | Must Have |
-| VR2.4 | Robots: Expressive animations (working, waiting, done) | Must Have |
-| VR2.5 | Nests: Egg hatching animation when receiving messages | Must Have |
-| VR2.6 | Scales: Physics-based tipping animation | Should Have |
-
-#### VR3: Rendering Technologies
-
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| VR3.1 | Three.js for 3D graphics | Should Have |
-| VR3.2 | SVG for scalable 2D graphics | Must Have |
-| VR3.3 | CSS animations for UI transitions | Must Have |
-| VR3.4 | d3.js for data visualization elements | Could Have |
+| NFR4.1 | Test coverage | > 80% domain logic |
+| NFR4.2 | sw-checklist compliance | Pass all checks |
+| NFR4.3 | Zero clippy warnings | Enforced |
 
 ## User Stories
 
-### Essential User Stories
+### MVP Stories
 
 1. **As a child**, I want to drag a number onto another number to add them, so I can do arithmetic visually.
 
-2. **As a child**, I want to train a robot by showing it what to do, so I can automate repetitive tasks.
+2. **As a child**, I want to train a robot by showing it what to do, so I can automate tasks.
 
 3. **As a child**, I want to give something to a bird and watch it fly to its nest, so I can understand message passing.
 
@@ -296,122 +297,129 @@ The JavaScript implementation has accumulated technical debt and relies on aging
 
 7. **As a user**, I want to erase parts of a pattern, so my robot can work with many different inputs.
 
-### Advanced User Stories
+### Advanced Stories
 
-8. **As an advanced user**, I want to create recursive programs using birds and nests, so I can compute things like factorials.
+8. **As an advanced user**, I want to create recursive programs using birds and nests, so I can compute factorials.
 
-9. **As an advanced user**, I want multiple robots to run concurrently, so I can build complex parallel systems.
+9. **As an advanced user**, I want multiple robots in different houses, so I can build parallel systems.
 
-10. **As an educator**, I want to import programs from ToonTalk Reborn, so I can use existing curricula.
-
-## Constraints
-
-### Technical Constraints
-
-1. Must run entirely in the browser (no server-side execution)
-2. Must compile to WebAssembly from Rust
-3. Maximum JavaScript usage limited to browser API bindings
-4. Must work without plugins or extensions
-
-### Legal Constraints
-
-1. Must maintain BSD license compatibility
-2. Must preserve original copyright notices
-3. Must properly attribute derived work
-
-### Resource Constraints
-
-1. Single primary developer
-2. No dedicated design resources initially
-3. Open source, community-driven development
-
-## Success Metrics
-
-### Launch Metrics (MVP)
-
-- Core widgets functional (number, box, robot, bird/nest)
-- Save/load working
-- 3 example programs demonstrating capabilities
-- Basic documentation complete
-
-### Growth Metrics (Post-Launch)
-
-- Monthly active users
-- Programs created and saved
-- Community contributions (issues, PRs)
-- Educational deployments
+10. **As an educator**, I want to import ToonTalk Reborn programs, so I can use existing curricula.
 
 ## Milestones
 
-### Milestone 1: Foundation (MVP)
-- Basic widget system
+### Milestone 1: Foundation ✅ Complete
+- Widget trait system
+- Number, Box, Text widgets
 - Drag and drop
-- Number arithmetic
-- Box containers
-- Persistence
+- Basic tools (Wand, Vacuum)
 
-### Milestone 2: Programming
-- Robot training
-- Pattern matching
-- Robot execution
-- Bird/nest messaging
+### Milestone 2: Robot Programming (In Progress)
+- Robot training ✅
+- Action recording ✅
+- Basic execution ✅
+- Pattern matching ❌
+- Erasure system ❌
 
-### Milestone 3: Polish
-- Modern graphics (Three.js/SVG)
-- Animations
-- Sound effects
-- UI polish
+### Milestone 3: Messaging (Next)
+- Bird widget
+- Nest widget
+- Message delivery animation
+- Robot waits for nest
 
-### Milestone 4: Ecosystem
-- Import/export
-- Sharing
-- Documentation
-- Examples
+### Milestone 4: Persistence
+- JSON serialization
+- Save/load workspace
+- File import/export
 
-## Appendix
+### Milestone 5: Polish
+- Watched execution
+- Backside views
+- Sensors
+- UX improvements
 
-### Glossary
+### Milestone 6: Original Features
+- Houses and city
+- Trucks and bombs
+- Helicopter navigation
 
-**Core Concepts:**
-- **Widget**: Any visual object in the application (number, box, robot, etc.)
-- **Backside**: The configuration/programming interface of a widget
-- **Robot**: An automated agent that performs recorded actions
-- **Training**: The process of teaching a robot by demonstration
-- **Thought Bubble**: The robot's conditions (pattern) that must match before it works
+### Milestone 7: Innovations
+- 3D graphics
+- Sound/speech
+- Advanced features
 
-**Communication:**
-- **Bird**: A messenger that carries items to its associated nest
-- **Nest**: A receiver of messages delivered by its bird
+## Constraints
 
-**Data:**
-- **Box**: A container with numbered compartments (holes)
-- **Number**: A rational number with optional arithmetic operator
-- **Text**: A text string widget
+### Technical
+- Must run entirely in browser (no server execution)
+- Must compile to WebAssembly from Rust
+- Minimal JavaScript (only browser API bindings)
 
-**Comparison:**
-- **Scale**: A comparison widget that tips based on placed values
+### Legal
+- BSD license compatibility
+- Preserve original copyright notices
+- Proper derived work attribution
 
-**Process/Concurrency (from Original ToonTalk):**
-- **House**: A process container where robots work on boxes
-- **City**: The entire program consisting of multiple houses (processes)
-- **Truck**: Process spawner (load with robot+box to create new house)
-- **Bomb**: Process terminator (destroys a house)
-- **Helicopter**: Navigation tool for flying between houses (city view)
+### Resources
+- Single primary developer
+- Open source, community-driven
 
-**Tools:**
-- **Wand (Magic Wand)**: A tool for copying widgets
-- **Vacuum (Dusty)**: A tool for removing/erasing widgets (three modes: suck, erase, spit)
-- **Pump (Pumpy)**: A tool for resizing widgets
-- **Notebook**: Program storage; when dropped in truck, becomes module/package
+## Success Metrics
 
-**Events:**
-- **Sensor**: A widget that responds to browser events (keyboard, mouse, touch)
+### MVP Launch
+- Core widgets functional
+- Save/load working
+- 3+ example programs
+- Basic documentation
 
-### References
+### Post-Launch
+- Monthly active users
+- Programs created
+- Community contributions
+- Educational deployments
+
+## Glossary
+
+### Core Concepts
+- **Widget**: Any visual object (number, box, robot, etc.)
+- **Backside**: Widget's configuration/programming interface
+- **Robot**: Automated agent performing recorded actions
+- **Training**: Teaching a robot by demonstration
+- **Thought Bubble**: Robot's conditions that must match
+
+### Communication
+- **Bird**: Messenger carrying items to its nest
+- **Nest**: Receiver of messages from its bird
+
+### Data
+- **Box**: Container with numbered compartments (holes)
+- **Number**: Rational number with optional operator
+- **Text**: Text string widget
+
+### Comparison
+- **Scale**: Widget that tips based on value comparison
+
+### Process (Original ToonTalk)
+- **House**: Process container where robots work
+- **City**: Program with multiple houses
+- **Truck**: Process spawner
+- **Bomb**: Process terminator
+- **Helicopter**: City navigation tool
+
+### Tools
+- **Wand**: Copy tool
+- **Vacuum (Dusty)**: Remove/erase tool
+- **Pump (Pumpy)**: Resize tool
+- **Notebook**: Program storage and module container
+
+### Events
+- **Sensor**: Widget responding to browser events
+
+## References
 
 - [ToonTalk Wikipedia](https://en.wikipedia.org/wiki/ToonTalk)
 - [ToonTalk Papers](http://toontalk.com/English/papers.htm)
 - [ToonTalk Reborn Wiki](https://github.com/ToonTalk/ToonTalk/wiki)
+- [ToonTalk Reborn Demo](https://toontalk.github.io/ToonTalk/)
 - [Ken Kahn's Homepage](https://toontalk.com/English/kenkahn.htm)
 
 ## License

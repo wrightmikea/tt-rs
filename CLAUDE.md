@@ -8,6 +8,31 @@ tt-rs ("Cartoon-oriented Talking Programming Application") is a Rust/WebAssembly
 
 This is a derived work based on ToonTalk by Ken Kahn. See COPYRIGHT and LICENSE files.
 
+### Current Implementation Status (November 2025)
+
+**Working Features:**
+- Number widget (rational arithmetic with +, -, *, / operators)
+- Box widget (configurable holes 0-9, contents management)
+- Text widget (basic display)
+- Scales widget (numeric comparison, tipping animation)
+- Robot widget (training mode, action recording, basic execution)
+- Tools: Wand (copy), Vacuum (remove)
+- Drag-and-drop with visual feedback
+- Box joining (drop box on edge of another)
+- Box splitting (drop box on number)
+- Help panel with tutorials
+
+**In Progress:**
+- Pattern matching and erasure system
+- Watched robot execution
+
+**Next Priorities:**
+1. Bird/Nest messaging (core ToonTalk feature)
+2. Pattern matching with erasure
+3. Persistence (save/load workspaces)
+
+See [plan.md](documentation/plan.md) for detailed roadmap.
+
 ## IMPORTANT: Always Use Project Scripts
 
 **Always use project scripts for building and serving.** This prevents regressions and ensures reproducible builds.
@@ -55,18 +80,22 @@ This project uses a **multi-component architecture** where each component is an 
 
 ```
 components/
-├── core/     → Widget trait, WidgetId, MatchResult (no dependencies)
-├── widgets/  → Number, Text, Box implementations (depends on core)
-├── dnd/      → Drag-and-drop, UI components (depends on core)
-└── app/      → WASM entry point, Trunk config (depends on all above)
+├── core/       → Widget trait, WidgetId, MatchResult (no dependencies)
+├── widgets/    → Number, Text, Box, Robot, Scales, Wand, Vacuum
+├── dnd/        → Drag-and-drop, UI components (Help, Tooltip)
+├── state/      → Position, BoxContents, TrainingState
+├── handlers/   → Hit testing utilities
+├── commands/   → Command pattern (Move, Remove)
+└── app/        → WASM entry point, Trunk config (depends on all)
 ```
 
-**Dependency flow**: `core` ← `widgets` ← `dnd` ← `app`
+**Dependency flow**: `core` ← `widgets` ← `dnd` ← `state/handlers/commands` ← `app`
 
 ### Key Files
 
 - `components/app/crates/tt-rs-app/index.html` - Trunk entry point
 - `components/core/crates/tt-rs-core/src/widget_trait.rs` - Core `Widget` trait
+- `components/app/crates/tt-rs-app/src/demo.rs` - Demo widget setup
 - `docs/` - GitHub Pages deployment (built output, not source)
 
 ### Building Components
@@ -107,7 +136,7 @@ pub trait Widget: std::fmt::Debug {
 }
 ```
 
-**Implemented widgets**: Number (rational arithmetic), Text, Box (container with holes)
+**Implemented widgets**: Number, Text, Box, Robot, Scales, Wand, Vacuum
 
 ## Technology Stack
 
@@ -134,6 +163,14 @@ Run `./scripts/build-all.sh` or manually:
 - All public APIs have doc comments
 - Rust 2024 edition idioms
 - Use inline format args: `format!("{name}")` not `format!("{}", name)`
+
+### Adding New Widgets
+
+1. Create new crate in `components/widgets/crates/tt-rs-<name>/`
+2. Implement `Widget` trait from `tt-rs-core`
+3. Add to widget enum in app component
+4. Add copy source for palette
+5. Update help panel documentation
 
 ## DEPLOYMENT CHECKLIST - MANDATORY
 
@@ -183,10 +220,28 @@ git push
 - [ ] Test locally if possible
 - [ ] Check live demo after push
 
+## ToonTalk Background
+
+ToonTalk exists in three versions:
+
+1. **Original ToonTalk (1995)**: 3D C++ desktop app with cities, houses, trucks, bombs, helicopter
+2. **ToonTalk Reborn (2014-2017)**: JavaScript/jQuery web version, simplified (no houses/city)
+3. **tt-rs (this project)**: Rust/WASM reimplementation
+
+**Current goal**: Match ToonTalk Reborn features, then add original ToonTalk features, then innovate.
+
+Key concepts:
+- **Robot**: Trained by demonstration, executes recorded actions
+- **Bird/Nest**: Asynchronous message passing (actor model)
+- **Box**: Container with numbered holes
+- **Scales**: Visual comparison
+- **Erasure**: Generalize patterns by removing detail
+
 ## Documentation
 
-- [architecture.md](documentation/architecture.md) - System design
-- [prd.md](documentation/prd.md) - Product requirements
-- [design.md](documentation/design.md) - Technical design
-- [plan.md](documentation/plan.md) - Implementation roadmap
+- [architecture.md](documentation/architecture.md) - System design and actual implementation
+- [prd.md](documentation/prd.md) - Product requirements with status tracking
+- [design.md](documentation/design.md) - Technical design decisions
+- [plan.md](documentation/plan.md) - Implementation roadmap with next steps
 - [learnings.md](documentation/learnings.md) - **Solutions to issues encountered** (read this first!)
+- [tutorials-roadmap.md](documentation/tutorials-roadmap.md) - Demo and tutorial planning
