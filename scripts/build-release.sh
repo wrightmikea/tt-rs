@@ -49,6 +49,20 @@ else
     exit 1
 fi
 
+# Check for broken absolute asset paths (leading / without /tt-rs/)
+# These break on GitHub Pages subdirectory deployment
+BROKEN_PATHS=$(grep -oE 'src="/[^t][^"]*"' "$DOCS_DIR/index.html" 2>/dev/null || true)
+if [ -n "$BROKEN_PATHS" ]; then
+    echo "FAIL: Found absolute asset paths that will break on GitHub Pages:"
+    echo "$BROKEN_PATHS"
+    echo ""
+    echo "Asset paths should be relative (no leading /) or use /tt-rs/ prefix."
+    echo "See documentation/learnings.md for details."
+    exit 1
+else
+    echo "PASS: No broken absolute asset paths found"
+fi
+
 echo ""
 echo "=== Release build complete ==="
 echo "Files in $DOCS_DIR ready for GitHub Pages deployment"

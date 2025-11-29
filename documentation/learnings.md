@@ -241,3 +241,34 @@ cargo fmt --all -- --check
 # Build for deployment
 ./scripts/build-release.sh
 ```
+
+---
+
+## Asset Paths for GitHub Pages Subdirectory Deployment
+
+**Problem:** Images and assets fail to load on GitHub Pages when the site is deployed to a subdirectory (e.g., `https://username.github.io/repo-name/`).
+
+**Root Cause:** Absolute paths with leading `/` resolve to the domain root, not the subdirectory.
+
+| Path Format | Resolves To | Works on GH Pages? |
+|-------------|-------------|-------------------|
+| `/images/foo.svg` | `https://username.github.io/images/foo.svg` | NO |
+| `images/foo.svg` | `https://username.github.io/repo-name/images/foo.svg` | YES |
+
+**Solution:** Always use **relative paths without leading `/`** for assets in Rust/Yew code:
+
+```rust
+// WRONG - breaks on GitHub Pages subdirectory
+<img src="/images/tt-bird.svg" />
+
+// CORRECT - works everywhere
+<img src="images/tt-bird.svg" />
+```
+
+**Why this happens:**
+- During development with `trunk serve`, the app is served from `/`, so both formats work
+- On GitHub Pages project sites, the app is served from `/repo-name/`, breaking absolute paths
+
+**Prevention:** The `build-release.sh` script validates that no absolute asset paths exist in the built HTML before deployment.
+
+---

@@ -19,7 +19,7 @@ pub fn render(nest: &Nest) -> Html {
         <div class={class}
              data-widget-id={widget_id}
              data-copy-source={is_copy_source.to_string()}>
-            <img src="/images/tt-nest.svg" alt="Nest" class="nest-img"/>
+            <img src="images/tt-nest.svg" alt="Nest" class="nest-img"/>
             if msg_count > 0 {
                 <div class="nest-badge">{msg_count}</div>
             }

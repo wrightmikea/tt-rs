@@ -4,6 +4,8 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
+- fix: Use relative paths for Bird/Nest SVG assets (GitHub Pages fix) (`<latest>`)
+- feat: Add CHANGELOG and compact footer with links (`aeafd1c`)
 - deploy: Update live demo with user level selector and tt2 help (`61abe9c`)
 - fix: tt2 help shows only messaging and about sections (`839bd30`)
 - feat: Add user level selector and Bird/Nest messaging (`a7cbcb5`)

@@ -18,7 +18,7 @@ pub fn render(bird: &Bird) -> Html {
         <div class={class}
              data-widget-id={widget_id}
              data-copy-source={is_copy_source.to_string()}>
-            <img src="/images/tt-bird.svg" alt="Bird" class="bird-img"/>
+            <img src="images/tt-bird.svg" alt="Bird" class="bird-img"/>
         </div>
     }
 }
