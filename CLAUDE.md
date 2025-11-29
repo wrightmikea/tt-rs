@@ -50,6 +50,12 @@ See [plan.md](documentation/plan.md) for detailed roadmap.
 
 # Production build for GitHub Pages
 ./scripts/build-release.sh   # Build and copy to docs/
+
+# Automation scripts (run routinely to reduce manual work)
+./scripts/pre-commit-checks.sh      # Run all checks before committing
+./scripts/check-live-demo.sh        # Verify live demo is up to date
+./scripts/check-changelog.sh        # Verify CHANGELOG completeness
+./scripts/update-readme-screenshots.sh  # Update screenshot timestamps
 ```
 
 **Before starting development:** Read [learnings.md](documentation/learnings.md) for solutions to common issues.
