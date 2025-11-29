@@ -4,7 +4,8 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- feat: Timestamped screenshots and service worker for cache bypass (`<latest>`)
+- deploy: Update live demo with service worker for cache bypass (`<latest>`)
+- feat: Timestamped screenshots and service worker for cache bypass (`04c2ebe`)
 - chore: Delete unused screenshots and update cache-busting timestamps (`3ada2ff`)
 - docs: Sync CHANGELOG with all recent commits and enhance checkpoint command (`34333b8`)
 - feat: Add /checkpoint command for full deployment workflow (`985c548`)
