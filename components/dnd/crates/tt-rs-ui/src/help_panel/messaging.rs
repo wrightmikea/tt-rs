@@ -7,44 +7,53 @@ pub fn messaging_content() -> Html {
         <div class="help-section">
             <h4>{"What are Birds and Nests?"}</h4>
             <p>
-                {"Birds and Nests work together to pass messages between \
-                 different parts of your program - like sending a letter!"}
+                {"Birds and Nests enable message passing - a bird carries \
+                 items to its paired nest. Think of it like carrier pigeons!"}
             </p>
 
-            <h4>{"Hatching: Creating a Bird/Nest Pair"}</h4>
-            <p>{"Click on the Nest in the tool area to \"hatch\" it:"}</p>
+            <h4>{"Current Status"}</h4>
+            <p>
+                {"Hatching and basic message delivery work. \
+                 Robots using nests as input is planned for a future update."}
+            </p>
+
+            <h4>{"Hatching: Create a Bird/Nest Pair"}</h4>
+            <p>{"Click the Nest icon to create a paired bird and nest:"}</p>
             <ul>
-                <li>{"A new Nest appears where you clicked"}</li>
-                <li>{"A Bird appears next to it, already paired"}</li>
-                <li>{"This bird will always deliver to this nest"}</li>
+                <li>{"A Nest appears where you clicked"}</li>
+                <li>{"A Bird appears next to it, already linked"}</li>
+                <li>{"This bird will always deliver to THIS nest"}</li>
             </ul>
 
             <h4>{"Sending a Message"}</h4>
-            <p>{"To send something via the bird:"}</p>
             <ol>
-                <li>{"Create a number (click a number stack)"}</li>
+                <li>{"Create a number (click +1 or +5)"}</li>
                 <li>{"Drag the number onto the Bird"}</li>
-                <li>{"The bird delivers it - number appears at the Nest!"}</li>
+                <li>{"The number is consumed and appears at the Nest"}</li>
             </ol>
 
-            <h4>{"Try It: Send the Number 42"}</h4>
+            <h4>{"Try It Now"}</h4>
             <div class="help-example">
-                <p>{"1. Click the Nest stack to hatch a bird/nest pair"}</p>
-                <p>{"2. Drag the bird to the right side of the screen"}</p>
-                <p>{"3. Click +5 eight times, then +1 twice to make 42"}</p>
-                <p>{"4. Drag the 42 onto the bird"}</p>
-                <p>{"5. Watch: 42 appears at the nest!"}</p>
+                <p>{"1. Click the Nest icon to hatch a bird/nest pair"}</p>
+                <p>{"2. Drag the bird away from the nest"}</p>
+                <p>{"3. Click +5 to create a number"}</p>
+                <p>{"4. Drag the 5 onto the bird"}</p>
+                <p>{"5. The 5 appears at the nest!"}</p>
             </div>
 
             <h4>{"Why Use Messaging?"}</h4>
             <p>
-                {"Messaging lets robots work together. One robot can compute \
-                 a result and send it to another robot via a bird. This is \
-                 how real programs coordinate multiple tasks!"}
+                {"Message passing is fundamental to concurrent programming. \
+                 Once robots can watch nests, you'll be able to:"}
             </p>
+            <ul>
+                <li>{"Send work to robots in different locations"}</li>
+                <li>{"Collect results from parallel computations"}</li>
+                <li>{"Create pipelines where output flows to the next stage"}</li>
+            </ul>
             <p class="help-tip">
-                {"Advanced: Create two bird/nest pairs for two-way \
-                 communication between robots."}
+                {"Coming soon: Robots that wait for messages, enabling \
+                 true concurrent programming patterns."}
             </p>
         </div>
     }

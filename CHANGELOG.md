@@ -4,7 +4,10 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- fix: Reduce scales icon size to match other tools (`<latest>`)
+- fix: Move z-index from inline styles to CSS hierarchy; update bird/nest tutorial (`<latest>`)
+- fix: Update my-checkpoint command to use Playwright for screenshots (`b098130`)
+- deploy: Update live demo with scales icon fix (`4f60514`)
+- fix: Reduce scales icon size to match other tools (`912d91b`)
 - deploy: Update live demo with CHANGELOG sync (`438050d`)
 - docs: Update CHANGELOG with recent commits (`3ef278a`)
 - fix: Rename slash command file to my-checkpoint.md (`f1dac88`)

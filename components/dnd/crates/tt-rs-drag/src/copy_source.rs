@@ -114,11 +114,10 @@ pub fn copy_source(props: &CopySourceProps) -> Html {
         })
     };
 
+    // z-index handled by CSS (.copy-source-stack has z-index: 1, lower than widgets)
     let style = format!(
-        "position: absolute; left: {}px; top: {}px; cursor: grab; z-index: {};",
-        current_pos.x,
-        current_pos.y,
-        if *is_dragging { 100 } else { 1 }
+        "position: absolute; left: {}px; top: {}px; cursor: grab;",
+        current_pos.x, current_pos.y
     );
 
     html! {

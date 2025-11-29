@@ -92,6 +92,18 @@ if [ "$HAS_UI_CHANGES" = true ]; then
     ./scripts/update-readme-screenshots.sh 2>/dev/null || true
 fi
 
+# 5.5. Check z-index hierarchy if UI changed
+if [ "$HAS_UI_CHANGES" = true ]; then
+    echo ""
+    echo "--- Checking z-index hierarchy ---"
+    if ./scripts/check-zindex.sh; then
+        echo "  (see output above)"
+    else
+        ERRORS=$((ERRORS + 1))
+        add_instruction "Fix z-index issues. See scripts/check-zindex.sh for details."
+    fi
+fi
+
 # 6. Check documentation freshness
 echo ""
 echo "--- Checking documentation freshness ---"

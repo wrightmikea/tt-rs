@@ -304,14 +304,33 @@ if let Some(num_holes) = pending {
 
 **Problem:** Widgets created by clicking on copy source stacks appeared "under" the stacks, making them impossible to drag.
 
-**Root Cause:** Copy sources (stacks) and draggable widgets both used default z-index, so DOM order determined stacking. New widgets appeared behind stacks.
+**Root Cause:** Inline z-index values in Rust code were overriding the CSS class-based z-index hierarchy.
 
-**Solution:** Use explicit z-index values:
-- Copy sources (stacks): `z-index: 1` (low, background)
-- Normal draggable widgets: `z-index: 10` (above stacks)
-- Widgets being dragged: `z-index: 100` (topmost)
+**Solution:** All z-index values are defined in CSS only, NOT in Rust code. The CSS uses CSS custom properties for maintainability:
 
-This ensures newly created widgets always appear above their source stacks.
+```css
+:root {
+    --z-copy-source-behind: 1;   /* Copy source stacks (behind everything) */
+    --z-containers: 10;          /* Boxes */
+    --z-values: 20;              /* Numbers, Text */
+    --z-comparison: 30;          /* Scales */
+    --z-agents: 40;              /* Robot, Bird, Nest */
+    --z-tools: 50;               /* Vacuum, Wand */
+    --z-tooltip-hover: 100;      /* Tooltips */
+    --z-dragging: 200;           /* Widget being dragged */
+}
+```
+
+**Key Principle:** z-index must be set in CSS classes, NOT in Rust inline styles. This allows:
+- Different widget types to have appropriate stacking order
+- Consistent behavior regardless of DOM creation order
+- Easy maintenance via CSS variables
+
+**Validation:** Run `./scripts/check-zindex.sh` to verify:
+1. CSS variables are defined correctly
+2. No inline z-index in Rust format strings
+
+**Pre-commit:** The z-index check is included in `./scripts/pre-commit-checks.sh` for UI changes.
 
 ---
 

@@ -8,11 +8,11 @@
    Z-INDEX HIERARCHY
    ========================================
    Layer order (lowest to highest):
-   1. Copy source stacks (behind): -1
+   1. Copy source stacks (behind): 1
    2. Boxes/containers: 10
    3. Values (numbers, text): 20
    4. Comparison (scales): 30
-   5. Agents (robot, nest): 40
+   5. Agents (robot, bird, nest): 40
    6. Tools (vacuum, wand): 50
    7. Tooltips (hovered widget): 100
    8. Dragging widgets: 200 (above tooltips during drag)
@@ -20,7 +20,7 @@
    10. Help panel: 950
    ======================================== */
 :root {
-    --z-copy-source-behind: -1;
+    --z-copy-source-behind: 1;
     --z-containers: 10;
     --z-values: 20;
     --z-comparison: 30;
@@ -95,6 +95,11 @@ html, body {
     width: 100%;
     height: calc(100% - 2.5rem - 2rem);
     position: relative;
+}
+
+/* Copy source stacks - behind all draggable widgets */
+.copy-source-stack {
+    z-index: var(--z-copy-source-behind);
 }
 
 /* Draggable wrapper - base z-index set per widget type */
