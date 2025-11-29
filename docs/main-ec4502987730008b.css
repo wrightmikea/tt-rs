@@ -4,6 +4,34 @@
     padding: 0;
 }
 
+/* ========================================
+   Z-INDEX HIERARCHY
+   ========================================
+   Layer order (lowest to highest):
+   1. Copy source stacks (behind): -1
+   2. Boxes/containers: 10
+   3. Values (numbers, text): 20
+   4. Comparison (scales): 30
+   5. Agents (robot, nest): 40
+   6. Tools (vacuum, wand): 50
+   7. Tooltips (hovered widget): 100
+   8. Dragging widgets: 200 (above tooltips during drag)
+   9. Help panel backdrop: 900
+   10. Help panel: 950
+   ======================================== */
+:root {
+    --z-copy-source-behind: -1;
+    --z-containers: 10;
+    --z-values: 20;
+    --z-comparison: 30;
+    --z-agents: 40;
+    --z-tools: 50;
+    --z-tooltip-hover: 100;
+    --z-dragging: 200;
+    --z-help-backdrop: 900;
+    --z-help-panel: 950;
+}
+
 html, body {
     width: 100%;
     height: 100%;
@@ -24,6 +52,43 @@ html, body {
     padding: 0.5rem 1rem;
     font-size: 1.2rem;
     font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    flex: 1;
+}
+
+/* User Level Selector */
+.user-level-selector {
+    margin-right: 3rem; /* Space for help button */
+}
+
+.user-level-selector select {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 2px solid white;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    outline: none;
+}
+
+.user-level-selector select:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.user-level-selector select:focus {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.user-level-selector select option {
+    background-color: #4a90d9;
+    color: white;
 }
 
 .workspace-content {
@@ -32,23 +97,33 @@ html, body {
     position: relative;
 }
 
-/* Draggable wrapper */
+/* Draggable wrapper - base z-index set per widget type */
 .draggable {
     cursor: grab;
-    z-index: 1;
 }
 
 .draggable:active {
     cursor: grabbing;
-    z-index: 100;
+    z-index: var(--z-dragging);
 }
 
 .draggable.dragging {
     cursor: grabbing;
-    z-index: 100;
+    z-index: var(--z-dragging);
     pointer-events: none;
     opacity: 0.8;
 }
+
+/* Widget type z-index hierarchy */
+.draggable:has(.widget.box) { z-index: var(--z-containers); }
+.draggable:has(.widget.number),
+.draggable:has(.widget.text) { z-index: var(--z-values); }
+.draggable:has(.widget.scales) { z-index: var(--z-comparison); }
+.draggable:has(.widget.robot),
+.draggable:has(.widget.nest),
+.draggable:has(.widget.bird) { z-index: var(--z-agents); }
+.draggable:has(.widget.vacuum),
+.draggable:has(.widget.wand) { z-index: var(--z-tools); }
 
 /* Base widget styles */
 .widget {
@@ -554,9 +629,18 @@ body.dragging-active .widget.number:not(.copy-source) {
     display: inline-block;
 }
 
+/* Elevate entire widget and wrapper when tooltip is visible to escape parent stacking context */
+.tooltip-wrapper:hover {
+    z-index: var(--z-tooltip-hover);
+}
+
+/* Also elevate the draggable container when hovering to show tooltip above other widgets */
+.draggable:has(.tooltip-wrapper:hover) {
+    z-index: var(--z-tooltip-hover) !important;
+}
+
 .tooltip-content {
     position: absolute;
-    z-index: 1000;
     min-width: 180px;
     max-width: 280px;
     padding: 0.75rem;
@@ -649,7 +733,7 @@ body.dragging-active .widget.number:not(.copy-source) {
     right: 0;
     bottom: 0;
     background: rgba(0, 0, 0, 0.4);
-    z-index: 900;
+    z-index: var(--z-help-backdrop);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s;
@@ -669,7 +753,7 @@ body.dragging-active .widget.number:not(.copy-source) {
     max-width: 90vw;
     background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.2);
-    z-index: 950;
+    z-index: var(--z-help-panel);
     transform: translateX(100%);
     transition: transform 0.3s ease-out;
     display: flex;
@@ -863,7 +947,7 @@ body.dragging-active .widget.number:not(.copy-source) {
     border: none;
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    z-index: 100;
+    z-index: var(--z-tools);
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
@@ -874,4 +958,142 @@ body.dragging-active .widget.number:not(.copy-source) {
 
 .help-button:active {
     transform: scale(0.95);
+}
+
+/* ========================================
+   NEST WIDGET
+   ======================================== */
+
+.widget.nest {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0.25rem;
+    width: 70px;
+    height: 80px;
+}
+
+.widget.nest:hover {
+    transform: scale(1.05);
+    box-shadow: none;
+}
+
+.nest-svg,
+.nest-img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Copy source stack effect for nest */
+.widget.nest.copy-source {
+    position: relative;
+}
+
+.widget.nest.copy-source::before,
+.widget.nest.copy-source::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    z-index: var(--z-copy-source-behind);
+}
+
+.widget.nest.copy-source::before {
+    transform: translate(8px, 8px);
+    opacity: 0.5;
+    background: #8B4513;
+}
+
+.widget.nest.copy-source::after {
+    transform: translate(4px, 4px);
+    opacity: 0.7;
+    background: #8B4513;
+}
+
+/* Badge showing message count */
+.nest-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #e53935;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Nest in box hole */
+.widget.nest.in-hole {
+    width: 35px;
+    height: 40px;
+    font-size: 0.7rem;
+}
+
+/* ========================================
+   BIRD WIDGET
+   ======================================== */
+
+.widget.bird {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0.25rem;
+    width: 70px;
+    height: 80px;
+}
+
+.widget.bird:hover {
+    transform: scale(1.05);
+    box-shadow: none;
+}
+
+.bird-img {
+    width: 100%;
+    height: 100%;
+}
+
+/* Copy source stack effect for bird */
+.widget.bird.copy-source {
+    position: relative;
+}
+
+.widget.bird.copy-source::before,
+.widget.bird.copy-source::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    z-index: var(--z-copy-source-behind);
+}
+
+.widget.bird.copy-source::before {
+    transform: translate(8px, 8px);
+    opacity: 0.5;
+    background: #63B3ED;
+}
+
+.widget.bird.copy-source::after {
+    transform: translate(4px, 4px);
+    opacity: 0.7;
+    background: #63B3ED;
+}
+
+/* Bird in box hole */
+.widget.bird.in-hole {
+    width: 35px;
+    height: 40px;
+    font-size: 0.7rem;
 }
