@@ -50,7 +50,7 @@ pub fn copy_source(props: &CopySourceProps) -> Html {
     };
 
     let style = format!(
-        "position: absolute; left: {}px; top: {}px; cursor: grab;",
+        "position: absolute; left: {}px; top: {}px; cursor: grab; z-index: 1;",
         props.position.x, props.position.y
     );
 

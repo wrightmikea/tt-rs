@@ -137,13 +137,19 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 - [ ] Implement `deserialize()` for each widget type
 - [ ] Handle widget references (birds→nests)
 
-#### 3.2 Local Storage
-- [ ] Save workspace to localStorage
+#### 3.2 Layout Persistence
+- [ ] Save widget positions to localStorage
+- [ ] Load positions on startup
+- [ ] Reset layout to defaults button
+- [ ] Export/import layout as JSON
+
+#### 3.3 Workspace Local Storage
+- [ ] Save full workspace to localStorage
 - [ ] Load workspace from localStorage
 - [ ] Auto-save on changes (debounced)
 - [ ] Workspace naming/listing
 
-#### 3.3 File Export/Import
+#### 3.4 File Export/Import
 - [ ] Export workspace to JSON file
 - [ ] Import workspace from JSON file
 - [ ] Drag-drop file to import

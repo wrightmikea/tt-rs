@@ -97,6 +97,8 @@ pub fn draggable(props: &DraggableProps) -> Html {
     let current_pos = props.position;
 
     // Build style - include pointer-events: none when dragging
+    // z-index: 10 for normal widgets (above copy sources at z-index: 1)
+    // z-index: 100 when dragging (above everything)
     let style = if *is_dragging {
         format!(
             "position: absolute; left: {}px; top: {}px; pointer-events: none; opacity: 0.8; z-index: 100;",
@@ -104,7 +106,7 @@ pub fn draggable(props: &DraggableProps) -> Html {
         )
     } else {
         format!(
-            "position: absolute; left: {}px; top: {}px;",
+            "position: absolute; left: {}px; top: {}px; z-index: 10;",
             current_pos.x, current_pos.y
         )
     };

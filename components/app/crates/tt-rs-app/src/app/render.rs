@@ -45,7 +45,7 @@ fn render_boxes(state: &AppState, cbs: &Callbacks) -> Html {
         let pos = state.positions.get(id).copied().unwrap_or_default();
         html! {
             <Draggable widget_id={*id} position={pos} on_move={cbs.on_move.clone()} on_drag_start={cbs.on_box_drag_start.clone()} on_drag_end={cbs.on_box_drag_end.clone()} on_drop={cbs.on_box_drop.clone()}>
-                <Tooltip title="Box" description="A container with holes for storing items." hint="Drag items into holes. Drop on numbers to split." position={TooltipPosition::Right}>
+                <Tooltip title="Box" description="A container with holes for storing items." hint="Drag items into holes. Drop on number to split. Press 0-9 while dragging to create copy with that many holes." position={TooltipPosition::Right}>
                     { render_box(b, &state.widgets) }
                 </Tooltip>
             </Draggable>

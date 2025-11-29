@@ -14,8 +14,8 @@ pub fn handle_box_drop(state: &mut AppState, event: &DropEvent, pending: Option<
     let (mx, my) = (event.mouse_position.x, event.mouse_position.y);
 
     if let Some(num_holes) = pending {
+        // Create a new box with requested number of holes (original stays as prototype)
         create_new_box(state, num_holes, event);
-        state.positions.insert(box_id, event.position);
         return true;
     }
 

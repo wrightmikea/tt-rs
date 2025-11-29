@@ -273,6 +273,48 @@ cargo fmt --all -- --check
 
 ---
 
+## Box Keyboard Resize Regression
+
+**Problem:** Dragging a box and pressing a number key should create a copy of the box with the specified number of holes, but the original box was being removed instead of kept as a prototype.
+
+**Root Cause:** The `handle_box_drop` function was removing the original box when creating a new box with the pending number of holes, instead of keeping the original as a prototype.
+
+**Solution:** When a keyboard number is pressed while dragging a box:
+1. Keep the original box in place (it acts as a prototype)
+2. Create a new box with the specified number of holes at the drop location
+
+**Code Fix:**
+```rust
+// In box_ops.rs handle_box_drop()
+if let Some(num_holes) = pending {
+    // Create a new box with requested number of holes (original stays as prototype)
+    create_new_box(state, num_holes, event);
+    return true;
+}
+```
+
+**Key Points:**
+- The original box stays in its original position
+- A new box is created at the drop location with the specified number of holes
+- This matches the behavior of copy sources (stacks) where clicking creates a copy
+
+---
+
+## Z-Index for Widget Stacking
+
+**Problem:** Widgets created by clicking on copy source stacks appeared "under" the stacks, making them impossible to drag.
+
+**Root Cause:** Copy sources (stacks) and draggable widgets both used default z-index, so DOM order determined stacking. New widgets appeared behind stacks.
+
+**Solution:** Use explicit z-index values:
+- Copy sources (stacks): `z-index: 1` (low, background)
+- Normal draggable widgets: `z-index: 10` (above stacks)
+- Widgets being dragged: `z-index: 100` (topmost)
+
+This ensures newly created widgets always appear above their source stacks.
+
+---
+
 ## CRITICAL: Live Demo Must Always Be Current
 
 **Problem:** Feature commits were pushed without updating the live demo at https://wrightmikea.github.io/tt-rs/, leaving users with an outdated version.
