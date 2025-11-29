@@ -2,9 +2,11 @@
 
 All notable changes to tt-rs.
 
+
 ## 2025-11-29
 
-- deploy: Update live demo with service worker for cache bypass (`<latest>`)
+- docs: Sync CHANGELOG with deploy commit (`4344cc5`)
+- deploy: Update live demo with service worker for cache bypass (`4f80199`)
 - feat: Timestamped screenshots and service worker for cache bypass (`04c2ebe`)
 - chore: Delete unused screenshots and update cache-busting timestamps (`3ada2ff`)
 - docs: Sync CHANGELOG with all recent commits and enhance checkpoint command (`34333b8`)
@@ -46,7 +48,7 @@ All notable changes to tt-rs.
 - fix: Reset operator to Add after arithmetic operations (`aeb6316`)
 - fix: UI bug fixes for number display and tooltip persistence (`011fe11`)
 - refactor: Split modules to meet sw-checklist function limits (`7298c1a`)
-- docs: Add Code Quality Refactoring Plan (`b8b985a`)
+- docs: Add Code Quality Refactoring Plan to address sw-checklist issues (`b8b985a`)
 - docs: Update screenshot with help panel showing About section (`56ba7a4`)
 - fix: Show + prefix on number stacks, add -1 tool and About section (`271cd7c`)
 - feat: Add tooltips and help panel for new users (`460fcd0`)
@@ -74,4 +76,4 @@ All notable changes to tt-rs.
 - feat: Add GitHub Pages live demo and screenshot (`6a52064`)
 - feat: Implement Yew/WASM scaffolding and Number widget (`cc1a81d`)
 - docs: Add project documentation and structure for tt-rs (`486bc28`)
-- Initial commit (`d98f63d`)
+- 1st (`d98f63d`)

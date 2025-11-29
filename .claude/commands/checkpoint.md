@@ -4,17 +4,14 @@ This command ensures CHANGELOG, README.md, screenshot1.png, and live demo are al
 
 ## Steps to Execute
 
-### 1. CHANGELOG Sync
-Compare `git log --oneline` with `CHANGELOG.md`:
-- Add any missing commits to the current date section
-- Replace previous `<latest>` with its actual SHA
-- Use `<latest>` for the newest commit entry
-- Commits should be in reverse chronological order (newest first)
+### 1. CHANGELOG Generation
+Run `./scripts/generate-changelog.sh "description of pending change"` to regenerate CHANGELOG from git history.
+- Pass pending change description as argument (will show as `<latest>`)
+- Or run without argument if no pending changes
 
 ### 2. Pre-commit Checks
 Run `./scripts/pre-commit-checks.sh` and fix any issues:
 - Build failures: fix the code
-- CHANGELOG issues: update with proper SHAs and `<latest>` placeholder
 
 ### 3. Screenshot Check
 If UI code has changed since last screenshot update:
@@ -71,5 +68,5 @@ Before every push, ensure:
 
 - If any step fails, stop and fix before continuing
 - Screenshot requirements: latest user level, latest feature help expanded
-- CHANGELOG: use `<latest>` for current commit, replace previous `<latest>` with actual SHA
+- CHANGELOG is auto-generated from git history via `./scripts/generate-changelog.sh`
 - Always verify live demo loads correctly after push
