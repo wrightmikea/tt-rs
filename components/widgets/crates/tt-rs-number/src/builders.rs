@@ -58,28 +58,37 @@ impl Number {
     }
 }
 
-fn apply_op(op: ArithOperator, a: &Number, b: &Number) -> Option<(i64, u64)> {
+fn apply_op(op: ArithOperator, dropped: &Number, target: &Number) -> Option<(i64, u64)> {
+    // The dropped number's operator determines the operation.
+    // The dropped number's raw numerator is the operand value.
+    // The target's effective value is used (accounts for Subtract tools).
+    let dropped_num = dropped.numerator;
+    let target_num = target.effective_numerator();
+
     match op {
         ArithOperator::Add => Some(operator::add(
-            a.numerator,
-            a.denominator,
-            b.numerator,
-            b.denominator,
+            dropped_num,
+            dropped.denominator,
+            target_num,
+            target.denominator,
         )),
         ArithOperator::Subtract => Some(operator::subtract(
-            a.numerator,
-            a.denominator,
-            b.numerator,
-            b.denominator,
+            dropped_num,
+            dropped.denominator,
+            target_num,
+            target.denominator,
         )),
         ArithOperator::Multiply => Some(operator::multiply(
-            a.numerator,
-            a.denominator,
-            b.numerator,
-            b.denominator,
+            dropped_num,
+            dropped.denominator,
+            target_num,
+            target.denominator,
         )),
-        ArithOperator::Divide => {
-            operator::divide(a.numerator, a.denominator, b.numerator, b.denominator)
-        }
+        ArithOperator::Divide => operator::divide(
+            dropped_num,
+            dropped.denominator,
+            target_num,
+            target.denominator,
+        ),
     }
 }

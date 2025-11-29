@@ -38,4 +38,14 @@ impl Number {
     pub fn is_tool(&self) -> bool {
         self.operator != ArithOperator::Add
     }
+
+    /// Returns the effective numerator value accounting for the operator.
+    /// For Subtract tools, the effective value is negated.
+    /// This is the actual numeric value the number represents.
+    pub fn effective_numerator(&self) -> i64 {
+        match self.operator {
+            ArithOperator::Subtract => -self.numerator,
+            _ => self.numerator,
+        }
+    }
 }
