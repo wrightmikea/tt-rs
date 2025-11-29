@@ -4,7 +4,8 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- fix: Hide Bird/Nest widgets in tt1 mode, show only in tt2 (`<latest>`)
+- refactor: Reorganize demo layout into vertical columns by category (`<latest>`)
+- fix: Hide Bird/Nest widgets in tt1 mode, show only in tt2 (`b12356c`)
 - docs: Add CHANGELOG workflow guidance to prevent SHA loops (`77ea8e8`)
 - feat: Implement ToonTalk-compatible Bird/Nest messaging (`5be220b`)
 - docs: Update plan.md, CLAUDE.md with recent progress and workflow emphasis (`d7db2f2`)
