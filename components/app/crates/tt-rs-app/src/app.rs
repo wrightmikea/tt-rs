@@ -306,10 +306,16 @@ impl BoxState {
 /// New: Use scales to compare numbers, vacuum to erase values.
 fn demo_widgets() -> Vec<WidgetItem> {
     vec![
-        // Value sources (copy sources with Add operator - just show the number)
+        // Addition tools (copy sources with Add operator)
         WidgetItem::Number(Number::new(1).as_copy_source()),
         WidgetItem::Number(Number::new(5).as_copy_source()),
-        // Operation tools (non-Add operators - show the operation)
+        // Subtraction tool
+        WidgetItem::Number(
+            Number::new(1)
+                .with_operator(ArithOperator::Subtract)
+                .as_copy_source(),
+        ),
+        // Multiplication and division tools
         WidgetItem::Number(
             Number::new(2)
                 .with_operator(ArithOperator::Multiply)
@@ -366,7 +372,7 @@ impl AppState {
         let mut boxes = HashMap::new();
 
         // Initialize widgets
-        let cols = 4;
+        let cols = 5;
         let spacing_x = 120.0;
         let spacing_y = 80.0;
         let start_x = 20.0;
@@ -375,7 +381,7 @@ impl AppState {
         for (i, widget) in widgets_vec.into_iter().enumerate() {
             // Robot gets special position: just right of the /2 stack
             let (x, y) = if matches!(widget, WidgetItem::Robot(_)) {
-                (start_x + 4.0 * spacing_x, start_y) // col 4, row 0 (right of /2)
+                (start_x + 5.0 * spacing_x, start_y) // col 5, row 0 (right of /2)
             } else {
                 let col = i % cols;
                 let row = i / cols;

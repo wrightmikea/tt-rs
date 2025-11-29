@@ -12,7 +12,8 @@ pub fn render(n: &Number) -> Html {
 
     let class = css_class(is_tool, is_copy_source);
 
-    if is_tool {
+    // Show operator for tools OR for copy sources (so +1 and +5 show the +)
+    if is_tool || is_copy_source {
         render_tool(n, class, &widget_id, &value_str, is_copy_source)
     } else {
         render_plain(class, &widget_id, &value_str, is_copy_source)

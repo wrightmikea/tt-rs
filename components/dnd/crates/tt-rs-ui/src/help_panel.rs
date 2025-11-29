@@ -43,6 +43,9 @@ pub fn help_panel(props: &HelpPanelProps) -> Html {
                 <AccordionSection title="Tips & Tricks">
                     { tips_content() }
                 </AccordionSection>
+                <AccordionSection title="About ToonTalk">
+                    { about_content() }
+                </AccordionSection>
             </Accordion>
         </SlidePanel>
     }
@@ -76,6 +79,7 @@ fn numbers_content() -> Html {
             <ul>
                 <li><strong>{"+1"}</strong>{" - Adds 1 to a number"}</li>
                 <li><strong>{"+5"}</strong>{" - Adds 5 to a number"}</li>
+                <li><strong>{"-1"}</strong>{" - Subtracts 1 from a number"}</li>
                 <li><strong>{"\u{00D7}2"}</strong>{" - Multiplies by 2"}</li>
                 <li><strong>{"\u{00F7}2"}</strong>{" - Divides by 2"}</li>
             </ul>
@@ -195,6 +199,55 @@ fn tips_content() -> Html {
                     {"The best way to learn is to experiment"}
                 </li>
             </ul>
+        </div>
+    }
+}
+
+fn about_content() -> Html {
+    html! {
+        <div class="help-section">
+            <h4>{"History"}</h4>
+            <p>
+                {"ToonTalk is a visual programming environment originally created by \
+                 Ken Kahn. It teaches programming through animated metaphors where \
+                 robots learn by watching."}
+            </p>
+
+            <h4>{"Previous Versions"}</h4>
+            <ul>
+                <li>
+                    <strong>{"ToonTalk (C++, 1992-2009)"}</strong>
+                    {" - The original Windows application"}
+                </li>
+                <li>
+                    <strong>{"ToonTalk Reborn (JavaScript, 2014-2017)"}</strong>
+                    {" - Browser-based reimplementation using jQuery"}
+                </li>
+                <li>
+                    <strong>{"tt-rs (Rust/WebAssembly, 2025)"}</strong>
+                    {" - This modern reimplementation"}
+                </li>
+            </ul>
+
+            <h4>{"Learn More"}</h4>
+            <p>
+                <a href="https://www.toontalk.com/" target="_blank" rel="noopener">
+                    {"ToonTalk Website"}
+                </a>
+                {" - Official site by Ken Kahn"}
+            </p>
+            <p>
+                <a href="https://en.wikipedia.org/wiki/ToonTalk" target="_blank" rel="noopener">
+                    {"Wikipedia Article"}
+                </a>
+                {" - Background and history"}
+            </p>
+            <p>
+                <a href="https://github.com/ToonTalk/ToonTalk" target="_blank" rel="noopener">
+                    {"ToonTalk Reborn (GitHub)"}
+                </a>
+                {" - JavaScript version source code"}
+            </p>
         </div>
     }
 }

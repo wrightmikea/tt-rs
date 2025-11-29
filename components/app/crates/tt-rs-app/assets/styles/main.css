@@ -826,6 +826,16 @@ body.dragging-active .widget.number:not(.copy-source) {
     color: #2c3e50;
 }
 
+.help-section a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.help-section a:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
 .help-tip {
     background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
     border-left: 4px solid #ffc107;
