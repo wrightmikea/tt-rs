@@ -4,7 +4,8 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- docs: Update README status and use project scripts (`<latest>`)
+- docs: Update plan.md, CLAUDE.md with recent progress and workflow emphasis (`<latest>`)
+- docs: Update README status and use project scripts (`99c4ef6`)
 - fix: Use relative paths for Bird/Nest SVG assets (GitHub Pages fix) (`4345422`)
 - feat: Add CHANGELOG and compact footer with links (`aeafd1c`)
 - deploy: Update live demo with user level selector and tt2 help (`61abe9c`)

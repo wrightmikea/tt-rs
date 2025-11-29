@@ -25,17 +25,23 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 | **Text Widget** | ✅ Complete | Basic text display |
 | **Scales Widget** | ✅ Complete | Numeric comparison, tipping animation |
 | **Robot Widget** | ✅ Complete | Training mode, action recording, basic execution |
+| **Bird Widget** | ✅ Complete | SVG rendering, copy source, basic structure |
+| **Nest Widget** | ✅ Complete | SVG rendering, message queue structure |
 | **Wand Tool** | ✅ Complete | Copy on touch |
 | **Vacuum Tool** | ✅ Complete | Remove widgets |
 | **Drag & Drop** | ✅ Complete | Full DnD system with visual feedback |
 | **Box Joining** | ✅ Complete | Drop box on edge of another to combine |
 | **Box Splitting** | ✅ Complete | Drop box on number to split |
-| **Help Panel** | ✅ Complete | Slide-out help with tutorials |
+| **Help Panel** | ✅ Complete | Slide-out help with tutorials, user-level aware |
+| **User Levels** | ✅ Complete | tt1 (basics), tt2 (messaging) with level-specific help |
+| **Tooltips** | ✅ Complete | Contextual tooltips on all widgets |
+| **Compact Footer** | ✅ Complete | Links to License, GitHub, Changelog with build info |
 
 ### 🚧 Partially Implemented
 
 | Feature | Status | What's Missing |
 |---------|--------|----------------|
+| Bird/Nest Messaging | 🚧 Partial | Widgets exist, need pairing and message delivery |
 | Robot Execution | 🚧 Partial | Pattern matching, bindings, watched execution |
 | Scales in Boxes | 🚧 Partial | Scales work standalone, not yet in box holes |
 | Erasure Levels | 🚧 Partial | Vacuum removes but doesn't create erased patterns |
@@ -44,7 +50,8 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 
 | Feature | Priority | Notes |
 |---------|----------|-------|
-| Bird/Nest Messaging | High | Core to ToonTalk programming model |
+| Bird/Nest Pairing | High | Drop bird on nest to pair them |
+| Message Delivery | High | Drop item on bird → delivers to paired nest |
 | Pattern Matching | High | Required for robot generalization |
 | Persistence (Save/Load) | High | Essential for user experience |
 | Text Explosion | Medium | Drop text on box → individual letters |
@@ -62,32 +69,38 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 
 ## Short-Term Roadmap (Next 3 Iterations)
 
-### Iteration 1: Bird/Nest Messaging (MVP Critical)
+### Iteration 1: Bird/Nest Messaging (MVP Critical) - IN PROGRESS
 
 **Goal**: Enable asynchronous communication - the heart of ToonTalk's concurrency model.
 
-#### 1.1 Nest Widget
-- [ ] Create `tt-rs-nest` crate in widgets component
-- [ ] Implement `Nest` struct with contents queue
-- [ ] Implement nest rendering (egg visual)
-- [ ] Implement `take()` method for retrieving contents
+#### 1.1 Nest Widget ✅ DONE
+- [x] Create `tt-rs-nest` crate in containers component
+- [x] Implement `Nest` struct with contents queue
+- [x] Implement nest rendering (tt-nest.svg)
+- [x] Implement `take()` method for retrieving contents
 
-#### 1.2 Bird Widget
-- [ ] Create `tt-rs-bird` crate in widgets component
-- [ ] Implement `Bird` struct with nest reference
-- [ ] Implement bird rendering (animated sprite)
-- [ ] Bird colors matching nest colors
+#### 1.2 Bird Widget ✅ DONE
+- [x] Create `tt-rs-bird` crate in containers component
+- [x] Implement `Bird` struct with nest reference
+- [x] Implement bird rendering (tt-bird.svg)
+- [x] Bird as copy source in demo
 
-#### 1.3 Message Delivery
+#### 1.3 Bird/Nest Pairing - NEXT
+- [ ] Implement pairing logic (drop bird on nest)
+- [ ] Store paired nest ID in Bird
+- [ ] Visual indicator when paired (bird near nest)
+- [ ] Pairing persists until bird removed
+
+#### 1.4 Message Delivery - NEXT
 - [ ] Implement "give to bird" drag operation
-- [ ] Bird flight animation to nest
+- [ ] Bird delivers copy to paired nest
 - [ ] Nest receives and queues message
-- [ ] Bird returns to original position
+- [ ] Click nest to retrieve oldest message
 
-#### 1.4 Demo/Tutorial
-- [ ] Add bird/nest pair to demo widgets
-- [ ] Add tutorial section explaining messaging
-- [ ] Example: send number to nest, retrieve it
+#### 1.5 Demo/Tutorial ✅ DONE
+- [x] Add bird/nest to demo widgets
+- [x] Add tutorial section explaining messaging (tt2 help)
+- [ ] Interactive example: send number to nest, retrieve it
 
 ### Iteration 2: Pattern Matching & Erasure
 
@@ -333,10 +346,12 @@ This section tracks specific refactoring needs identified by sw-checklist.
 
 ### Completed Refactoring
 - ✅ App component modularized (callbacks, render, ops)
-- ✅ Help panel split (basics, advanced)
+- ✅ Help panel split (basics, advanced, messaging)
 - ✅ Robot module split (types, ops, mutators)
 - ✅ Scales module split (ops, mutators)
 - ✅ Box tests split (creation, resize, erased)
+- ✅ Bird rendering split from widget_impl
+- ✅ Nest rendering split from widget_impl
 
 ---
 

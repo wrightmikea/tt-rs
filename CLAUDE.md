@@ -16,18 +16,22 @@ This is a derived work based on ToonTalk by Ken Kahn. See COPYRIGHT and LICENSE 
 - Text widget (basic display)
 - Scales widget (numeric comparison, tipping animation)
 - Robot widget (training mode, action recording, basic execution)
+- Bird widget (SVG rendering, copy source)
+- Nest widget (SVG rendering, message queue structure)
 - Tools: Wand (copy), Vacuum (remove)
 - Drag-and-drop with visual feedback
 - Box joining (drop box on edge of another)
 - Box splitting (drop box on number)
-- Help panel with tutorials
+- Help panel with tutorials and user levels (tt1/tt2)
+- Tooltips on all widgets
+- Compact footer with GitHub/License/Changelog links
 
 **In Progress:**
+- Bird/Nest pairing and message delivery
 - Pattern matching and erasure system
-- Watched robot execution
 
 **Next Priorities:**
-1. Bird/Nest messaging (core ToonTalk feature)
+1. Complete Bird/Nest messaging (pairing + delivery)
 2. Pattern matching with erasure
 3. Persistence (save/load workspaces)
 
@@ -143,7 +147,7 @@ pub trait Widget: std::fmt::Debug {
 }
 ```
 
-**Implemented widgets**: Number, Text, Box, Robot, Scales, Wand, Vacuum
+**Implemented widgets**: Number, Text, Box, Robot, Scales, Bird, Nest, Wand, Vacuum
 
 ## Technology Stack
 
@@ -248,10 +252,23 @@ Key concepts:
 
 ## Documentation
 
-- [physical-design.md](documentation/physical-design.md) - **Component architecture & phased feature reveal**
+### IMPORTANT: Read These First
+
+- [process.md](documentation/process.md) - **Development workflow and commit guidelines**
+- [learnings.md](documentation/learnings.md) - **Solutions to issues encountered - ALWAYS consult before debugging!**
+
+### Reference Documentation
+
+- [plan.md](documentation/plan.md) - Implementation roadmap with next steps
+- [physical-design.md](documentation/physical-design.md) - Component architecture & phased feature reveal
 - [architecture.md](documentation/architecture.md) - System design and actual implementation
 - [prd.md](documentation/prd.md) - Product requirements with status tracking
 - [design.md](documentation/design.md) - Technical design decisions
-- [plan.md](documentation/plan.md) - Implementation roadmap with next steps
-- [learnings.md](documentation/learnings.md) - **Solutions to issues encountered** (read this first!)
 - [tutorials-roadmap.md](documentation/tutorials-roadmap.md) - Demo and tutorial planning
+
+### Development Workflow
+
+1. **Before starting work**: Read `learnings.md` for known issues and solutions
+2. **During development**: Follow `process.md` for workflow guidelines
+3. **Before committing**: Run `./scripts/build-all.sh` and check validation passes
+4. **Before deploying**: Use `./scripts/build-release.sh` (validates asset paths)
