@@ -2,9 +2,10 @@
 
 All notable changes to tt-rs.
 
-
 ## 2025-11-29
 
+- fix: Increase row spacing between column icons (`<latest>`)
+- docs: Regenerate CHANGELOG (`4540522`)
 - feat: Auto-generate CHANGELOG from git history (`020e6a3`)
 - docs: Sync CHANGELOG with deploy commit (`4344cc5`)
 - deploy: Update live demo with service worker for cache bypass (`4f80199`)

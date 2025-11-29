@@ -22,7 +22,7 @@ use crate::widget_item::WidgetItem;
 
 // Layout constants
 const START_Y: f64 = 60.0;
-const ROW_SPACING: f64 = 80.0; // Increased from 70 for better separation
+const ROW_SPACING: f64 = 100.0; // Increased for clear separation between icons
 const COL_NUMBERS: f64 = 20.0;
 const COL_BOXES: f64 = 130.0;
 const COL_TT1_TOOLS: f64 = 300.0;
