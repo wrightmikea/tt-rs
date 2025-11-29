@@ -11,13 +11,13 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
-tt-rs-number = { path = "../../../widgets/crates/tt-rs-number" }
-tt-rs-text = { path = "../../../widgets/crates/tt-rs-text" }
-tt-rs-box = { path = "../../../widgets/crates/tt-rs-box" }
-tt-rs-scales = { path = "../../../widgets/crates/tt-rs-scales" }
-tt-rs-vacuum = { path = "../../../widgets/crates/tt-rs-vacuum" }
-tt-rs-wand = { path = "../../../widgets/crates/tt-rs-wand" }
-tt-rs-robot = { path = "../../../widgets/crates/tt-rs-robot" }
+tt-rs-number = { path = "../../../values/crates/tt-rs-number" }
+tt-rs-text = { path = "../../../values/crates/tt-rs-text" }
+tt-rs-box = { path = "../../../containers/crates/tt-rs-box" }
+tt-rs-scales = { path = "../../../comparison/crates/tt-rs-scales" }
+tt-rs-vacuum = { path = "../../../tools/crates/tt-rs-vacuum" }
+tt-rs-wand = { path = "../../../tools/crates/tt-rs-wand" }
+tt-rs-robot = { path = "../../../agents/crates/tt-rs-robot" }
 tt-rs-drag = { path = "../../../dnd/crates/tt-rs-drag" }
 tt-rs-ui = { path = "../../../dnd/crates/tt-rs-ui" }
 tt-rs-hit-test = { path = "../../../handlers/crates/tt-rs-hit-test" }

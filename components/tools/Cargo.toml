@@ -1,13 +1,8 @@
 [workspace]
 resolver = "2"
 members = [
-    "crates/tt-rs-number",
-    "crates/tt-rs-text",
-    "crates/tt-rs-box",
-    "crates/tt-rs-scales",
-    "crates/tt-rs-vacuum",
     "crates/tt-rs-wand",
-    "crates/tt-rs-robot",
+    "crates/tt-rs-vacuum",
 ]
 
 [workspace.package]

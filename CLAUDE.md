@@ -76,20 +76,26 @@ sw-checklist .           # Check modularity and standards
 
 ## Multi-Component Architecture
 
-This project uses a **multi-component architecture** where each component is an independent Cargo workspace:
+This project uses a **multi-component architecture** organized by programming concept:
 
 ```
 components/
-├── core/       → Widget trait, WidgetId, MatchResult (no dependencies)
-├── widgets/    → Number, Text, Box, Robot, Scales, Wand, Vacuum
-├── dnd/        → Drag-and-drop, UI components (Help, Tooltip)
-├── state/      → Position, BoxContents, TrainingState
-├── handlers/   → Hit testing utilities
-├── commands/   → Command pattern (Move, Remove)
-└── app/        → WASM entry point, Trunk config (depends on all)
+├── core/        → Widget trait, WidgetId, MatchResult (no dependencies)
+├── values/      → Number, Text (primitive data types)
+├── containers/  → Box (data structures)
+├── comparison/  → Scales (value comparison)
+├── agents/      → Robot (autonomous behavior)
+├── tools/       → Wand, Vacuum (user manipulation)
+├── dnd/         → Drag-and-drop, UI components (Help, Tooltip)
+├── state/       → Position, BoxContents, TrainingState
+├── handlers/    → Hit testing utilities
+├── commands/    → Command pattern (Move, Remove)
+└── app/         → WASM entry point, Trunk config (depends on all)
 ```
 
-**Dependency flow**: `core` ← `widgets` ← `dnd` ← `state/handlers/commands` ← `app`
+**Dependency flow**: `core` ← `values/containers/comparison/agents/tools` ← `dnd` ← `state/handlers/commands` ← `app`
+
+See [physical-design.md](documentation/physical-design.md) for detailed architecture and phased feature reveal strategy.
 
 ### Key Files
 
@@ -106,7 +112,7 @@ components/
 
 # Build/test individual component
 ./components/core/scripts/build.sh
-cd components/widgets && cargo test
+cd components/values && cargo test
 
 # Run sw-checklist on individual components
 cd components/core && sw-checklist
@@ -114,10 +120,11 @@ cd components/core && sw-checklist
 
 ### Modularity Guidelines (sw-checklist)
 
-- Functions: max 50 LOC (warn >25)
-- Modules: max 7 functions (warn >4)
-- Crates: max 7 modules (warn >4)
-- Projects: max 7 crates (warn >4)
+**Strict limits (max 4 items per level):**
+- Functions: max 4 per module (warn >3)
+- Modules: max 4 per crate (warn >3)
+- Crates: max 4 per component (warn >3)
+- Components: unlimited (can split to separate repos later)
 
 Keep modules focused to leave room for future features.
 
@@ -164,13 +171,15 @@ Run `./scripts/build-all.sh` or manually:
 - Rust 2024 edition idioms
 - Use inline format args: `format!("{name}")` not `format!("{}", name)`
 
-### Adding New Widgets
+### Adding New Features
 
-1. Create new crate in `components/widgets/crates/tt-rs-<name>/`
-2. Implement `Widget` trait from `tt-rs-core`
-3. Add to widget enum in app component
-4. Add copy source for palette
-5. Update help panel documentation
+1. Determine which component the feature belongs to (by concept, not "widget")
+2. Create new crate in appropriate component: `components/<concept>/crates/tt-rs-<name>/`
+3. Implement `Widget` trait from `tt-rs-core`
+4. Add to widget enum in app component
+5. Add copy source for palette
+6. Update help panel documentation
+7. Update [physical-design.md](documentation/physical-design.md) with new feature's phase
 
 ## DEPLOYMENT CHECKLIST - MANDATORY
 
@@ -239,6 +248,7 @@ Key concepts:
 
 ## Documentation
 
+- [physical-design.md](documentation/physical-design.md) - **Component architecture & phased feature reveal**
 - [architecture.md](documentation/architecture.md) - System design and actual implementation
 - [prd.md](documentation/prd.md) - Product requirements with status tracking
 - [design.md](documentation/design.md) - Technical design decisions

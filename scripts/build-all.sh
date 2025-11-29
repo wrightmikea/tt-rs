@@ -8,7 +8,7 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_ROOT"
 
 echo "Building all components..."
-COMPONENTS=(core widgets dnd app)
+COMPONENTS=(core values containers comparison agents tools dnd app)
 for component in "${COMPONENTS[@]}"; do
     echo ""
     echo "=== Building $component ==="

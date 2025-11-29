@@ -1,0 +1,21 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/tt-rs-box",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "BSD-3-Clause"
+repository = "https://github.com/wrightmikea/tt-rs"
+
+[workspace.dependencies]
+yew = { version = "0.21", features = ["csr"] }
+tt-rs-core = { path = "../core/crates/tt-rs-core" }
+tt-rs-number = { path = "../values/crates/tt-rs-number" }
+tt-rs-text = { path = "../values/crates/tt-rs-text" }
+
+[profile.release]
+opt-level = "s"
+lto = true
