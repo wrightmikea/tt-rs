@@ -31,9 +31,13 @@ pub fn render_small(widget: &WidgetItem) -> Html {
 }
 
 fn render_number_small(n: &tt_rs_number::Number) -> Html {
+    // Only show operator for tools (non-Add operators)
+    let show_op = n.is_tool();
     html! {
         <div class="widget number in-hole">
-            <span class="number-operator">{ n.operator().symbol() }</span>
+            if show_op {
+                <span class="number-operator">{ n.operator().symbol() }</span>
+            }
             <span class="number-value">{ n.display_value() }</span>
         </div>
     }

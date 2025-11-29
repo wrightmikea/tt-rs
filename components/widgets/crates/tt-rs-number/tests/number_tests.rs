@@ -106,3 +106,58 @@ fn test_apply_division_by_zero_returns_none() {
     // Target should remain unchanged
     assert_eq!(target.numerator(), 10);
 }
+
+#[test]
+fn test_subtract_from_negative() {
+    // Scenario: drop -1 tool on -1 value, should get -2
+    let mut target = Number::new(-1);
+    let dropped = Number::new(1).with_operator(ArithOperator::Subtract);
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), -2); // -1 - 1 = -2
+}
+
+#[test]
+fn test_subtract_from_zero() {
+    // Drop -1 on 0 should give -1
+    let mut target = Number::new(0);
+    let dropped = Number::new(1).with_operator(ArithOperator::Subtract);
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), -1); // 0 - 1 = -1
+}
+
+#[test]
+fn test_chained_subtractions() {
+    // Drop -1 on 0, then drop -1 on result, should give -2
+    let mut target = Number::new(0);
+    let dropped = Number::new(1).with_operator(ArithOperator::Subtract);
+
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), -1, "First subtraction failed");
+
+    // Create a fresh -1 tool and apply again
+    let dropped2 = Number::new(1).with_operator(ArithOperator::Subtract);
+    target.apply(&dropped2);
+    assert_eq!(target.numerator(), -2, "Second subtraction failed");
+}
+
+#[test]
+fn test_display_value_negative_zero() {
+    // -0 should display as 0, not -0
+    let n = Number::new(0);
+    assert_eq!(n.display_value(), "0");
+
+    // After subtraction resulting in -0 (which is 0)
+    let mut target = Number::new(1);
+    let dropped = Number::new(1).with_operator(ArithOperator::Subtract);
+    target.apply(&dropped);
+    assert_eq!(target.numerator(), 0);
+    assert_eq!(target.display_value(), "0");
+}
+
+#[test]
+fn test_negative_number_display() {
+    let n = Number::new(-1);
+    assert_eq!(n.display_value(), "-1");
+    assert!(!n.is_tool()); // Add operator, so not a tool
+    assert!(!n.is_copy_source());
+}

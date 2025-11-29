@@ -3,6 +3,7 @@
 //! Provides rich tooltips that appear on hover with title, description,
 //! and optional usage hints.
 
+use wasm_bindgen::{closure::Closure, JsCast};
 use yew::prelude::*;
 
 /// Properties for the Tooltip component.
@@ -48,6 +49,23 @@ impl TooltipPosition {
 #[function_component(Tooltip)]
 pub fn tooltip(props: &TooltipProps) -> Html {
     let visible = use_state(|| false);
+
+    // Hide tooltip when window loses focus (e.g., ctrl-tab to another app)
+    {
+        let visible = visible.clone();
+        use_effect_with((), move |_| {
+            let window = web_sys::window().unwrap();
+            let cb = Closure::wrap(Box::new(move || visible.set(false)) as Box<dyn Fn()>);
+            window
+                .add_event_listener_with_callback("blur", cb.as_ref().unchecked_ref())
+                .unwrap();
+            let w = window;
+            let c = cb;
+            move || {
+                let _ = w.remove_event_listener_with_callback("blur", c.as_ref().unchecked_ref());
+            }
+        });
+    }
 
     let on_mouse_enter = {
         let visible = visible.clone();
