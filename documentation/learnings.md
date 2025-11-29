@@ -273,6 +273,43 @@ cargo fmt --all -- --check
 
 ---
 
+## CRITICAL: Live Demo Must Always Be Current
+
+**Problem:** Feature commits were pushed without updating the live demo at https://wrightmikea.github.io/tt-rs/, leaving users with an outdated version.
+
+**Root Cause:** The deployment step was documented but not enforced as mandatory in the workflow.
+
+**Solution:** Update the live demo after EVERY feature or fix commit. No exceptions.
+
+**Complete Feature/Fix Workflow:**
+
+```bash
+# 1. Make your code changes
+# 2. Run quality checks
+./scripts/build-all.sh
+
+# 3. Commit code changes
+git add -A
+git commit -m "feat/fix: description"
+
+# 4. MANDATORY: Update live demo
+./scripts/build-release.sh
+git add docs/
+git commit -m "deploy: Update live demo with <feature/fix description>"
+git push
+
+# 5. Verify live demo at https://wrightmikea.github.io/tt-rs/
+```
+
+**Key Rules:**
+- NEVER push code changes without updating the live demo
+- NEVER consider a feature "done" until the live demo shows it
+- If you forgot to update the demo, fix it immediately
+
+**Enforcement:** If feature commits exist without a corresponding deploy commit, the process has been broken. Fix immediately by running `./scripts/build-release.sh` and committing docs/.
+
+---
+
 ## CHANGELOG Workflow: Avoiding Commit SHA Loops
 
 **Problem:** Updating a CHANGELOG entry with its own commit SHA creates an infinite loop - each amend changes the SHA, requiring another update.

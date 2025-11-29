@@ -298,4 +298,39 @@ See [learnings.md](documentation/learnings.md#changelog-workflow-avoiding-commit
 1. **Before starting work**: Read `learnings.md` for known issues and solutions
 2. **During development**: Follow `process.md` for workflow guidelines
 3. **Before committing**: Run `./scripts/build-all.sh` and check validation passes
-4. **Before deploying**: Use `./scripts/build-release.sh` (validates asset paths)
+4. **After committing any feature/fix**: Run `./scripts/build-release.sh`, commit docs/, push
+
+## MANDATORY: Live Demo Must Always Be Current
+
+**CRITICAL: The live demo MUST be updated after EVERY feature or fix that changes behavior.**
+
+The live demo at https://wrightmikea.github.io/tt-rs/ is the primary way users experience tt-rs. Leaving it out of date is unacceptable.
+
+### Complete Feature/Fix Workflow
+
+```bash
+# 1. Make your code changes
+# 2. Run quality checks
+./scripts/build-all.sh
+
+# 3. Commit code changes
+git add -A
+git commit -m "feat/fix: description"
+
+# 4. MANDATORY: Update live demo
+./scripts/build-release.sh
+git add docs/
+git commit -m "deploy: Update live demo with <feature/fix description>"
+git push
+
+# 5. Verify live demo at https://wrightmikea.github.io/tt-rs/
+```
+
+### DO NOT:
+- Push code changes without updating the live demo
+- Leave multiple commits without a corresponding deploy
+- Skip the deploy step "to do later" - do it NOW
+
+### Enforcement
+
+If you (AI assistant or human) make feature/fix commits without updating the live demo, you have broken the process. Immediately run `./scripts/build-release.sh` and deploy.

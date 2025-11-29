@@ -298,6 +298,49 @@ Fixes #42
 - Provides backup of work
 - Makes work visible for collaboration
 
+## MANDATORY: Live Demo Updates
+
+**CRITICAL: The live demo MUST be updated after EVERY feature or fix that changes behavior.**
+
+The live demo at https://wrightmikea.github.io/tt-rs/ is the primary way users experience tt-rs. Leaving it out of date is unacceptable.
+
+### Complete Feature/Fix Workflow
+
+```bash
+# 1. Make your code changes
+# 2. Run quality checks
+./scripts/build-all.sh
+
+# 3. Commit code changes
+git add -A
+git commit -m "feat/fix: description"
+
+# 4. MANDATORY: Update live demo
+./scripts/build-release.sh
+git add docs/
+git commit -m "deploy: Update live demo with <feature/fix description>"
+git push
+
+# 5. Verify live demo at https://wrightmikea.github.io/tt-rs/
+```
+
+### DO NOT:
+- Push code changes without updating the live demo
+- Leave multiple commits without a corresponding deploy commit
+- Skip the deploy step "to do later" - do it NOW
+- Consider a feature "done" until the live demo shows it
+
+### Enforcement
+
+If you (AI assistant or human) make feature/fix commits without updating the live demo, you have broken the process. Immediately run:
+
+```bash
+./scripts/build-release.sh
+git add docs/
+git commit -m "deploy: Update live demo"
+git push
+```
+
 ## Build and Development
 
 ### Prerequisites
