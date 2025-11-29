@@ -23,7 +23,12 @@ This is a derived work based on ToonTalk, originally created by Ken Kahn.
 
 ## Status
 
-Early development - Number, Text, and Box widgets with drag-and-drop interaction implemented.
+Active development with working demo. Current features:
+
+- **Widgets**: Numbers (rational arithmetic), Boxes (configurable holes), Text, Scales (comparison), Robot, Bird, Nest
+- **Tools**: Wand (copy), Vacuum (remove)
+- **Interaction**: Drag-and-drop, tooltips, contextual help panel
+- **User Levels**: tt1 (basics), tt2 (messaging) with level-specific help
 
 ## Documentation
 
@@ -53,11 +58,14 @@ Early development - Number, Text, and Box widgets with drag-and-drop interaction
 rustup target add wasm32-unknown-unknown
 cargo install trunk
 
-# Development server
-trunk serve
+# Development server (port 1140)
+./scripts/serve.sh
 
-# Production build
-trunk build --release
+# Build + test + clippy + fmt
+./scripts/build-all.sh
+
+# Production build for GitHub Pages
+./scripts/build-release.sh
 ```
 
 ## License
