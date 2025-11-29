@@ -17,6 +17,7 @@ pub fn copy_widget(widget: &WidgetItem) -> WidgetItem {
         WidgetItem::Vacuum(v) => WidgetItem::Vacuum(v.copy_vacuum()),
         WidgetItem::Wand(w) => WidgetItem::Wand(w.copy_wand()),
         WidgetItem::Robot(r) => WidgetItem::Robot(r.copy_robot()),
+        WidgetItem::Nest(n) => WidgetItem::Nest(n.copy_nest()),
     }
 }
 

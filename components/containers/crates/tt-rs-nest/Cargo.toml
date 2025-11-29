@@ -1,0 +1,11 @@
+[package]
+name = "tt-rs-nest"
+description = "Nest widget for tt-rs - message receiving endpoint"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
+yew = { workspace = true }

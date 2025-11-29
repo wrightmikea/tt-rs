@@ -3,6 +3,7 @@
 use std::collections::HashMap;
 use tt_rs_core::WidgetId;
 use tt_rs_drag::Position;
+use tt_rs_nest::Nest;
 use tt_rs_number::{ArithOperator, Number};
 use tt_rs_robot::Robot;
 use tt_rs_scales::Scales;
@@ -58,6 +59,7 @@ fn demo_widgets() -> Vec<WidgetItem> {
         WidgetItem::Number(arith_tool(2, ArithOperator::Divide)),
         WidgetItem::Number(Number::new(0)),
         WidgetItem::Scales(Scales::new()),
+        WidgetItem::Nest(Nest::new().as_copy_source()),
         WidgetItem::Vacuum(Vacuum::new()),
         WidgetItem::Wand(Wand::new()),
         WidgetItem::Robot(Robot::new()),

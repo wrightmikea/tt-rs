@@ -14,6 +14,7 @@ tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
 tt-rs-number = { path = "../../../values/crates/tt-rs-number" }
 tt-rs-text = { path = "../../../values/crates/tt-rs-text" }
 tt-rs-box = { path = "../../../containers/crates/tt-rs-box" }
+tt-rs-nest = { path = "../../../containers/crates/tt-rs-nest" }
 tt-rs-scales = { path = "../../../comparison/crates/tt-rs-scales" }
 tt-rs-vacuum = { path = "../../../tools/crates/tt-rs-vacuum" }
 tt-rs-wand = { path = "../../../tools/crates/tt-rs-wand" }

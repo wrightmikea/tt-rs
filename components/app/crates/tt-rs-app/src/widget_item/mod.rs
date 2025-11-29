@@ -4,6 +4,7 @@ mod render;
 mod tooltip;
 
 use tt_rs_core::{Widget, WidgetId};
+use tt_rs_nest::Nest;
 use tt_rs_number::Number;
 use tt_rs_robot::Robot;
 use tt_rs_scales::Scales;
@@ -25,6 +26,7 @@ pub enum WidgetItem {
     Vacuum(Vacuum),
     Wand(Wand),
     Robot(Robot),
+    Nest(Nest),
 }
 
 impl WidgetItem {
@@ -36,6 +38,7 @@ impl WidgetItem {
             WidgetItem::Vacuum(v) => v.id(),
             WidgetItem::Wand(w) => w.id(),
             WidgetItem::Robot(r) => r.id(),
+            WidgetItem::Nest(nest) => nest.id(),
         }
     }
 

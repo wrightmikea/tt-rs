@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "crates/tt-rs-box",
+    "crates/tt-rs-nest",
 ]
 
 [workspace.package]

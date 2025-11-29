@@ -71,6 +71,12 @@ const TOOLTIP_ROBOT: TooltipInfo = TooltipInfo {
     hint: "Click to start/stop training, click again to run.",
 };
 
+const TOOLTIP_NEST: TooltipInfo = TooltipInfo {
+    title: "Nest",
+    description: "Receives messages from birds.",
+    hint: "Birds deliver items here. Click to take the oldest message.",
+};
+
 /// Get tooltip information for a widget item.
 pub fn tooltip_info(item: &WidgetItem) -> &'static TooltipInfo {
     match item {
@@ -86,5 +92,6 @@ pub fn tooltip_info(item: &WidgetItem) -> &'static TooltipInfo {
         WidgetItem::Vacuum(_) => &TOOLTIP_VACUUM,
         WidgetItem::Wand(_) => &TOOLTIP_WAND,
         WidgetItem::Robot(_) => &TOOLTIP_ROBOT,
+        WidgetItem::Nest(_) => &TOOLTIP_NEST,
     }
 }
