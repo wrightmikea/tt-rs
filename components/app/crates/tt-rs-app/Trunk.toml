@@ -1,0 +1,24 @@
+# Trunk configuration for tt-rs-app
+# https://trunkrs.dev/configuration/
+
+[build]
+# Target directory for build output
+dist = "dist"
+# Use content hashing for cache busting (default, but explicit)
+filehash = true
+# Disable SRI (Subresource Integrity) to avoid cache validation issues
+no_sri = true
+
+[watch]
+# Directories to watch for changes
+watch = ["src", "assets", "index.html"]
+# Ignore patterns (using glob to avoid path resolution issues)
+ignore = []
+
+[serve]
+# Development server port
+port = 1140
+# Address to bind
+address = "127.0.0.1"
+# Open browser automatically
+open = false

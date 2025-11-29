@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Cache control for development -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>tt-rs - Visual Programming Environment</title>
     <link data-trunk rel="icon" href="favicon.ico">
-    <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="z">
-    <link data-trunk rel="css" href="assets/styles/main.css">
+    <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="z" data-no-sri="true">
+    <link data-trunk rel="css" href="assets/styles/main.css" data-no-sri="true">
     <link data-trunk rel="copy-dir" href="assets/images">
 </head>
 <body>
