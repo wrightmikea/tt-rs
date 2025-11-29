@@ -8,4 +8,5 @@ repository.workspace = true
 
 [dependencies]
 tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
+tt-rs-nest = { path = "../tt-rs-nest" }
 yew = { workspace = true }

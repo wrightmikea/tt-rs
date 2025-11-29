@@ -70,4 +70,49 @@ impl WidgetItem {
             _ => None,
         }
     }
+
+    /// Returns true if this widget is a copy source (palette item).
+    /// Note: Only widgets that track copy source status have the method.
+    /// Others (Text, Scales, tools) are never copy sources in practice.
+    pub fn is_copy_source(&self) -> bool {
+        match self {
+            WidgetItem::Number(n) => n.is_copy_source(),
+            WidgetItem::Nest(nest) => nest.is_copy_source(),
+            WidgetItem::Bird(bird) => bird.is_copy_source(),
+            // These widget types don't track copy source status
+            WidgetItem::Text(_)
+            | WidgetItem::Scales(_)
+            | WidgetItem::Vacuum(_)
+            | WidgetItem::Wand(_)
+            | WidgetItem::Robot(_) => false,
+        }
+    }
+
+    /// Creates a copy of this widget with a new ID.
+    pub fn copy_widget(&self) -> WidgetItem {
+        match self {
+            WidgetItem::Number(n) => WidgetItem::Number(n.copy_number()),
+            WidgetItem::Text(t) => WidgetItem::Text(t.copy_text()),
+            WidgetItem::Scales(s) => WidgetItem::Scales(s.copy_scales()),
+            WidgetItem::Vacuum(v) => WidgetItem::Vacuum(v.copy_vacuum()),
+            WidgetItem::Wand(w) => WidgetItem::Wand(w.copy_wand()),
+            WidgetItem::Robot(r) => WidgetItem::Robot(r.copy_robot()),
+            WidgetItem::Nest(nest) => WidgetItem::Nest(nest.copy_nest()),
+            WidgetItem::Bird(bird) => WidgetItem::Bird(bird.copy_bird()),
+        }
+    }
+
+    /// Converts this widget to a boxed trait object for message passing.
+    pub fn to_boxed_widget(&self) -> Box<dyn Widget> {
+        match self {
+            WidgetItem::Number(n) => Box::new(n.clone()),
+            WidgetItem::Text(t) => Box::new(t.clone()),
+            WidgetItem::Scales(s) => Box::new(s.clone()),
+            WidgetItem::Vacuum(v) => Box::new(v.clone()),
+            WidgetItem::Wand(w) => Box::new(w.clone()),
+            WidgetItem::Robot(r) => Box::new(r.clone()),
+            WidgetItem::Nest(nest) => Box::new(nest.clone()),
+            WidgetItem::Bird(bird) => Box::new(bird.clone()),
+        }
+    }
 }

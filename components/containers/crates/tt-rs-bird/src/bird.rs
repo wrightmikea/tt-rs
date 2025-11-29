@@ -26,6 +26,17 @@ pub enum BirdColor {
     Yellow,
 }
 
+impl From<tt_rs_nest::NestColor> for BirdColor {
+    fn from(color: tt_rs_nest::NestColor) -> Self {
+        match color {
+            tt_rs_nest::NestColor::Blue => BirdColor::Blue,
+            tt_rs_nest::NestColor::Red => BirdColor::Red,
+            tt_rs_nest::NestColor::Green => BirdColor::Green,
+            tt_rs_nest::NestColor::Yellow => BirdColor::Yellow,
+        }
+    }
+}
+
 /// State of the bird.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum BirdState {

@@ -1,7 +1,6 @@
 //! Demo scene initialization.
 
 use std::collections::HashMap;
-use tt_rs_bird::Bird;
 use tt_rs_core::WidgetId;
 use tt_rs_drag::Position;
 use tt_rs_nest::Nest;
@@ -52,6 +51,7 @@ fn widget_position(widget: &WidgetItem, index: usize) -> Position {
 }
 
 fn demo_widgets() -> Vec<WidgetItem> {
+    // Note: Bird is NOT a copy source - birds are created by "hatching" (copying) a nest
     vec![
         WidgetItem::Number(Number::new(1).as_copy_source()),
         WidgetItem::Number(Number::new(5).as_copy_source()),
@@ -61,7 +61,6 @@ fn demo_widgets() -> Vec<WidgetItem> {
         WidgetItem::Number(Number::new(0)),
         WidgetItem::Scales(Scales::new()),
         WidgetItem::Nest(Nest::new().as_copy_source()),
-        WidgetItem::Bird(Bird::new().as_copy_source()),
         WidgetItem::Vacuum(Vacuum::new()),
         WidgetItem::Wand(Wand::new()),
         WidgetItem::Robot(Robot::new()),
