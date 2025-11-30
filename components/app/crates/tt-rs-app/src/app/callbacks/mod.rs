@@ -10,7 +10,7 @@ use tt_rs_drag::{CopySourceClickEvent, DragEndEvent, DragStartEvent, DropEvent, 
 use tt_rs_ui::{SaveFormData, UserLevel};
 use yew::prelude::*;
 
-use crate::state::AppState;
+use crate::state::{default_notes_for_level, AppState};
 
 pub struct Callbacks {
     pub on_help_open: Callback<()>,
@@ -30,6 +30,10 @@ pub struct Callbacks {
     pub on_workspace_delete: Callback<String>,
     pub on_workspace_export: Callback<String>,
     pub on_workspace_import: Callback<web_sys::File>,
+    // TextPane callbacks
+    pub on_text_pane_change: Callback<String>,
+    pub on_text_pane_resize: Callback<(f64, f64)>,
+    pub on_text_pane_move: Callback<Position>,
 }
 
 pub fn create_callbacks(
@@ -49,7 +53,16 @@ pub fn create_callbacks(
             let h = help_open;
             Callback::from(move |_| h.set(false))
         },
-        on_level_change: { Callback::from(move |level: UserLevel| user_level.set(level)) },
+        on_level_change: {
+            let s = state.clone();
+            Callback::from(move |level: UserLevel| {
+                user_level.set(level);
+                // Update text pane content when level changes
+                let mut new_state = (*s).clone();
+                new_state.text_pane_content = default_notes_for_level(level).to_string();
+                s.set(new_state);
+            })
+        },
         on_box_drag_start: box_handlers::create_box_drag_start(
             dragged_box_id.clone(),
             pending_new_box.clone(),
@@ -58,7 +71,7 @@ pub fn create_callbacks(
         on_box_drop: box_handlers::create_box_drop(state.clone(), pending_new_box),
         on_copy_source_click: widget_handlers::create_copy_source(state.clone()),
         on_move: widget_handlers::create_move(state.clone()),
-        on_drop: widget_handlers::create_widget_drop(state),
+        on_drop: widget_handlers::create_widget_drop(state.clone()),
         // Workspace callbacks - stubs for now, will be implemented with storage
         on_workspace_open: {
             let w = workspace_open.clone();
@@ -88,5 +101,29 @@ pub fn create_callbacks(
             log::info!("Import workspace from file");
             // TODO: Implement actual import from file
         }),
+        on_text_pane_change: {
+            let s = state.clone();
+            Callback::from(move |content: String| {
+                let mut new_state = (*s).clone();
+                new_state.text_pane_content = content;
+                s.set(new_state);
+            })
+        },
+        on_text_pane_resize: {
+            let s = state.clone();
+            Callback::from(move |size: (f64, f64)| {
+                let mut new_state = (*s).clone();
+                new_state.text_pane_size = size;
+                s.set(new_state);
+            })
+        },
+        on_text_pane_move: {
+            let s = state;
+            Callback::from(move |pos: Position| {
+                let mut new_state = (*s).clone();
+                new_state.text_pane_position = pos;
+                s.set(new_state);
+            })
+        },
     }
 }

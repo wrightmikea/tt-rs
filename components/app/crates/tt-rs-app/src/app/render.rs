@@ -8,9 +8,10 @@
 use tt_rs_core::WidgetId;
 use tt_rs_drag::{CopySource, Draggable, DropEvent, Position};
 use tt_rs_ui::{
-    Footer, HelpButton, HelpPanel, Tooltip, TooltipLayer, TooltipPosition, UserLevel,
+    Footer, HelpButton, HelpPanel, TextPane, Tooltip, TooltipLayer, TooltipPosition, UserLevel,
     UserLevelSelector, WorkspaceButton, WorkspaceMenu, WorkspaceMetadata,
 };
+use wasm_bindgen::JsCast;
 use yew::prelude::*;
 
 use super::callbacks::Callbacks;
@@ -27,6 +28,7 @@ const Z_PLANE_BOXES: i32 = 100;
 const Z_PLANE_VALUES: i32 = 200;
 const Z_PLANE_AGENTS: i32 = 300;
 const Z_PLANE_TOOLS: i32 = 400;
+const Z_PLANE_TEXT_PANE: i32 = 450;
 const Z_PLANE_TOOLTIPS: i32 = 500;
 
 pub fn render_app(
@@ -69,6 +71,8 @@ pub fn render_app(
                 { render_z_plane(Z_PLANE_AGENTS, render_widgets(&planes.agents, state, &cbs.on_move, &cbs.on_drop)) }
                 // Z-plane 400: Tools (vacuum, wand)
                 { render_z_plane(Z_PLANE_TOOLS, render_widgets(&planes.tools, state, &cbs.on_move, &cbs.on_drop)) }
+                // Z-plane 450: Text pane (workspace notes)
+                { render_z_plane(Z_PLANE_TEXT_PANE, render_text_pane(state, cbs)) }
                 // Z-plane 500: Tooltips (highest)
                 { render_z_plane(Z_PLANE_TOOLTIPS, html! { <TooltipLayer /> }) }
             </div>
@@ -137,4 +141,133 @@ fn render_widgets(
             </Draggable>
         }
     }).collect()
+}
+
+/// Renders the draggable text pane for workspace notes.
+fn render_text_pane(state: &AppState, cbs: &Callbacks) -> Html {
+    let pos = state.text_pane_position;
+    let (width, height) = state.text_pane_size;
+    let style = format!(
+        "position: absolute; left: {x}px; top: {y}px; pointer-events: auto;",
+        x = pos.x,
+        y = pos.y
+    );
+
+    // Create a wrapper for dragging the text pane
+    html! {
+        <DraggableTextPane
+            position={pos}
+            on_move={cbs.on_text_pane_move.clone()}
+            style={style}
+        >
+            <TextPane
+                content={state.text_pane_content.clone()}
+                on_change={cbs.on_text_pane_change.clone()}
+                width={width}
+                height={height}
+                on_resize={cbs.on_text_pane_resize.clone()}
+                title="Workspace Notes"
+            />
+        </DraggableTextPane>
+    }
+}
+
+/// Props for draggable text pane wrapper.
+#[derive(Properties, Clone, PartialEq)]
+struct DraggableTextPaneProps {
+    position: Position,
+    on_move: Callback<Position>,
+    style: String,
+    children: Children,
+}
+
+/// Draggable wrapper for the text pane (draggable by header).
+#[function_component(DraggableTextPane)]
+fn draggable_text_pane(props: &DraggableTextPaneProps) -> Html {
+    let is_dragging = use_state(|| false);
+    let drag_start = use_state(|| Position::new(0.0, 0.0));
+    let start_pos = use_state(|| Position::new(0.0, 0.0));
+    let current_pos = use_state(|| props.position);
+
+    // Update position when props change
+    {
+        let current_pos = current_pos.clone();
+        let prop_pos = props.position;
+        use_effect_with(prop_pos, move |pos| {
+            current_pos.set(*pos);
+            || ()
+        });
+    }
+
+    let on_mouse_down = {
+        let is_dragging = is_dragging.clone();
+        let drag_start = drag_start.clone();
+        let start_pos = start_pos.clone();
+        let current_pos = current_pos.clone();
+
+        Callback::from(move |e: MouseEvent| {
+            // Only start drag on header (check class)
+            if let Some(target) = e.target() {
+                if let Ok(element) = target.dyn_into::<web_sys::Element>() {
+                    let class = element.class_name();
+                    if class.contains("text-pane-header") || class.contains("text-pane-title") {
+                        e.prevent_default();
+                        is_dragging.set(true);
+                        let mouse_pos = Position::new(e.client_x() as f64, e.client_y() as f64);
+                        drag_start.set(mouse_pos);
+                        start_pos.set(*current_pos);
+                    }
+                }
+            }
+        })
+    };
+
+    let on_mouse_move = {
+        let is_dragging = is_dragging.clone();
+        let drag_start = drag_start.clone();
+        let start_pos = start_pos.clone();
+        let current_pos = current_pos.clone();
+
+        Callback::from(move |e: MouseEvent| {
+            if *is_dragging {
+                let mouse_pos = Position::new(e.client_x() as f64, e.client_y() as f64);
+                let delta_x = mouse_pos.x - drag_start.x;
+                let delta_y = mouse_pos.y - drag_start.y;
+                let new_pos = Position::new(start_pos.x + delta_x, start_pos.y + delta_y);
+                current_pos.set(new_pos);
+            }
+        })
+    };
+
+    let on_mouse_up = {
+        let is_dragging = is_dragging.clone();
+        let current_pos = current_pos.clone();
+        let on_move = props.on_move.clone();
+
+        Callback::from(move |_: MouseEvent| {
+            if *is_dragging {
+                is_dragging.set(false);
+                on_move.emit(*current_pos);
+            }
+        })
+    };
+
+    let style = format!(
+        "position: absolute; left: {x}px; top: {y}px; pointer-events: auto;",
+        x = current_pos.x,
+        y = current_pos.y
+    );
+
+    html! {
+        <div
+            class="draggable-text-pane"
+            style={style}
+            onmousedown={on_mouse_down}
+            onmousemove={on_mouse_move}
+            onmouseup={on_mouse_up.clone()}
+            onmouseleave={on_mouse_up}
+        >
+            { for props.children.iter() }
+        </div>
+    }
 }

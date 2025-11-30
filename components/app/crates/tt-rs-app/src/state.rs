@@ -5,10 +5,47 @@ use tt_rs_core::WidgetId;
 use tt_rs_drag::Position;
 use tt_rs_robot::Action;
 use tt_rs_scales::Scales;
+use tt_rs_ui::UserLevel;
 
 use crate::box_state::BoxState;
 use crate::demo;
 use crate::widget_item::WidgetItem;
+
+/// Default workspace notes for tt1 (Basic) mode.
+pub const TT1_DEFAULT_NOTES: &str = r#"Welcome to tt-rs Basic Mode!
+
+NUMBERS: Click and drag number stacks to create copies. Numbers support +, -, *, / operations.
+
+BOXES: Containers with holes. Drag items into holes. Drop a box on another's edge to join them. Drop on a number to split.
+
+SCALES: Compare values. Drop numbers in adjacent box holes to see which is larger.
+
+ROBOT: Train by demonstration. Click to start training, perform actions, click again to stop.
+
+TOOLS: Wand copies items. Vacuum removes items."#;
+
+/// Default workspace notes for tt2 (Messaging) mode.
+pub const TT2_DEFAULT_NOTES: &str = r#"Welcome to tt-rs Messaging Mode!
+
+This level introduces Birds and Nests for message passing.
+
+BIRDS: Carriers that deliver items to their paired nest. Drop an item on a bird to send it.
+
+NESTS: Receivers where birds deliver items. Items accumulate in the nest until removed.
+
+BIRD-NEST PAIRS: Each bird is bonded to exactly one nest. Create pairs from the palette.
+
+MESSAGE PASSING: Use birds to send data between different parts of your program - this enables asynchronous communication.
+
+All Basic Mode features (numbers, boxes, scales, robot, tools) are also available."#;
+
+/// Get default notes content for a user level.
+pub fn default_notes_for_level(level: UserLevel) -> &'static str {
+    match level {
+        UserLevel::Tt1 => TT1_DEFAULT_NOTES,
+        UserLevel::Tt2 => TT2_DEFAULT_NOTES,
+    }
+}
 
 /// Application state.
 #[derive(Clone)]
@@ -18,6 +55,12 @@ pub struct AppState {
     pub positions: HashMap<WidgetId, Position>,
     pub widget_in_box: HashMap<WidgetId, (WidgetId, usize)>,
     pub training_robot_id: Option<WidgetId>,
+    /// Workspace notes/documentation content.
+    pub text_pane_content: String,
+    /// Text pane size (width, height).
+    pub text_pane_size: (f64, f64),
+    /// Text pane position.
+    pub text_pane_position: Position,
 }
 
 impl AppState {
@@ -32,6 +75,12 @@ impl AppState {
             positions,
             widget_in_box: HashMap::new(),
             training_robot_id: None,
+            // Initialize with tt1 content (default level)
+            text_pane_content: TT1_DEFAULT_NOTES.to_string(),
+            text_pane_size: (300.0, 200.0),
+            // Center horizontally (assume ~1280px viewport, 300px width): (1280-300)/2 = 490
+            // Near the top: y = 10
+            text_pane_position: Position::new(490.0, 10.0),
         }
     }
 
