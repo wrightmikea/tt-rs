@@ -12,7 +12,7 @@
       "numerator": 1,
       "denominator": 1,
       "operator": "+",
-      "position": { "x": 100, "y": 200 },
+      "position": { "x": 100, "y": 100 },
       "is_copy_source": false
     },
     {
@@ -20,13 +20,13 @@
       "numerator": 2,
       "denominator": 1,
       "operator": "+",
-      "position": { "x": 500, "y": 250 },
+      "position": { "x": 200, "y": 100 },
       "is_copy_source": false
     },
     {
       "type": "dropzone",
       "label": "I need a box with a 1 and a 2. Please drop it here.",
-      "position": { "x": 200, "y": 50 },
+      "position": { "x": 100, "y": 350 },
       "expected": {
         "type": "box",
         "num_holes": 2,
@@ -42,7 +42,7 @@
   "boxes": [
     {
       "num_holes": 2,
-      "position": { "x": 280, "y": 180 },
+      "position": { "x": 100, "y": 200 },
       "contents": [],
       "erased": false,
       "is_copy_source": false

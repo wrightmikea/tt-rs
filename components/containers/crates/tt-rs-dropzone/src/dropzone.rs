@@ -17,6 +17,8 @@ pub struct DropZone {
     pub(crate) on_success_message: Option<String>,
     /// Whether the drop zone has been satisfied (puzzle solved).
     pub(crate) satisfied: bool,
+    /// Whether to show an error (wrong answer was dropped).
+    pub(crate) show_error: bool,
 }
 
 impl DropZone {
@@ -28,6 +30,7 @@ impl DropZone {
             on_success_url: None,
             on_success_message: None,
             satisfied: false,
+            show_error: false,
         }
     }
 
@@ -51,6 +54,7 @@ impl DropZone {
             on_success_url: self.on_success_url.clone(),
             on_success_message: self.on_success_message.clone(),
             satisfied: false, // Reset satisfied state on copy
+            show_error: false,
         }
     }
 }

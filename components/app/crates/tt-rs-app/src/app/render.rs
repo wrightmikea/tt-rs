@@ -24,6 +24,7 @@ use crate::widget_item::WidgetItem;
 /// Higher numbers appear on top.
 /// Help panel uses CSS z-index: 600-650 (see main.css).
 const Z_PLANE_STACKS: i32 = 0;
+const Z_PLANE_DROPZONES: i32 = 50; // Drop targets below draggable items
 const Z_PLANE_BOXES: i32 = 100;
 const Z_PLANE_VALUES: i32 = 200;
 const Z_PLANE_AGENTS: i32 = 300;
@@ -63,6 +64,8 @@ pub fn render_app(
             <div class="workspace-content">
                 // Z-plane 0: Copy source stacks (lowest)
                 { render_z_plane(Z_PLANE_STACKS, render_copy_sources(&planes.copy_sources, state, &cbs.on_copy_source_click, &cbs.on_move)) }
+                // Z-plane 50: Drop zones (below draggable items)
+                { render_z_plane(Z_PLANE_DROPZONES, render_widgets(&planes.dropzones, state, &cbs.on_move, &cbs.on_drop)) }
                 // Z-plane 100: Boxes
                 { render_z_plane(Z_PLANE_BOXES, render_boxes(state, cbs)) }
                 // Z-plane 200: Values (numbers, text)

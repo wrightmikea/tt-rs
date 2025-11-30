@@ -75,6 +75,8 @@ type WidgetRefs<'a> = Vec<(&'a WidgetId, &'a WidgetItem)>;
 pub struct ZPlanes<'a> {
     /// Plane 0: Copy source stacks (lowest z-index)
     pub copy_sources: WidgetRefs<'a>,
+    /// Plane 0.5: Drop zones (below draggable items)
+    pub dropzones: WidgetRefs<'a>,
     /// Plane 1: Values (numbers, text)
     pub values: WidgetRefs<'a>,
     /// Plane 2: Agents and comparison (robot, bird, nest, scales)
@@ -97,6 +99,17 @@ fn partition_into_planes(state: &AppState, level: UserLevel) -> ZPlanes<'_> {
         .widgets
         .iter()
         .filter(|(id, w)| not_in_box(id) && is_visible(w) && w.is_copy_source())
+        .collect();
+
+    let dropzones: Vec<_> = state
+        .widgets
+        .iter()
+        .filter(|(id, w)| {
+            not_in_box(id)
+                && is_visible(w)
+                && !w.is_copy_source()
+                && matches!(w, WidgetItem::DropZone(_))
+        })
         .collect();
 
     let values: Vec<_> = state
@@ -140,6 +153,7 @@ fn partition_into_planes(state: &AppState, level: UserLevel) -> ZPlanes<'_> {
 
     ZPlanes {
         copy_sources,
+        dropzones,
         values,
         agents,
         tools,

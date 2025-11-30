@@ -10,6 +10,7 @@ use tt_rs_ui::UserLevel;
 use crate::box_state::BoxState;
 use crate::demo;
 use crate::widget_item::WidgetItem;
+use crate::workspace::WidgetData;
 
 /// Default workspace notes for tt1 (Basic) mode.
 pub const TT1_DEFAULT_NOTES: &str = r#"Welcome to tt-rs Basic Mode!
@@ -61,6 +62,8 @@ pub struct AppState {
     pub text_pane_size: (f64, f64),
     /// Text pane position.
     pub text_pane_position: Position,
+    /// Expected patterns for drop zones (dropzone_id -> pattern).
+    pub dropzone_patterns: HashMap<WidgetId, WidgetData>,
 }
 
 impl AppState {
@@ -81,6 +84,7 @@ impl AppState {
             // Center horizontally (assume ~1280px viewport, 300px width): (1280-300)/2 = 490
             // Near the top: y = 10
             text_pane_position: Position::new(490.0, 10.0),
+            dropzone_patterns: HashMap::new(),
         }
     }
 

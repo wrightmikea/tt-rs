@@ -72,23 +72,33 @@ pub fn create_callbacks(
         on_copy_source_click: widget_handlers::create_copy_source(state.clone()),
         on_move: widget_handlers::create_move(state.clone()),
         on_drop: widget_handlers::create_widget_drop(state.clone()),
-        // Workspace callbacks - stubs for now, will be implemented with storage
+        // Workspace callbacks
         on_workspace_open: {
             let w = workspace_open.clone();
             Callback::from(move |_| w.set(true))
         },
         on_workspace_close: {
-            let w = workspace_open;
+            let w = workspace_open.clone();
             Callback::from(move |_| w.set(false))
         },
         on_workspace_save: Callback::from(|data: SaveFormData| {
             log::info!("Save workspace: {} - {}", data.name, data.description);
             // TODO: Implement actual save with storage backend
         }),
-        on_workspace_load: Callback::from(|id: String| {
-            log::info!("Load workspace: {}", id);
-            // TODO: Implement actual load with storage backend
-        }),
+        on_workspace_load: {
+            let s = state.clone();
+            let w = workspace_open;
+            Callback::from(move |id: String| {
+                log::info!("Load workspace: {}", id);
+                if let Some(workspace) = crate::workspace::load_bundled_puzzle(&id) {
+                    let new_state = crate::workspace::from_workspace(&workspace);
+                    s.set(new_state);
+                    w.set(false); // Close workspace menu after loading
+                } else {
+                    log::warn!("Puzzle not found: {}", id);
+                }
+            })
+        },
         on_workspace_delete: Callback::from(|id: String| {
             log::info!("Delete workspace: {}", id);
             // TODO: Implement actual delete with storage backend

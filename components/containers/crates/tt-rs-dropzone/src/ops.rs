@@ -27,4 +27,14 @@ impl DropZone {
     pub fn set_satisfied(&mut self, satisfied: bool) {
         self.satisfied = satisfied;
     }
+
+    /// Returns whether to show an error state.
+    pub fn show_error(&self) -> bool {
+        self.show_error
+    }
+
+    /// Sets whether to show an error state.
+    pub fn set_show_error(&mut self, show_error: bool) {
+        self.show_error = show_error;
+    }
 }

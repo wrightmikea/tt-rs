@@ -64,9 +64,25 @@ pub fn from_workspace(workspace: &Workspace) -> AppState {
     let mut positions = HashMap::new();
     let mut boxes = HashMap::new();
     let mut widget_in_box = HashMap::new();
+    let mut dropzone_patterns = HashMap::new();
 
     // Deserialize standalone widgets
     for widget_data in &workspace.widgets {
+        // Extract dropzone expected patterns before converting
+        if let WidgetData::DropZone(dz_data) = widget_data {
+            if let Some(ref expected) = dz_data.expected {
+                // Store the pattern - we'll associate it with the ID after creation
+                if let Some((item, pos)) = data_to_widget(widget_data) {
+                    let id = item.id();
+                    positions.insert(id, pos);
+                    widgets.insert(id, item);
+                    // Store the expected pattern for this dropzone
+                    dropzone_patterns.insert(id, expected.as_ref().clone());
+                }
+                continue;
+            }
+        }
+
         if let Some((item, pos)) = data_to_widget(widget_data) {
             let id = item.id();
             positions.insert(id, pos);
@@ -99,6 +115,7 @@ pub fn from_workspace(workspace: &Workspace) -> AppState {
         text_pane_content: workspace.notes.clone(),
         text_pane_size: (300.0, 200.0),
         text_pane_position: Position::new(490.0, 10.0),
+        dropzone_patterns,
     }
 }
 

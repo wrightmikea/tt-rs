@@ -6,9 +6,9 @@ use tt_rs_drag::{CopySourceClickEvent, DropEvent, Position};
 use yew::prelude::*;
 
 use crate::ops::{
-    handle_bird_drop, handle_box_hole_drop, handle_drop_on_bird, handle_nest_click,
-    handle_nest_drop, handle_number_on_number, handle_robot_click, handle_scales_drop,
-    handle_vacuum_drop, handle_wand_drop,
+    handle_bird_drop, handle_box_hole_drop, handle_drop_on_bird, handle_dropzone_drop,
+    handle_nest_click, handle_nest_drop, handle_number_on_number, handle_robot_click,
+    handle_scales_drop, handle_vacuum_drop, handle_wand_drop,
 };
 use crate::state::AppState;
 use crate::widget_item::WidgetItem;
@@ -106,6 +106,7 @@ pub fn create_widget_drop(state: UseStateHandle<AppState>) -> Callback<DropEvent
             || handle_bird_drop(&mut s, id, mx, my)
             || handle_nest_drop(&mut s, id, mx, my)
             || handle_scales_drop(&mut s, id, mx, my)
+            || handle_dropzone_drop(&mut s, id, mx, my)  // Drop widget ON dropzone for puzzle verification
             || handle_number_on_number(&mut s, id, mx, my)
             || handle_box_hole_drop(&mut s, id, mx, my, &e)
         {

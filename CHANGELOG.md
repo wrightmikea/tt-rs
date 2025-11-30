@@ -4,7 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-30
 
-- feat: Add DropZone widget and puzzle infrastructure with classic ToonTalk puzzles (`<latest>`)
+- feat: Add puzzle drop verification with visual feedback for correct/incorrect answers (`<latest>`)
+- deploy: Update live demo with DropZone widget and puzzle infrastructure (`c368ed7`)
+- feat: Add DropZone widget and puzzle infrastructure with classic ToonTalk puzzles (`841b963`)
 
 ## 2025-11-29
 

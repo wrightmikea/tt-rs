@@ -1324,6 +1324,45 @@ body.dragging-active .widget.number:not(.copy-source) {
     background-color: #c82333;
 }
 
+/* Tutorial puzzle list styles */
+.workspace-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 0.25rem 0;
+}
+
+.workspace-section .section-desc {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin: 0 0 0.75rem 0;
+}
+
+.workspace-item-name {
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1;
+}
+
+.workspace-item-difficulty {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    background: #e9ecef;
+    color: #495057;
+}
+
+.workspace-item-desc {
+    font-size: 0.85rem;
+    color: #5a6268;
+    margin: 0;
+}
+
+.workspace-item {
+    cursor: pointer;
+}
+
 /* Empty state */
 .workspace-empty {
     text-align: center;
@@ -1752,6 +1791,35 @@ body.dragging-active .widget.dropzone {
 .dropzone-success {
     font-size: 1.5rem;
     margin-bottom: 0.5rem;
+}
+
+/* Error dropzone - wrong answer dropped */
+.widget.dropzone.error {
+    background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+    border-color: #c62828;
+    border-style: solid;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.widget.dropzone.error .dropzone-label {
+    color: #c62828;
+}
+
+.dropzone-error {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #c62828;
+}
+
+.dropzone-hint.error {
+    color: #c62828;
+    font-weight: bold;
 }
 
 /* Dropzone in box hole (smaller display) */

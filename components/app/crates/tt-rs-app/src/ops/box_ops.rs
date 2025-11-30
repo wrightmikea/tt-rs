@@ -4,6 +4,7 @@ use tt_rs_core::WidgetId;
 use tt_rs_drag::{DropEvent, Position};
 use tt_rs_hit_test::{find_number_at, find_widget_at_excluding};
 
+use super::dropzone_ops::handle_dropzone_drop;
 use crate::box_state::BoxState;
 use crate::state::AppState;
 use crate::widget_item::WidgetItem;
@@ -30,7 +31,7 @@ pub fn deep_copy_box(state: &mut AppState, src: &BoxState) -> BoxState {
     new_box
 }
 
-/// Handle box drop: create new box, split, or join.
+/// Handle box drop: create new box, split, join, or drop on dropzone.
 pub fn handle_box_drop(state: &mut AppState, event: &DropEvent, pending: Option<usize>) -> bool {
     let box_id = event.widget_id;
     let (mx, my) = (event.mouse_position.x, event.mouse_position.y);
@@ -38,6 +39,11 @@ pub fn handle_box_drop(state: &mut AppState, event: &DropEvent, pending: Option<
     if let Some(num_holes) = pending {
         // Create a new box with requested number of holes (original stays as prototype)
         create_new_box(state, num_holes, event);
+        return true;
+    }
+
+    // Check for dropzone drop first (for puzzle verification)
+    if handle_dropzone_drop(state, box_id, mx, my) {
         return true;
     }
 

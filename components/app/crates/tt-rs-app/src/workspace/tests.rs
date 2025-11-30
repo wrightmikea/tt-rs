@@ -77,7 +77,8 @@ mod tests {
             assert_eq!(dz.label, "I need a 4. Please drop it here.");
 
             // Expected should be a number 4
-            if let WidgetData::Number(n) = dz.expected.as_ref() {
+            let expected = dz.expected.as_ref().expect("Expected pattern should exist");
+            if let WidgetData::Number(n) = expected.as_ref() {
                 assert_eq!(n.numerator, 4);
             } else {
                 panic!("Expected pattern should be a number");
@@ -99,7 +100,8 @@ mod tests {
 
         if let WidgetData::DropZone(dz) = dropzone.unwrap() {
             // Expected should be a box with [1, 2]
-            if let WidgetData::Box(b) = dz.expected.as_ref() {
+            let expected = dz.expected.as_ref().expect("Expected pattern should exist");
+            if let WidgetData::Box(b) = expected.as_ref() {
                 assert_eq!(b.num_holes, 2);
                 assert_eq!(b.contents.len(), 2);
             } else {
