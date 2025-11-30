@@ -5,6 +5,7 @@ mod tooltip;
 
 use tt_rs_bird::Bird;
 use tt_rs_core::{Widget, WidgetId};
+use tt_rs_dropzone::DropZone;
 use tt_rs_nest::Nest;
 use tt_rs_number::Number;
 use tt_rs_robot::Robot;
@@ -29,6 +30,7 @@ pub enum WidgetItem {
     Robot(Robot),
     Nest(Nest),
     Bird(Bird),
+    DropZone(DropZone),
 }
 
 impl WidgetItem {
@@ -42,6 +44,7 @@ impl WidgetItem {
             WidgetItem::Robot(r) => r.id(),
             WidgetItem::Nest(nest) => nest.id(),
             WidgetItem::Bird(bird) => bird.id(),
+            WidgetItem::DropZone(dz) => dz.id(),
         }
     }
 
@@ -57,6 +60,9 @@ impl WidgetItem {
     }
     pub fn is_robot(&self) -> bool {
         matches!(self, WidgetItem::Robot(_))
+    }
+    pub fn is_dropzone(&self) -> bool {
+        matches!(self, WidgetItem::DropZone(_))
     }
 
     pub fn tooltip_info(&self) -> &'static TooltipInfo {
@@ -84,7 +90,8 @@ impl WidgetItem {
             | WidgetItem::Scales(_)
             | WidgetItem::Vacuum(_)
             | WidgetItem::Wand(_)
-            | WidgetItem::Robot(_) => false,
+            | WidgetItem::Robot(_)
+            | WidgetItem::DropZone(_) => false,
         }
     }
 
@@ -99,6 +106,7 @@ impl WidgetItem {
             WidgetItem::Robot(r) => WidgetItem::Robot(r.copy_robot()),
             WidgetItem::Nest(nest) => WidgetItem::Nest(nest.copy_nest()),
             WidgetItem::Bird(bird) => WidgetItem::Bird(bird.copy_bird()),
+            WidgetItem::DropZone(dz) => WidgetItem::DropZone(dz.copy_dropzone()),
         }
     }
 
@@ -113,6 +121,7 @@ impl WidgetItem {
             WidgetItem::Robot(r) => Box::new(r.clone()),
             WidgetItem::Nest(nest) => Box::new(nest.clone()),
             WidgetItem::Bird(bird) => Box::new(bird.clone()),
+            WidgetItem::DropZone(dz) => Box::new(dz.clone()),
         }
     }
 
@@ -166,6 +175,14 @@ impl WidgetItem {
             "robot" => WidgetItem::Robot(Robot::new()),
             "nest" => WidgetItem::Nest(Nest::new()),
             "bird" => WidgetItem::Bird(Bird::new()),
+            "dropzone" => {
+                // Parse dropzone from description like 'dropzone "I need a 4"'
+                let label = desc
+                    .strip_prefix("dropzone \"")
+                    .and_then(|s| s.strip_suffix('"'))
+                    .unwrap_or("Drop here");
+                WidgetItem::DropZone(DropZone::new(label))
+            }
             _ => {
                 log::warn!("Unknown widget type: {}", widget.type_name());
                 WidgetItem::Number(Number::new(0))

@@ -83,5 +83,6 @@ fn copy_item(w: &WidgetItem) -> WidgetItem {
         WidgetItem::Robot(r) => WidgetItem::Robot(r.copy_robot()),
         WidgetItem::Nest(n) => WidgetItem::Nest(n.copy_nest()),
         WidgetItem::Bird(b) => WidgetItem::Bird(b.copy_bird()),
+        WidgetItem::DropZone(dz) => WidgetItem::DropZone(dz.copy_dropzone()),
     }
 }

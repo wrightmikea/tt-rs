@@ -83,6 +83,12 @@ const TOOLTIP_BIRD: TooltipInfo = TooltipInfo {
     hint: "Drop an item on a bird to send it to the nest.",
 };
 
+const TOOLTIP_DROPZONE: TooltipInfo = TooltipInfo {
+    title: "Drop Zone",
+    description: "Drop the correct answer here to verify.",
+    hint: "Create the requested item and drop it here.",
+};
+
 /// Get tooltip information for a widget item.
 pub fn tooltip_info(item: &WidgetItem) -> &'static TooltipInfo {
     match item {
@@ -100,5 +106,6 @@ pub fn tooltip_info(item: &WidgetItem) -> &'static TooltipInfo {
         WidgetItem::Robot(_) => &TOOLTIP_ROBOT,
         WidgetItem::Nest(_) => &TOOLTIP_NEST,
         WidgetItem::Bird(_) => &TOOLTIP_BIRD,
+        WidgetItem::DropZone(_) => &TOOLTIP_DROPZONE,
     }
 }

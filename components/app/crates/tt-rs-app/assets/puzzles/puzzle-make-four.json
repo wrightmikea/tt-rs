@@ -1,0 +1,44 @@
+{
+  "metadata": {
+    "id": "puzzle-make-four",
+    "name": "Make a 4",
+    "description": "Add the two 2s together to make 4, then drop it on the drop zone.",
+    "user_level": "tt1",
+    "is_bundled": true
+  },
+  "widgets": [
+    {
+      "type": "number",
+      "numerator": 2,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 100, "y": 150 },
+      "is_copy_source": false
+    },
+    {
+      "type": "number",
+      "numerator": 2,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 450, "y": 200 },
+      "is_copy_source": false
+    },
+    {
+      "type": "dropzone",
+      "label": "I need a 4. Please drop it here.",
+      "position": { "x": 200, "y": 50 },
+      "expected": {
+        "type": "number",
+        "numerator": 4,
+        "denominator": 1,
+        "operator": "+",
+        "position": { "x": 0, "y": 0 },
+        "is_copy_source": false
+      },
+      "on_success_url": "puzzle-make-nine",
+      "on_success_message": "Correct! 2 + 2 = 4"
+    }
+  ],
+  "boxes": [],
+  "notes": "Puzzle 2: Make a 4\n\nGoal: Create the number 4 and drop it on the blue drop zone.\n\nHint: Drag one 2 onto the other 2. When you drop a number on another number, they add together!"
+}

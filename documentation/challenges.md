@@ -6,6 +6,107 @@ Programming puzzles and problems to solve with tt-rs.
 
 Challenges are goal-oriented puzzles that test understanding of tt-rs concepts. Each challenge has a clear objective and success criteria. Users must figure out the solution themselves.
 
+## ToonTalk Classic Puzzles (from ToonTalk Reborn 2017)
+
+These three puzzles are adapted from the original ToonTalk Reborn puzzle series:
+https://toontalk.github.io/ToonTalk/puzzles/classic/p1.html
+
+### Puzzle 1: Fill a Box with 1 and 2
+
+**File**: `puzzle-fill-box.json`
+**Difficulty**: Easy (Introductory)
+**User Level**: tt1
+
+**Starting Widgets**:
+- Number 1
+- Number 2
+- Empty 2-hole box
+- DropZone: "I need a box with a 1 and a 2. Please drop it here."
+
+**Goal**: Put the numbers 1 and 2 into the box, then drop the completed box on the DropZone.
+
+**Success Criteria**: Box with [1, 2] matches the expected pattern.
+
+**Skills Taught**:
+- Dragging widgets
+- Dropping items into box holes
+- Using the DropZone to verify answers
+
+**Solution**: Drag 1 into first hole, drag 2 into second hole, drag box onto DropZone.
+
+---
+
+### Puzzle 2: Make a 4
+
+**File**: `puzzle-make-four.json`
+**Difficulty**: Easy
+**User Level**: tt1
+
+**Starting Widgets**:
+- Number 2 (first copy)
+- Number 2 (second copy)
+- DropZone: "I need a 4. Please drop it here."
+
+**Goal**: Create the number 4 and drop it on the DropZone.
+
+**Success Criteria**: Number 4 matches the expected pattern.
+
+**Skills Taught**:
+- Number arithmetic (drop one number on another to add)
+- Understanding that dropping adds numbers
+
+**Solution**: Drag one 2 onto the other 2. Result is 4. Drop 4 on DropZone.
+
+---
+
+### Puzzle 3: Make a 9
+
+**File**: `puzzle-make-nine.json`
+**Difficulty**: Easy-Medium
+**User Level**: tt1
+
+**Starting Widgets**:
+- Number 3 (as copy source - unlimited copies)
+- DropZone: "I need a 9. Please drop it here."
+
+**Goal**: Create the number 9 using only 3s and drop it on the DropZone.
+
+**Success Criteria**: Number 9 matches the expected pattern.
+
+**Skills Taught**:
+- Using copy sources (drag to get copies, original stays)
+- Multiple additions (3 + 3 + 3 = 9)
+- Planning a multi-step solution
+
+**Solution**:
+1. Drag a 3 from the stack (creates a copy)
+2. Drag another 3 from the stack
+3. Drop one 3 on the other to make 6
+4. Drag another 3 from the stack
+5. Drop it on 6 to make 9
+6. Drop 9 on DropZone
+
+---
+
+## New Widget Types Required
+
+### DropZone Widget
+
+A verification drop target used in puzzles:
+- Displays a label/instruction (e.g., "I need a 4")
+- Has an expected pattern that dropped widgets are checked against
+- Visual feedback on success (green) or failure (red/rejected)
+- Can optionally trigger navigation to next puzzle on success
+
+### Copy Source Pattern (existing)
+
+Any widget can be marked as a copy source using `is_copy_source`:
+- Already implemented for Number, Nest, Bird
+- Need to extend to Box for puzzles
+- When dragged FROM, creates a copy while original stays
+- Visual indicator showing it's a stack (shadow/depth effect via CSS)
+- Used for puzzle starting materials and the palette
+
 ## Proposed Challenges
 
 ### Arithmetic Challenges

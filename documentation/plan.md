@@ -271,32 +271,79 @@ See detailed content designs in:
 
 ---
 
-## Medium-Term Roadmap (Iterations 4-8)
+## Medium-Term Roadmap (Iterations 4-9)
 
-### Iteration 4: Sensors & Events
+### Iteration 4: Puzzle Infrastructure
+
+**Goal**: Enable puzzle/challenge workspaces with verification drop zones.
+
+Based on ToonTalk Classic Puzzles (https://toontalk.github.io/ToonTalk/puzzles/classic/p1.html):
+
+#### 4.1 DropZone Widget
+- [ ] Create `tt-rs-dropzone` crate in containers component
+- [ ] Implement `DropZone` struct with:
+  - `label: String` - displayed text (e.g., "I need a box with 1 and 2")
+  - `expected: Box<dyn Widget>` - pattern to match against
+  - `on_success: Option<String>` - URL or action on success
+- [ ] Implement drop zone rendering (styled text box)
+- [ ] Visual feedback on hover (highlight when valid drop target)
+
+#### 4.2 Drop Verification
+- [ ] Implement `accepts_drop()` method using `Widget::matches()`
+- [ ] On drop: check if dropped widget matches expected pattern
+- [ ] Success: visual feedback (green flash, checkmark)
+- [ ] Failure: reject drop (widget returns to original position)
+- [ ] Optional: success message or next puzzle URL
+
+#### 4.3 Copy Source for All Widgets (Refactor)
+
+**Note**: We already have `is_copy_source` pattern on Number, Nest, Bird. Extend to Box:
+
+- [ ] Add `is_copy_source: bool` field to `BoxState`
+- [ ] Implement `as_copy_source()` builder method for BoxState
+- [ ] Update `BoxState::copy()` to reset `is_copy_source` to false
+- [ ] Render copy-source boxes with stacked visual (shadow effect)
+- [ ] Ensure copy sources work in puzzle workspaces
+
+This uses the existing `CopySource` component from tt-rs-drag, which already:
+- Stays in place when dragged from
+- Creates copies on click/drag
+- Shows stacked visual appearance
+
+#### 4.4 ToonTalk Classic Puzzles (3 workspaces)
+- [ ] `puzzle-fill-box.json` - Puzzle 1: Put 1 and 2 in a box
+- [ ] `puzzle-make-four.json` - Puzzle 2: Add 2+2 to make 4
+- [ ] `puzzle-make-nine.json` - Puzzle 3: Add 3+3+3 to make 9
+
+#### 4.5 Puzzle Navigation (Optional)
+- [ ] Success triggers navigation to next puzzle URL
+- [ ] Puzzle sequence configuration
+- [ ] Progress tracking in localStorage
+
+### Iteration 5: Sensors & Events
 - Keyboard sensor (key press detection)
 - Mouse sensor (click, position)
 - Touch sensor (mobile support)
 - Sensors trigger robot activation
 
-### Iteration 5: Backside & Configuration
+### Iteration 6: Backside & Configuration
 - Flip widget to see backside
 - Robot backside shows conditions
 - Number backside shows operator selection
 - Box backside shows labels
 
-### Iteration 6: Robot Execution Polish
+### Iteration 7: Robot Execution Polish
 - Watched execution (step-by-step with animation)
 - Speed control slider
 - Visual highlighting of current action
 - Robot chaining (sequential robots)
 
-### Iteration 7: Text Operations
+### Iteration 8: Text Operations
 - Text explosion (text on box → letters in holes)
 - Text joining (box contents → concatenated text)
 - Text comparison on scales (alphabetical)
 
-### Iteration 8: Element Widget
+### Iteration 9: Element Widget
 - HTML content widgets
 - SVG graphics support
 - Drag images from browser

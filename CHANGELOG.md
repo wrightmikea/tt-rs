@@ -2,9 +2,14 @@
 
 All notable changes to tt-rs.
 
+## 2025-11-30
+
+- feat: Add DropZone widget and puzzle infrastructure with classic ToonTalk puzzles (`<latest>`)
+
 ## 2025-11-29
 
-- feat: Add workspace menu tabs and content documentation (`<latest>`)
+- deploy: Update live demo with workspace menu tabs and content documentation (`65abe0d`)
+- feat: Add workspace menu tabs and content documentation (`7307ba2`)
 - deploy: Update live demo with TextPane workspace documentation widget (`00d8237`)
 - feat: Add TextPane widget for workspace documentation with mode-specific content (`140b402`)
 - deploy: Update live demo with workspace menu UI (`73a0f44`)

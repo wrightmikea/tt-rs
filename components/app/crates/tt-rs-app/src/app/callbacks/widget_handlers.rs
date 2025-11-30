@@ -75,6 +75,9 @@ pub fn create_copy_source(state: UseStateHandle<AppState>) -> Callback<CopySourc
                 s.positions.insert(copy.id(), e.position);
                 s.widgets.insert(copy.id(), WidgetItem::Text(copy));
             }
+            Some(WidgetItem::DropZone(_)) => {
+                // DropZones are not copy sources
+            }
             None => {}
         }
         state.set(s);

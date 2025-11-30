@@ -1679,3 +1679,85 @@ body.dragging-active .widget.number:not(.copy-source) {
 .text-pane {
     position: relative;
 }
+
+/* ========================================
+   DROPZONE WIDGET (Puzzle Verification)
+   ======================================== */
+
+.widget.dropzone {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border: 3px dashed #1976d2;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    min-width: 200px;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.widget.dropzone:hover {
+    border-style: solid;
+    background: linear-gradient(135deg, #bbdefb 0%, #90caf9 100%);
+    box-shadow: 0 4px 16px rgba(25, 118, 210, 0.3);
+}
+
+/* Highlight dropzone when something is being dragged */
+body.dragging-active .widget.dropzone {
+    animation: pulse-dropzone 1s ease-in-out infinite;
+    border-color: #4caf50;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+}
+
+@keyframes pulse-dropzone {
+    0%, 100% {
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+        transform: scale(1.02);
+    }
+}
+
+.dropzone-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1565c0;
+    line-height: 1.4;
+    max-width: 300px;
+}
+
+.dropzone-hint {
+    font-size: 0.8rem;
+    color: #64b5f6;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+/* Satisfied dropzone - correct answer dropped */
+.widget.dropzone.satisfied {
+    background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+    border-color: #388e3c;
+    border-style: solid;
+}
+
+.widget.dropzone.satisfied .dropzone-label {
+    color: #2e7d32;
+}
+
+.dropzone-success {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Dropzone in box hole (smaller display) */
+.widget.dropzone.in-hole {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0.25rem;
+    font-size: 0.6rem;
+}

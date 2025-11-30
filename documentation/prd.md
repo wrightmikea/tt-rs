@@ -125,6 +125,8 @@ Goal: Match the core functionality of the 2017 JavaScript version.
 | FR1.6 | Bird (message carrier) | Must Have | ❌ Pending |
 | FR1.7 | Nest (message receiver) | Must Have | ❌ Pending |
 | FR1.8 | Sensor (event detection) | Should Have | ❌ Pending |
+| FR1.9 | DropZone (verification target) | Should Have | ❌ Pending |
+| FR1.10 | Copy source for Box widget | Should Have | ❌ Pending |
 
 #### FR2: Tools (MVP)
 
@@ -179,6 +181,17 @@ Goal: Match the core functionality of the 2017 JavaScript version.
 | FR5B.4 | Tutorial workspace files (7 planned) | Must Have | ❌ Pending |
 | FR5B.5 | Example workspace files (10 planned) | Should Have | ❌ Pending |
 | FR5B.6 | Challenge workspace files (10 planned) | Should Have | ❌ Pending |
+| FR5B.7 | ToonTalk Classic Puzzles (3 from 2017) | Should Have | ❌ Pending |
+
+#### FR5C: Puzzle Infrastructure
+
+| ID | Feature | Priority | Status |
+|----|---------|----------|--------|
+| FR5C.1 | DropZone widget (labelled verification target) | Should Have | ❌ Pending |
+| FR5C.2 | Pattern matching for drop verification | Should Have | ❌ Pending |
+| FR5C.3 | Success/failure feedback on drop | Should Have | ❌ Pending |
+| FR5C.4 | Puzzle auto-advance on success | Could Have | ❌ Pending |
+| FR5C.5 | Copy source support for Box | Should Have | ❌ Pending |
 
 See documentation files for planned content:
 - [tutorials.md](tutorials.md) - 7 step-by-step guided lessons
@@ -455,6 +468,10 @@ Goal: Go beyond original ToonTalk with modern capabilities.
 
 ### Events
 - **Sensor**: Widget responding to browser events
+
+### Puzzle Support
+- **DropZone**: Labeled verification target that checks dropped widgets against an expected pattern
+- **Copy Source**: Any widget marked `is_copy_source` produces copies when dragged from (original stays)
 
 ## References
 

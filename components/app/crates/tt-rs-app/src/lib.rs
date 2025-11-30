@@ -7,6 +7,7 @@ mod ops;
 mod robot_exec;
 mod state;
 mod widget_item;
+pub mod workspace;
 
 use app::App;
 

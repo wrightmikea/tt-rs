@@ -1,0 +1,11 @@
+[package]
+name = "tt-rs-dropzone"
+description = "DropZone widget for tt-rs - verification target for puzzles"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+tt-rs-core = { path = "../../../core/crates/tt-rs-core" }
+yew = { workspace = true }

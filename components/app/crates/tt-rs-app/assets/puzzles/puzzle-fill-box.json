@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "id": "puzzle-fill-box",
+    "name": "Fill a Box",
+    "description": "Put the numbers 1 and 2 into the box, then drop the completed box on the drop zone.",
+    "user_level": "tt1",
+    "is_bundled": true
+  },
+  "widgets": [
+    {
+      "type": "number",
+      "numerator": 1,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 100, "y": 200 },
+      "is_copy_source": false
+    },
+    {
+      "type": "number",
+      "numerator": 2,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 500, "y": 250 },
+      "is_copy_source": false
+    },
+    {
+      "type": "dropzone",
+      "label": "I need a box with a 1 and a 2. Please drop it here.",
+      "position": { "x": 200, "y": 50 },
+      "expected": {
+        "type": "box",
+        "num_holes": 2,
+        "contents": [
+          { "hole": 0, "widget": { "type": "number", "numerator": 1, "denominator": 1, "operator": "+", "position": { "x": 0, "y": 0 }, "is_copy_source": false } },
+          { "hole": 1, "widget": { "type": "number", "numerator": 2, "denominator": 1, "operator": "+", "position": { "x": 0, "y": 0 }, "is_copy_source": false } }
+        ]
+      },
+      "on_success_url": "puzzle-make-four",
+      "on_success_message": "Correct! You filled the box with 1 and 2."
+    }
+  ],
+  "boxes": [
+    {
+      "num_holes": 2,
+      "position": { "x": 280, "y": 180 },
+      "contents": [],
+      "erased": false,
+      "is_copy_source": false
+    }
+  ],
+  "notes": "Puzzle 1: Fill a Box\n\nGoal: Put the numbers 1 and 2 into the box, then drop the completed box on the blue drop zone.\n\nHint: Drag the 1 into the left hole, the 2 into the right hole, then drag the box to the drop zone."
+}
