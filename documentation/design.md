@@ -952,6 +952,237 @@ Copy sources (palette items) are NOT saved:
 - Only user-created widgets and their positions are persisted
 - This keeps workspace files small and ensures palette consistency
 
+## URL-Based Routing
+
+### Design Goals
+
+URL routing enables:
+- **Persistence**: Browser reload stays on the same puzzle/workspace
+- **Sharing**: Copy URL to share a specific puzzle with others
+- **Bookmarking**: Save puzzles to browser bookmarks
+- **Navigation**: Browser back/forward buttons work intuitively
+- **Deep linking**: Documentation and tutorials can link directly to puzzles
+
+### URL Structure
+
+```
+https://wrightmikea.github.io/tt-rs/
+https://wrightmikea.github.io/tt-rs/#/tutorial/fill-a-box
+https://wrightmikea.github.io/tt-rs/#/tutorial/make-a-4
+https://wrightmikea.github.io/tt-rs/#/example/counting-robot
+https://wrightmikea.github.io/tt-rs/#/challenge/factorial
+https://wrightmikea.github.io/tt-rs/#/workspace/{uuid}
+```
+
+Using hash-based routing (`#/path`) for GitHub Pages compatibility (no server-side routing).
+
+### Route Types
+
+```rust
+pub enum Route {
+    /// Default workspace (empty or demo)
+    Home,
+    /// Load a bundled tutorial puzzle
+    Tutorial { slug: String },
+    /// Load a bundled example workspace
+    Example { slug: String },
+    /// Load a bundled challenge puzzle
+    Challenge { slug: String },
+    /// Load a user-saved workspace by ID
+    Workspace { id: String },
+}
+
+impl Route {
+    pub fn from_hash(hash: &str) -> Self {
+        // Parse hash fragment into Route
+        // e.g., "#/tutorial/fill-a-box" -> Tutorial { slug: "fill-a-box" }
+    }
+
+    pub fn to_hash(&self) -> String {
+        match self {
+            Route::Home => String::new(),
+            Route::Tutorial { slug } => format!("#/tutorial/{}", slug),
+            Route::Example { slug } => format!("#/example/{}", slug),
+            Route::Challenge { slug } => format!("#/challenge/{}", slug),
+            Route::Workspace { id } => format!("#/workspace/{}", id),
+        }
+    }
+}
+```
+
+### Navigation Integration
+
+```rust
+pub struct Router {
+    current_route: Route,
+    history_listener: EventListener,
+}
+
+impl Router {
+    /// Update URL without page reload
+    pub fn navigate_to(&mut self, route: Route) {
+        let hash = route.to_hash();
+        window().location().set_hash(&hash).unwrap();
+        self.current_route = route;
+    }
+
+    /// Listen for browser back/forward
+    pub fn on_popstate<F>(&self, callback: F) where F: Fn(Route) {
+        // Called when user clicks back/forward or manually changes URL
+    }
+}
+```
+
+### Puzzle Loading with URL Update
+
+When user clicks a puzzle in the Workspace menu:
+1. Load the puzzle data
+2. Update the URL hash
+3. Close the menu
+
+```rust
+pub fn load_puzzle(slug: &str, state: &mut AppState) {
+    // Load puzzle
+    let workspace = puzzles::load_puzzle(slug);
+    *state = from_workspace(&workspace);
+
+    // Update URL
+    let route = Route::Tutorial { slug: slug.to_string() };
+    Router::navigate_to(route);
+}
+```
+
+### Page Reload Behavior
+
+On page load:
+1. Parse current URL hash
+2. If route is a puzzle/workspace, load it
+3. Otherwise, show default workspace
+
+```rust
+pub fn on_mount() {
+    let hash = window().location().hash().unwrap_or_default();
+    let route = Route::from_hash(&hash);
+
+    match route {
+        Route::Tutorial { slug } => load_puzzle(&slug),
+        Route::Example { slug } => load_example(&slug),
+        Route::Challenge { slug } => load_challenge(&slug),
+        Route::Workspace { id } => load_workspace(&id),
+        Route::Home => init_default_workspace(),
+    }
+}
+```
+
+## Puzzle/Tutorial Usability
+
+### Reset Button
+
+Each puzzle/tutorial needs a reset button to restart from the beginning:
+
+```rust
+pub struct PuzzleControls {
+    pub on_reset: Callback<()>,
+    pub on_hint: Option<Callback<()>>,
+    pub on_show_me: Option<Callback<()>>,
+}
+```
+
+**Reset button behavior:**
+1. Reload the puzzle from its original JSON file
+2. Clear any error state on the DropZone
+3. Keep the same URL (don't navigate away)
+4. Optionally show a "Reset" confirmation toast
+
+**UI placement:**
+- Add a floating control bar when a puzzle is loaded
+- Or add controls to the DropZone widget itself
+
+### "Show Me" Animated Demo (Future)
+
+A demonstration system that animates the solution:
+
+```rust
+pub struct DemoAnimation {
+    steps: Vec<DemoStep>,
+    current_step: usize,
+    speed: f32,
+}
+
+pub enum DemoStep {
+    Wait { duration: Duration },
+    MoveTo { widget_id: WidgetId, position: Position },
+    DragStart { widget_id: WidgetId },
+    DragMove { path: Vec<Position> },
+    DragEnd { target: DragTarget },
+    ShowTooltip { text: String, position: Position },
+}
+```
+
+**Implementation approach:**
+1. Each puzzle JSON can include an optional `demo` field with animation steps
+2. The "Show Me" button plays the animation
+3. Widget positions and drags are interpolated for smooth animation
+4. Tooltips can appear to explain each step
+
+### Undo/Redo for Puzzles
+
+Command pattern for undoing user actions:
+
+```rust
+pub enum PuzzleCommand {
+    /// Widget was placed in a box hole
+    PlaceInHole { widget_id: WidgetId, box_id: WidgetId, hole: usize },
+    /// Widget was removed from a box hole
+    RemoveFromHole { widget_id: WidgetId, box_id: WidgetId, hole: usize },
+    /// Widget position changed
+    MoveWidget { widget_id: WidgetId, from: Position, to: Position },
+    /// Number arithmetic was applied
+    ApplyArithmetic { source: WidgetId, target: WidgetId, result: Number },
+}
+
+pub struct UndoStack {
+    commands: Vec<PuzzleCommand>,
+    max_size: usize,
+}
+
+impl UndoStack {
+    pub fn undo(&mut self, state: &mut AppState) {
+        if let Some(cmd) = self.commands.pop() {
+            cmd.undo(state);
+        }
+    }
+}
+```
+
+### Hint System (Future)
+
+Progressive hints for stuck users:
+
+```rust
+pub struct PuzzleHints {
+    hints: Vec<String>,
+    revealed_count: usize,
+}
+
+impl PuzzleHints {
+    pub fn reveal_next(&mut self) -> Option<&str> {
+        if self.revealed_count < self.hints.len() {
+            let hint = &self.hints[self.revealed_count];
+            self.revealed_count += 1;
+            Some(hint)
+        } else {
+            None
+        }
+    }
+}
+```
+
+Example hints for "Fill a Box" puzzle:
+1. "Drag the number 1 into the left hole of the box"
+2. "Drag the number 2 into the right hole of the box"
+3. "Now drag the filled box onto the drop zone"
+
 ## Error Handling
 
 ### Error Types

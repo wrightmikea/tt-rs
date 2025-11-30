@@ -187,11 +187,30 @@ Goal: Match the core functionality of the 2017 JavaScript version.
 
 | ID | Feature | Priority | Status |
 |----|---------|----------|--------|
-| FR5C.1 | DropZone widget (labelled verification target) | Should Have | ❌ Pending |
-| FR5C.2 | Pattern matching for drop verification | Should Have | ❌ Pending |
-| FR5C.3 | Success/failure feedback on drop | Should Have | ❌ Pending |
+| FR5C.1 | DropZone widget (labelled verification target) | Should Have | ✅ Done |
+| FR5C.2 | Pattern matching for drop verification | Should Have | ✅ Done |
+| FR5C.3 | Success/failure feedback on drop | Should Have | ✅ Done |
 | FR5C.4 | Puzzle auto-advance on success | Could Have | ❌ Pending |
 | FR5C.5 | Copy source support for Box | Should Have | ❌ Pending |
+
+#### FR5D: Puzzle/Tutorial Usability
+
+| ID | Feature | Priority | Status |
+|----|---------|----------|--------|
+| FR5D.1 | Reset button to restart puzzle | Must Have | ❌ Pending |
+| FR5D.2 | URL-based routing for puzzles | Should Have | ❌ Pending |
+| FR5D.3 | Bookmarkable/shareable puzzle URLs | Should Have | ❌ Pending |
+| FR5D.4 | Browser reload stays on same puzzle | Should Have | ❌ Pending |
+| FR5D.5 | "Show Me" animated solution demo | Could Have | ❌ Pending |
+| FR5D.6 | Hint system for puzzles | Could Have | ❌ Pending |
+| FR5D.7 | Undo last action | Should Have | ❌ Pending |
+
+**Rationale**: Currently, if a user makes a mistake (e.g., putting numbers in wrong order), they cannot easily recover without reloading the page, which exits the puzzle. URL-based routing enables:
+- Bookmarking specific puzzles for later
+- Sharing puzzle links with others
+- Browser back/forward navigation
+- Reload staying on current puzzle
+- Deep linking from tutorials/documentation
 
 See documentation files for planned content:
 - [tutorials.md](tutorials.md) - 7 step-by-step guided lessons

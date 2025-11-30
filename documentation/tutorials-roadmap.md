@@ -320,10 +320,55 @@ Current help panel sections map to tutorials:
 
 ### URL-Based Tutorial Loading
 
-When persistence is implemented, tutorials can be:
-- Pre-built program states
-- Loaded via URL parameter: `?tutorial=counting-down`
-- Shared as starting points
+Tutorials and puzzles are loaded via hash-based URLs for GitHub Pages compatibility:
+
+```
+https://wrightmikea.github.io/tt-rs/#/tutorial/counting-down
+https://wrightmikea.github.io/tt-rs/#/puzzle/fill-a-box
+```
+
+**Benefits:**
+- Bookmarkable and shareable links
+- Browser reload stays on same puzzle/tutorial
+- Deep linking directly to specific content
+- History navigation (back/forward buttons work)
+
+### Puzzle/Tutorial Usability Features
+
+Each puzzle and tutorial includes these interactive features:
+
+#### Reset Button
+- Restores puzzle to initial state
+- Clears all user actions and modifications
+- Allows retry without page reload
+
+#### Undo/Redo
+- Revert most recent action
+- Step backward through action history
+- Enable experimentation without fear of mistakes
+
+#### "Show Me" Animated Demo
+- Watch an automated demonstration of the solution
+- Animated drag-and-drop showing each step
+- Visual cues (glow, trail) highlight the action
+- Pause/step-through capability for learning
+
+#### Progressive Hints
+- After 60 seconds of no progress: generic encouragement
+- After 2 minutes: specific hint about next step
+- "Give Up" option shows solution without penalty
+
+### Tutorial/Puzzle Error Feedback
+
+Visual feedback helps users understand puzzle state:
+
+| State | Visual Feedback |
+|-------|-----------------|
+| Initial | Dashed border, neutral colors |
+| Correct Answer | Green background, checkmark (✓), success message |
+| Wrong Answer | Red/pink background, X mark (✗), "Try again!", shake animation |
+
+Wrong answers allow retry - widget bounces back to original position, and error feedback clears on next attempt
 
 ---
 
