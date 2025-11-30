@@ -51,14 +51,33 @@ fn try_split_box(
     num_id: WidgetId,
     event: &DropEvent,
 ) -> bool {
-    let split_at = match state.widgets.get(&num_id) {
-        Some(WidgetItem::Number(n)) if !n.is_copy_source() => n.numerator() as usize,
+    // Get effective numerator (accounts for operator) to handle negative indices
+    // A "- 1" widget has operator=Subtract, numerator=1, so effective_numerator() returns -1
+    let raw_split = match state.widgets.get(&num_id) {
+        Some(WidgetItem::Number(n)) if !n.is_copy_source() => n.effective_numerator(),
         _ => return false,
     };
 
     let box_state = match state.boxes.get(&box_id) {
-        Some(b) if split_at >= 1 && split_at < b.num_holes => b.clone(),
-        _ => return false,
+        Some(b) => b.clone(),
+        None => return false,
+    };
+
+    // Convert negative index to split from right: -2 on 8-hole box → split at 6
+    // Positive: split_at holes on left, rest on right
+    // Negative: abs(split_at) holes on right, rest on left
+    let split_at = if raw_split < 0 {
+        let from_right = (-raw_split) as usize;
+        if from_right >= box_state.num_holes || from_right == 0 {
+            return false;
+        }
+        box_state.num_holes - from_right
+    } else {
+        let pos = raw_split as usize;
+        if pos < 1 || pos >= box_state.num_holes {
+            return false;
+        }
+        pos
     };
 
     let (left, right) = split_contents(&box_state, split_at, state);
@@ -149,4 +168,81 @@ fn join_contents(src: &BoxState, tgt: &BoxState, state: &mut AppState) -> BoxSta
         }
     }
     joined
+}
+
+#[cfg(test)]
+mod tests {
+    #[allow(unused_imports)]
+    use super::*;
+
+    /// Test that negative index splitting works correctly.
+    /// A 6-hole box [1, 2, _, _, _, 6] dropped on -1 should produce:
+    /// - Left: 5-hole box [1, 2, _, _, _]
+    /// - Right: 1-hole box [6]
+    #[test]
+    fn test_negative_split_takes_from_right() {
+        // Create a mock scenario:
+        // - 6-hole box with contents at holes 0, 1, and 5
+        // - Split at -1 means take 1 hole from the right
+        // - Result: left has 5 holes (with contents at 0, 1), right has 1 hole (with content at 0, originally hole 5)
+
+        // The split_at calculation for -1 on a 6-hole box:
+        // raw_split = -1
+        // from_right = 1
+        // split_at = 6 - 1 = 5
+        // So left gets holes 0..5 (5 holes), right gets holes 5..6 (1 hole)
+
+        let num_holes = 6;
+        let raw_split: i64 = -1;
+
+        let split_at = if raw_split < 0 {
+            let from_right = (-raw_split) as usize;
+            assert!(from_right < num_holes && from_right > 0);
+            num_holes - from_right
+        } else {
+            raw_split as usize
+        };
+
+        // split_at should be 5, meaning left gets 5 holes, right gets 1 hole
+        assert_eq!(
+            split_at, 5,
+            "Split at -1 on 6-hole box should split at position 5"
+        );
+
+        // After split:
+        // - Left box: 5 holes (indices 0-4 from original)
+        // - Right box: 1 hole (index 5 from original, now index 0)
+        let left_holes = split_at;
+        let right_holes = num_holes - split_at;
+        assert_eq!(left_holes, 5);
+        assert_eq!(right_holes, 1);
+    }
+
+    /// Test that -2 on an 8-hole box splits correctly.
+    /// An 8-hole box dropped on -2 should produce:
+    /// - Left: 6-hole box
+    /// - Right: 2-hole box
+    #[test]
+    fn test_negative_2_split() {
+        let num_holes = 8;
+        let raw_split: i64 = -2;
+
+        let split_at = if raw_split < 0 {
+            let from_right = (-raw_split) as usize;
+            assert!(from_right < num_holes && from_right > 0);
+            num_holes - from_right
+        } else {
+            raw_split as usize
+        };
+
+        assert_eq!(
+            split_at, 6,
+            "Split at -2 on 8-hole box should split at position 6"
+        );
+
+        let left_holes = split_at;
+        let right_holes = num_holes - split_at;
+        assert_eq!(left_holes, 6);
+        assert_eq!(right_holes, 2);
+    }
 }

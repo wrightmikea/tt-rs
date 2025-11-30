@@ -4,7 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- fix: Box keyboard resize regression - keydown listener not attached (`<latest>`)
+- feat: Add negative index box splitting (split from right side) (`<latest>`)
+- deploy: Update live demo with box keyboard resize fix (`1c37985`)
+- fix: Box keyboard resize and z-plane architecture improvements (`6a0a7d5`)
 - deploy: Update live demo with z-index fix and tutorial update (`eb88adc`)
 - fix: Move z-index from inline styles to CSS hierarchy; update bird/nest tutorial (`491ddfb`)
 - fix: Update my-checkpoint command to use Playwright for screenshots (`b098130`)
