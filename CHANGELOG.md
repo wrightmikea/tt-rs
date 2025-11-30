@@ -4,7 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- Add TextPane widget for workspace documentation with mode-specific content (`<latest>`)
+- feat: Add workspace menu tabs and content documentation (`<latest>`)
+- deploy: Update live demo with TextPane workspace documentation widget (`00d8237`)
+- feat: Add TextPane widget for workspace documentation with mode-specific content (`140b402`)
 - deploy: Update live demo with workspace menu UI (`73a0f44`)
 - feat: Add workspace menu UI for save/load persistence feature (`a3c9391`)
 - deploy: Update live demo with box copy on 0 and wand deep copy (`a1bdeb1`)

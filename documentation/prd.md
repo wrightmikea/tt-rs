@@ -163,10 +163,27 @@ Goal: Match the core functionality of the 2017 JavaScript version.
 | FR5.2 | Load from localStorage | Must Have | ❌ Pending |
 | FR5.3 | Export to file | Must Have | ❌ Pending |
 | FR5.4 | Import from file | Must Have | ❌ Pending |
-| FR5.5 | Workspace menu (save/list/load dialog) | Must Have | ❌ Pending |
+| FR5.5 | Workspace menu (tabbed browser) | Must Have | ✅ Done |
 | FR5.6 | Bundled examples/tutorials | Must Have | ❌ Pending |
-| FR5.7 | Workspace documentation (description text) | Must Have | ❌ Pending |
+| FR5.7 | Workspace Notes (editable TextPane) | Must Have | ✅ Done |
 | FR5.8 | User level preservation (tt1/tt2) | Must Have | ❌ Pending |
+| FR5.9 | Workspace serialization (JSON format) | Must Have | ❌ Pending |
+
+#### FR5B: Workspace Content (MVP)
+
+| ID | Feature | Priority | Status |
+|----|---------|----------|--------|
+| FR5B.1 | Tutorials tab with guided lessons | Must Have | ✅ UI Done |
+| FR5B.2 | Examples tab with demo workspaces | Must Have | ✅ UI Done |
+| FR5B.3 | Challenges tab with puzzles | Must Have | ✅ UI Done |
+| FR5B.4 | Tutorial workspace files (7 planned) | Must Have | ❌ Pending |
+| FR5B.5 | Example workspace files (10 planned) | Should Have | ❌ Pending |
+| FR5B.6 | Challenge workspace files (10 planned) | Should Have | ❌ Pending |
+
+See documentation files for planned content:
+- [tutorials.md](tutorials.md) - 7 step-by-step guided lessons
+- [examples.md](examples.md) - 10 pre-built demo workspaces
+- [challenges.md](challenges.md) - 10 programming puzzles
 
 ### Phase 2: Extended MVP
 
@@ -348,10 +365,13 @@ Goal: Go beyond original ToonTalk with modern capabilities.
 - Message delivery animation
 - Robot waits for nest
 
-### Milestone 4: Persistence
-- JSON serialization
-- Save/load workspace
-- File import/export
+### Milestone 4: Persistence (In Progress)
+- Workspace menu with tabs ✅
+- Workspace Notes (TextPane) ✅
+- JSON serialization ❌
+- Save/load workspace ❌
+- File import/export ❌
+- Bundled tutorials/examples/challenges ❌
 
 ### Milestone 5: Polish
 - Watched execution

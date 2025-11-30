@@ -20,7 +20,7 @@ pub fn workspace_button(props: &WorkspaceButtonProps) -> Html {
     };
 
     html! {
-        <button class="workspace-button" onclick={on_click} title="Save/Load Workspace">
+        <button class="workspace-button" onclick={on_click} title="Browse tutorials, examples, and challenges">
             { "Workspace" }
         </button>
     }

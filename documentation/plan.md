@@ -36,6 +36,8 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 | **User Levels** | ✅ Complete | tt1 (basics), tt2 (messaging) with level-specific help |
 | **Tooltips** | ✅ Complete | Contextual tooltips on all widgets |
 | **Compact Footer** | ✅ Complete | Links to License, GitHub, Changelog with build info |
+| **Workspace Menu** | ✅ Complete | Tabbed browser for Tutorials, Examples, Challenges |
+| **Workspace Notes** | ✅ Complete | Editable TextPane with mode-specific content |
 
 ### 🚧 Partially Implemented
 
@@ -53,7 +55,8 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 | Bird/Nest Pairing | High | Drop bird on nest to pair them |
 | Message Delivery | High | Drop item on bird → delivers to paired nest |
 | Pattern Matching | High | Required for robot generalization |
-| Persistence (Save/Load) | High | Essential for user experience |
+| Workspace Serialization | High | JSON format for save/load (UI done) |
+| Bundled Tutorials/Examples | High | See tutorials.md, examples.md, challenges.md |
 | Text Explosion | Medium | Drop text on box → individual letters |
 | Sensors | Medium | Keyboard/mouse/touch event handling |
 | Backside Views | Medium | Widget configuration interface |
@@ -127,16 +130,20 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 - [ ] Tutorial: "Train robot, then erase number to work with any number"
 - [ ] Example: Doubling robot (works on any input)
 
-### Iteration 3: Persistence & Sharing
+### Iteration 3: Persistence & Sharing (IN PROGRESS)
 
 **Goal**: Save and load workspaces so users can continue their work and share tutorials.
 
-#### 3.1 Workspace Menu UI (Part 1)
-- [ ] Create `WorkspaceButton` component in tt-rs-ui
-- [ ] Create `WorkspaceMenu` slide panel component
-- [ ] Add workspace button to header (next to user level selector)
-- [ ] Implement open/close state management in App
-- [ ] Style workspace menu CSS (modal dialog style)
+#### 3.1 Workspace Menu UI (Part 1) ✅ DONE
+- [x] Create `WorkspaceButton` component in tt-rs-ui
+- [x] Create `WorkspaceMenu` slide panel component with tabs
+- [x] Add workspace button to header (next to user level selector)
+- [x] Implement open/close state management in App
+- [x] Style workspace menu CSS
+- [x] Add Tutorials, Examples, Challenges tabs with "Coming soon..." placeholders
+- [x] Create `TextPane` component for Workspace Notes
+- [x] Mode-specific default content (tt1/tt2)
+- [x] Tooltips for mode dropdown and workspace button
 
 #### 3.2 Workspace Data Structures
 - [ ] Define `Workspace` struct with metadata
@@ -198,15 +205,44 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 - [ ] Parse and validate imported JSON
 - [ ] Import button in workspace menu
 
-#### 3.9 Bundled Examples (Part 2c)
-- [ ] Create `examples/` directory in tt-rs-app
-- [ ] Create `tutorial-arithmetic.json` (tt1 level)
-- [ ] Create `tutorial-robot-basics.json` (tt1 level)
-- [ ] Create `tutorial-messaging.json` (tt2 level)
-- [ ] Use `include_str!()` to embed examples in WASM
-- [ ] Implement `BundledExamplesBackend`
-- [ ] Mark bundled examples with `is_bundled: true`
-- [ ] Hide delete button for bundled examples
+#### 3.9 Bundled Workspace Content (Part 2c)
+
+See detailed content designs in:
+- [tutorials.md](tutorials.md) - 7 step-by-step guided lessons
+- [examples.md](examples.md) - 10 pre-built demo workspaces
+- [challenges.md](challenges.md) - 10 programming puzzles
+
+**Tutorials (tt1 Basic - 5 lessons)**
+- [ ] `tutorial-hello-numbers.json` - Learn number stacks and arithmetic
+- [ ] `tutorial-boxing-things.json` - Using boxes as containers
+- [ ] `tutorial-balancing-act.json` - Comparing values with scales
+- [ ] `tutorial-copy-and-clean.json` - Wand and vacuum tools
+- [ ] `tutorial-meet-robot.json` - Introduction to automation
+
+**Tutorials (tt2 Messaging - 2 lessons)**
+- [ ] `tutorial-birds-nests.json` - Asynchronous messaging
+- [ ] `tutorial-remote-comm.json` - Inter-box messaging
+
+**Examples (5 priority)**
+- [ ] `example-calculator.json` - Organized calculation workspace
+- [ ] `example-fraction-fun.json` - Rational number arithmetic
+- [ ] `example-nested-boxes.json` - Hierarchical organization
+- [ ] `example-copy-machine.json` - Trained robot copies numbers
+- [ ] `example-mailbox.json` - Bird/nest message queuing (tt2)
+
+**Challenges (5 priority)**
+- [ ] `challenge-make-10.json` - Combine numbers to make 10
+- [ ] `challenge-sort-three.json` - Sort numbers using scales
+- [ ] `challenge-balance.json` - Make the scale balance
+- [ ] `challenge-teach-addition.json` - Train robot to add 5
+- [ ] `challenge-delayed-delivery.json` - Send message to box (tt2)
+
+**Implementation**
+- [ ] Create `assets/workspaces/` directory in tt-rs-app
+- [ ] Use `include_str!()` to embed workspaces in WASM
+- [ ] Implement `BundledWorkspacesBackend`
+- [ ] Mark bundled content with `is_bundled: true`
+- [ ] Hide delete button for bundled content
 
 #### 3.10 Description Display (Part 3)
 - [ ] Show description text when workspace is loaded

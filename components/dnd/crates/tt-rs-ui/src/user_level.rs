@@ -57,7 +57,7 @@ pub fn user_level_selector(props: &UserLevelSelectorProps) -> Html {
     };
 
     html! {
-        <div class="user-level-selector">
+        <div class="user-level-selector" title="Select feature level. tt1=Basic widgets, tt2=adds Bird/Nest messaging.">
             <select onchange={on_change} value={props.level.name()}>
                 <option value="tt1" selected={props.level == UserLevel::Tt1}>
                     { "tt1 - Basic" }

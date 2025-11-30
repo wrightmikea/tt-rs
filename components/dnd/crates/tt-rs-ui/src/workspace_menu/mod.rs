@@ -1,19 +1,29 @@
-//! WorkspaceMenu component for save/load operations.
+//! WorkspaceMenu component for browsing tutorials, examples, and challenges.
 //!
-//! Provides a slide panel with workspace listing, save dialog, and import/export.
-
-mod list;
-mod save_form;
+//! Provides a slide panel with tabbed navigation for different workspace categories.
 
 use crate::slide_panel::SlidePanel;
 use crate::user_level::UserLevel;
 use yew::prelude::*;
 
-pub use save_form::SaveFormData;
+/// Tab selection for the workspace menu.
+#[derive(Clone, Copy, PartialEq, Debug, Default)]
+pub enum WorkspaceTab {
+    #[default]
+    Tutorials,
+    Examples,
+    Challenges,
+}
 
-// Re-export WorkspaceListItem when it becomes used
-#[allow(unused_imports)]
-use list::render_workspace_list;
+impl WorkspaceTab {
+    fn label(&self) -> &'static str {
+        match self {
+            WorkspaceTab::Tutorials => "Tutorials",
+            WorkspaceTab::Examples => "Examples",
+            WorkspaceTab::Challenges => "Challenges",
+        }
+    }
+}
 
 /// Workspace metadata for display in the list.
 #[derive(Clone, PartialEq, Debug)]
@@ -32,12 +42,11 @@ pub struct WorkspaceMetadata {
     pub is_bundled: bool,
 }
 
-/// Dialog mode for the workspace menu.
+/// Save form data (kept for API compatibility).
 #[derive(Clone, PartialEq, Debug, Default)]
-pub enum WorkspaceMenuMode {
-    #[default]
-    List,
-    Save,
+pub struct SaveFormData {
+    pub name: String,
+    pub description: String,
 }
 
 /// Properties for the WorkspaceMenu component.
@@ -63,60 +72,129 @@ pub struct WorkspaceMenuProps {
     pub workspaces: Vec<WorkspaceMetadata>,
 }
 
-/// Workspace menu slide panel.
+/// Workspace menu slide panel with tabs.
 #[function_component(WorkspaceMenu)]
 pub fn workspace_menu(props: &WorkspaceMenuProps) -> Html {
-    let mode = use_state(WorkspaceMenuMode::default);
+    let active_tab = use_state(WorkspaceTab::default);
 
-    let on_save_click = {
-        let mode = mode.clone();
-        Callback::from(move |_| mode.set(WorkspaceMenuMode::Save))
-    };
-
-    let on_cancel_save = {
-        let mode = mode.clone();
-        Callback::from(move |_| mode.set(WorkspaceMenuMode::List))
-    };
-
-    let on_save_submit = {
-        let on_save = props.on_save.clone();
-        let mode = mode.clone();
-        Callback::from(move |data: SaveFormData| {
-            on_save.emit(data);
-            mode.set(WorkspaceMenuMode::List);
-        })
-    };
-
-    // Reset mode when menu closes
+    // Reset tab when menu closes
     {
-        let mode = mode.clone();
+        let active_tab = active_tab.clone();
         let is_open = props.is_open;
         use_effect_with(is_open, move |&open| {
             if !open {
-                mode.set(WorkspaceMenuMode::List);
+                active_tab.set(WorkspaceTab::Tutorials);
             }
+            || ()
         });
     }
 
-    let title = match *mode {
-        WorkspaceMenuMode::List => "Workspaces",
-        WorkspaceMenuMode::Save => "Save Workspace",
+    let make_tab_click = |tab: WorkspaceTab| {
+        let active_tab = active_tab.clone();
+        Callback::from(move |_| active_tab.set(tab))
     };
 
-    let content = match *mode {
-        WorkspaceMenuMode::List => list::render_workspace_list(props, on_save_click),
-        WorkspaceMenuMode::Save => {
-            save_form::render_save_form(props.current_level, on_save_submit, on_cancel_save)
-        }
+    let tabs = [
+        WorkspaceTab::Tutorials,
+        WorkspaceTab::Examples,
+        WorkspaceTab::Challenges,
+    ];
+
+    let tab_content = match *active_tab {
+        WorkspaceTab::Tutorials => render_tutorials_tab(),
+        WorkspaceTab::Examples => render_examples_tab(),
+        WorkspaceTab::Challenges => render_challenges_tab(),
     };
 
     html! {
         <SlidePanel
             is_open={props.is_open}
             on_close={props.on_close.clone()}
-            title={title}
+            title="Workspaces"
         >
-            { content }
+            <div class="workspace-tabs">
+                { for tabs.iter().map(|&tab| {
+                    let is_active = *active_tab == tab;
+                    let class = if is_active { "workspace-tab active" } else { "workspace-tab" };
+                    html! {
+                        <button
+                            class={class}
+                            onclick={make_tab_click(tab)}
+                        >
+                            { tab.label() }
+                        </button>
+                    }
+                }) }
+            </div>
+            <div class="workspace-tab-content">
+                { tab_content }
+            </div>
         </SlidePanel>
+    }
+}
+
+/// Render the Tutorials tab content.
+fn render_tutorials_tab() -> Html {
+    html! {
+        <div class="workspace-category">
+            <div class="workspace-category-header">
+                <span class="category-icon">{ "📚" }</span>
+                <h3>{ "Tutorials" }</h3>
+            </div>
+            <p class="workspace-category-desc">
+                { "Step-by-step guided lessons to learn tt-rs concepts." }
+            </p>
+            <div class="workspace-coming-soon">
+                <span class="coming-soon-icon">{ "🚧" }</span>
+                <p>{ "Coming soon..." }</p>
+                <p class="coming-soon-hint">
+                    { "Tutorials will teach you how to use numbers, boxes, scales, robots, and more!" }
+                </p>
+            </div>
+        </div>
+    }
+}
+
+/// Render the Examples tab content.
+fn render_examples_tab() -> Html {
+    html! {
+        <div class="workspace-category">
+            <div class="workspace-category-header">
+                <span class="category-icon">{ "💡" }</span>
+                <h3>{ "Examples" }</h3>
+            </div>
+            <p class="workspace-category-desc">
+                { "Pre-built workspaces demonstrating tt-rs features and patterns." }
+            </p>
+            <div class="workspace-coming-soon">
+                <span class="coming-soon-icon">{ "🚧" }</span>
+                <p>{ "Coming soon..." }</p>
+                <p class="coming-soon-hint">
+                    { "Examples will show arithmetic operations, message passing, robot training, and more!" }
+                </p>
+            </div>
+        </div>
+    }
+}
+
+/// Render the Challenges tab content.
+fn render_challenges_tab() -> Html {
+    html! {
+        <div class="workspace-category">
+            <div class="workspace-category-header">
+                <span class="category-icon">{ "🏆" }</span>
+                <h3>{ "Challenges" }</h3>
+            </div>
+            <p class="workspace-category-desc">
+                { "Test your skills with programming puzzles and problems to solve." }
+            </p>
+            <div class="workspace-coming-soon">
+                <span class="coming-soon-icon">{ "🚧" }</span>
+                <p>{ "Coming soon..." }</p>
+                <p class="coming-soon-hint">
+                    { "Challenges will include sorting, searching, math puzzles, and logic problems!" }
+                </p>
+            </div>
+        </div>
     }
 }
