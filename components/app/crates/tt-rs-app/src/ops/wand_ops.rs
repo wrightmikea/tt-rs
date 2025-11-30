@@ -5,6 +5,7 @@ use tt_rs_drag::{DropEvent, Position};
 use tt_rs_hit_test::find_widget_at_excluding;
 use tt_rs_robot::Action;
 
+use super::box_ops::deep_copy_box;
 use super::robot_ops::copy_widget;
 use crate::state::AppState;
 use crate::widget_item::WidgetItem;
@@ -34,8 +35,8 @@ pub fn handle_wand_drop(
 }
 
 fn copy_box(state: &mut AppState, target_id: WidgetId) {
-    if let Some(b) = state.boxes.get(&target_id) {
-        let copied = b.copy_box();
+    if let Some(b) = state.boxes.get(&target_id).cloned() {
+        let copied = deep_copy_box(state, &b);
         let pos = state.positions.get(&target_id).copied().unwrap_or_default();
         state
             .positions

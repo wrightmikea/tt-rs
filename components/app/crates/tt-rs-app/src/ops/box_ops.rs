@@ -1,4 +1,4 @@
-//! Box drop operations: create, split, join.
+//! Box drop operations: create, split, join, copy.
 
 use tt_rs_core::WidgetId;
 use tt_rs_drag::{DropEvent, Position};
@@ -7,6 +7,28 @@ use tt_rs_hit_test::{find_number_at, find_widget_at_excluding};
 use crate::box_state::BoxState;
 use crate::state::AppState;
 use crate::widget_item::WidgetItem;
+
+/// Deep copy a box including all its contents.
+/// Returns the new box and updates state with copied widgets.
+pub fn deep_copy_box(state: &mut AppState, src: &BoxState) -> BoxState {
+    let mut new_box = BoxState::new(src.num_holes);
+
+    for (hole, &widget_id) in &src.contents {
+        if let Some(widget) = state.widgets.get(&widget_id) {
+            let copied = widget.copy_widget();
+            let copied_id = copied.id();
+            state.widgets.insert(copied_id, copied);
+            // Position copied widgets relative to original
+            if let Some(pos) = state.positions.get(&widget_id) {
+                state.positions.insert(copied_id, pos.offset(30.0, 30.0));
+            }
+            new_box.place_in_hole(*hole, copied_id);
+            state.widget_in_box.insert(copied_id, (new_box.id(), *hole));
+        }
+    }
+
+    new_box
+}
 
 /// Handle box drop: create new box, split, or join.
 pub fn handle_box_drop(state: &mut AppState, event: &DropEvent, pending: Option<usize>) -> bool {
@@ -63,18 +85,23 @@ fn try_split_box(
         None => return false,
     };
 
+    // Handle special case: drop on 0 creates a deep copy of the box
+    if raw_split == 0 {
+        return copy_box_with_contents(state, &box_state, num_id, event);
+    }
+
     // Convert negative index to split from right: -2 on 8-hole box → split at 6
     // Positive: split_at holes on left, rest on right
     // Negative: abs(split_at) holes on right, rest on left
     let split_at = if raw_split < 0 {
         let from_right = (-raw_split) as usize;
-        if from_right >= box_state.num_holes || from_right == 0 {
+        if from_right >= box_state.num_holes {
             return false;
         }
         box_state.num_holes - from_right
     } else {
         let pos = raw_split as usize;
-        if pos < 1 || pos >= box_state.num_holes {
+        if pos >= box_state.num_holes {
             return false;
         }
         pos
@@ -96,6 +123,32 @@ fn try_split_box(
 
     state.boxes.remove(&box_id);
     state.positions.remove(&box_id);
+    state.widgets.remove(&num_id);
+    state.positions.remove(&num_id);
+    true
+}
+
+/// Copy a box with all its contents when dropped on 0.
+/// The original box remains, a copy is created offset from it.
+fn copy_box_with_contents(
+    state: &mut AppState,
+    src: &BoxState,
+    num_id: WidgetId,
+    event: &DropEvent,
+) -> bool {
+    let copied = deep_copy_box(state, src);
+    let pos = state
+        .positions
+        .get(&src.id())
+        .copied()
+        .unwrap_or(event.position);
+
+    state
+        .positions
+        .insert(copied.id(), Position::new(pos.x + 50.0, pos.y + 50.0));
+    state.boxes.insert(copied.id(), copied);
+
+    // Consume the 0 number
     state.widgets.remove(&num_id);
     state.positions.remove(&num_id);
     true

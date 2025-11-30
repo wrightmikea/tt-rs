@@ -41,6 +41,28 @@ This document captures future plans and ideas not yet implemented in tt-rs. For 
 
 ## Medium-Term Ideas
 
+### ToonTalk Compatibility Mode
+
+**Goal:** Run imported original ToonTalk saved programs without behavioral differences.
+
+**Features:**
+- Global setting to toggle "ToonTalk Compatible" mode
+- Disables tt-rs enhancements when enabled:
+  - Negative index box splitting (reject instead of split from right)
+  - Box-on-zero copy (wrap in 2-hole box instead of deep copy)
+  - Any future deviations documented in [deviations.md](deviations.md)
+- Import ToonTalk Reborn (.json) and original ToonTalk save files
+- Visual indicator when compatibility mode is active
+
+**Motivation:** Users with existing ToonTalk programs should be able to run them with original semantics, while new users benefit from tt-rs improvements.
+
+**Implementation Notes:**
+- Check compatibility flag in operations that have deviations
+- Persist setting in localStorage
+- Consider per-workspace setting vs global setting
+
+---
+
 ### Undo/Redo System
 
 **Goal:** Let users reverse mistakes without losing work.

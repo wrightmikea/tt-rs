@@ -84,6 +84,40 @@ This document captures conscious decisions where tt-rs behavior differs from the
 
 ---
 
+### DEV-006: Negative Index Box Splitting
+
+**ToonTalk Reborn:** Dropping a box on a negative number displays an error message: "This would make a box with N holes for some negative N." The operation is rejected.
+
+**tt-rs Behavior:** Negative numbers split from the right instead of the left:
+- 8-hole box on -2 → 6-hole + 2-hole (2 holes from the right)
+- 6-hole box on -1 → 5-hole + 1-hole (1 hole from the right)
+
+**Rationale:**
+- Provides useful functionality rather than rejecting valid inputs
+- Symmetrical with positive splitting (positive splits from left, negative from right)
+- Intuitive mental model: negative indices in many programming languages mean "from the end"
+- No information is lost - users who want ToonTalk behavior can simply avoid negative numbers
+
+**Status:** Implemented
+
+---
+
+### DEV-007: Box Copy on Zero
+
+**ToonTalk Reborn:** Dropping a box on 0 creates a 2-hole box containing a 0-hole empty box and the original box's contents (wrapping behavior).
+
+**tt-rs Behavior:** Dropping a box on 0 creates a deep copy of the original box, including all its contents.
+
+**Rationale:**
+- More intuitive: zero means "don't split, just copy"
+- Useful for duplicating populated boxes without using the wand
+- Simpler mental model: 0 acts as the identity operation for boxes
+- The ToonTalk wrapping behavior can be achieved through other operations if needed
+
+**Status:** Implemented
+
+---
+
 ## Pending Decisions
 
 ### DEV-P01: Stack Dragging

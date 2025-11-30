@@ -47,13 +47,4 @@ impl BoxState {
     pub fn clear_hole(&mut self, hole: usize) -> Option<WidgetId> {
         self.contents.remove(&hole)
     }
-
-    pub fn copy_box(&self) -> Self {
-        Self {
-            id: WidgetId::new(),
-            num_holes: self.num_holes,
-            contents: HashMap::new(),
-            erased: self.erased,
-        }
-    }
 }

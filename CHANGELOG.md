@@ -4,7 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- feat: Add negative index box splitting (split from right side) (`<latest>`)
+- feat: Box copy on 0 and wand deep copy (`<latest>`)
+- deploy: Update live demo with negative index box splitting (`c781091`)
+- feat: Add negative index box splitting (split from right side) (`093d452`)
 - deploy: Update live demo with box keyboard resize fix (`1c37985`)
 - fix: Box keyboard resize and z-plane architecture improvements (`6a0a7d5`)
 - deploy: Update live demo with z-index fix and tutorial update (`eb88adc`)
