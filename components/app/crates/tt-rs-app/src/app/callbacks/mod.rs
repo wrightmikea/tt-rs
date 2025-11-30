@@ -1,7 +1,6 @@
 //! Callback handler creation.
 
 mod box_handlers;
-mod keydown;
 mod widget_handlers;
 
 use std::cell::RefCell;
@@ -13,8 +12,6 @@ use yew::prelude::*;
 
 use crate::state::AppState;
 
-pub use keydown::setup_keydown_listener;
-
 pub struct Callbacks {
     pub on_help_open: Callback<()>,
     pub on_help_close: Callback<()>,
@@ -22,7 +19,6 @@ pub struct Callbacks {
     pub on_box_drag_start: Callback<DragStartEvent>,
     pub on_box_drag_end: Callback<DragEndEvent>,
     pub on_box_drop: Callback<DropEvent>,
-    pub on_keydown: Callback<web_sys::KeyboardEvent>,
     pub on_copy_source_click: Callback<CopySourceClickEvent>,
     pub on_move: Callback<(WidgetId, Position)>,
     pub on_drop: Callback<DropEvent>,
@@ -49,12 +45,8 @@ pub fn create_callbacks(
             dragged_box_id.clone(),
             pending_new_box.clone(),
         ),
-        on_box_drag_end: box_handlers::create_box_drag_end(
-            dragged_box_id.clone(),
-            pending_new_box.clone(),
-        ),
-        on_box_drop: box_handlers::create_box_drop(state.clone(), pending_new_box.clone()),
-        on_keydown: keydown::create_keydown(dragged_box_id, pending_new_box),
+        on_box_drag_end: box_handlers::create_box_drag_end(dragged_box_id, pending_new_box.clone()),
+        on_box_drop: box_handlers::create_box_drop(state.clone(), pending_new_box),
         on_copy_source_click: widget_handlers::create_copy_source(state.clone()),
         on_move: widget_handlers::create_move(state.clone()),
         on_drop: widget_handlers::create_widget_drop(state),

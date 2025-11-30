@@ -114,9 +114,10 @@ pub fn copy_source(props: &CopySourceProps) -> Html {
         })
     };
 
-    // z-index handled by CSS (.copy-source-stack has z-index: 1, lower than widgets)
+    // z-index is handled by z-plane container (plane 0, lowest z-index).
+    // pointer-events: auto because parent z-plane has pointer-events: none.
     let style = format!(
-        "position: absolute; left: {}px; top: {}px; cursor: grab;",
+        "position: absolute; left: {}px; top: {}px; cursor: grab; pointer-events: auto;",
         current_pos.x, current_pos.y
     );
 

@@ -96,12 +96,20 @@ pub fn draggable(props: &DraggableProps) -> Html {
     // Track current position for rendering
     let current_pos = props.position;
 
-    // Build style - position only, z-index handled by CSS based on widget type
-    // When dragging: add dragging class which sets z-index: 200 via CSS
-    let style = format!(
-        "position: absolute; left: {}px; top: {}px;",
-        current_pos.x, current_pos.y
-    );
+    // Style includes pointer-events: auto because parent z-plane has pointer-events: none.
+    // When dragging, the CSS .dragging class elevates z-index and sets pointer-events: none,
+    // which allows element_from_point() to find drop targets underneath the dragged widget.
+    let style = if *is_dragging {
+        format!(
+            "position: absolute; left: {}px; top: {}px;",
+            current_pos.x, current_pos.y
+        )
+    } else {
+        format!(
+            "position: absolute; left: {}px; top: {}px; pointer-events: auto;",
+            current_pos.x, current_pos.y
+        )
+    };
 
     // Store closures using use_mut_ref instead of use_state
     // This prevents Yew from dropping them during re-renders

@@ -1,10 +1,14 @@
 //! Enhanced Tooltip component with extended hover text.
 //!
 //! Provides rich tooltips that appear on hover with title, description,
-//! and optional usage hints.
+//! and optional usage hints. Tooltips are rendered on z-plane 500 via
+//! the TooltipLayer for guaranteed visibility.
 
 use wasm_bindgen::{closure::Closure, JsCast};
+use web_sys::MouseEvent;
 use yew::prelude::*;
+
+use crate::tooltip_layer::TooltipLayerContext;
 
 /// Properties for the Tooltip component.
 #[derive(Properties, Clone, PartialEq)]
@@ -19,7 +23,7 @@ pub struct TooltipProps {
     /// Optional usage hint (e.g., "Drag onto a number").
     #[prop_or_default]
     pub hint: AttrValue,
-    /// Position of the tooltip relative to the element.
+    /// Position of the tooltip relative to the element (currently only affects offset).
     #[prop_or(TooltipPosition::Bottom)]
     pub position: TooltipPosition,
 }
@@ -34,28 +38,22 @@ pub enum TooltipPosition {
     Right,
 }
 
-impl TooltipPosition {
-    fn class_name(&self) -> &'static str {
-        match self {
-            TooltipPosition::Top => "tooltip-top",
-            TooltipPosition::Bottom => "tooltip-bottom",
-            TooltipPosition::Left => "tooltip-left",
-            TooltipPosition::Right => "tooltip-right",
-        }
-    }
-}
-
 /// Enhanced tooltip component with title, description, and hints.
+/// Uses TooltipLayerContext to render on z-plane 500.
 #[function_component(Tooltip)]
 pub fn tooltip(props: &TooltipProps) -> Html {
-    let visible = use_state(|| false);
+    let ctx = use_context::<TooltipLayerContext>();
 
     // Hide tooltip when window loses focus (e.g., ctrl-tab to another app)
     {
-        let visible = visible.clone();
+        let ctx = ctx.clone();
         use_effect_with((), move |_| {
             let window = web_sys::window().unwrap();
-            let cb = Closure::wrap(Box::new(move || visible.set(false)) as Box<dyn Fn()>);
+            let cb = Closure::wrap(Box::new(move || {
+                if let Some(ref ctx) = ctx {
+                    ctx.hide();
+                }
+            }) as Box<dyn Fn()>);
             window
                 .add_event_listener_with_callback("blur", cb.as_ref().unchecked_ref())
                 .unwrap();
@@ -68,38 +66,63 @@ pub fn tooltip(props: &TooltipProps) -> Html {
     }
 
     let on_mouse_enter = {
-        let visible = visible.clone();
-        Callback::from(move |_| visible.set(true))
+        let ctx = ctx.clone();
+        let title = props.title.clone();
+        let description = props.description.clone();
+        let hint = props.hint.clone();
+        let position = props.position;
+        Callback::from(move |e: MouseEvent| {
+            if let Some(ref ctx) = ctx {
+                // Position tooltip to the right of cursor with offset
+                let (offset_x, offset_y) = match position {
+                    TooltipPosition::Right => (20.0, 0.0),
+                    TooltipPosition::Left => (-200.0, 0.0),
+                    TooltipPosition::Bottom => (0.0, 20.0),
+                    TooltipPosition::Top => (0.0, -80.0),
+                };
+                let x = e.client_x() as f64 + offset_x;
+                let y = e.client_y() as f64 + offset_y;
+                ctx.show(title.clone(), description.clone(), hint.clone(), x, y);
+            }
+        })
+    };
+
+    let on_mouse_move = {
+        let ctx = ctx.clone();
+        let title = props.title.clone();
+        let description = props.description.clone();
+        let hint = props.hint.clone();
+        let position = props.position;
+        Callback::from(move |e: MouseEvent| {
+            if let Some(ref ctx) = ctx {
+                let (offset_x, offset_y) = match position {
+                    TooltipPosition::Right => (20.0, 0.0),
+                    TooltipPosition::Left => (-200.0, 0.0),
+                    TooltipPosition::Bottom => (0.0, 20.0),
+                    TooltipPosition::Top => (0.0, -80.0),
+                };
+                let x = e.client_x() as f64 + offset_x;
+                let y = e.client_y() as f64 + offset_y;
+                ctx.show(title.clone(), description.clone(), hint.clone(), x, y);
+            }
+        })
     };
 
     let on_mouse_leave = {
-        let visible = visible.clone();
-        Callback::from(move |_| visible.set(false))
+        let ctx = ctx.clone();
+        Callback::from(move |_| {
+            if let Some(ref ctx) = ctx {
+                ctx.hide();
+            }
+        })
     };
-
-    let tooltip_class = format!(
-        "tooltip-content {}{}",
-        props.position.class_name(),
-        if *visible { " visible" } else { "" }
-    );
-
-    let has_description = !props.description.is_empty();
-    let has_hint = !props.hint.is_empty();
 
     html! {
         <div class="tooltip-wrapper"
              onmouseenter={on_mouse_enter}
+             onmousemove={on_mouse_move}
              onmouseleave={on_mouse_leave}>
             { for props.children.iter() }
-            <div class={tooltip_class}>
-                <div class="tooltip-title">{ &props.title }</div>
-                if has_description {
-                    <div class="tooltip-description">{ &props.description }</div>
-                }
-                if has_hint {
-                    <div class="tooltip-hint">{ &props.hint }</div>
-                }
-            </div>
         </div>
     }
 }

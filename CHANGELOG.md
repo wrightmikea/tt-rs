@@ -4,7 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- fix: Move z-index from inline styles to CSS hierarchy; update bird/nest tutorial (`<latest>`)
+- fix: Box keyboard resize regression - keydown listener not attached (`<latest>`)
+- deploy: Update live demo with z-index fix and tutorial update (`eb88adc`)
+- fix: Move z-index from inline styles to CSS hierarchy; update bird/nest tutorial (`491ddfb`)
 - fix: Update my-checkpoint command to use Playwright for screenshots (`b098130`)
 - deploy: Update live demo with scales icon fix (`4f60514`)
 - fix: Reduce scales icon size to match other tools (`912d91b`)

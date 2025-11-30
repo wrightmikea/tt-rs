@@ -5,21 +5,25 @@
 }
 
 /* ========================================
-   Z-INDEX HIERARCHY
+   Z-PLANE ARCHITECTURE
    ========================================
-   Layer order (lowest to highest):
-   1. Copy source stacks (behind): 1
-   2. Boxes/containers: 10
-   3. Values (numbers, text): 20
-   4. Comparison (scales): 30
-   5. Agents (robot, bird, nest): 40
-   6. Tools (vacuum, wand): 50
-   7. Tooltips (hovered widget): 100
-   8. Dragging widgets: 200 (above tooltips during drag)
-   9. Help panel backdrop: 900
-   10. Help panel: 950
+   All z-index values are managed via z-planes in render.rs.
+   Each z-plane is a transparent container (pointer-events: none)
+   with child widgets having pointer-events: auto.
+
+   Z-plane order (lowest to highest):
+   0:   Copy source stacks (bottom)
+   100: Boxes/containers
+   200: Values (numbers, text)
+   300: Agents (robot, bird, nest, scales)
+   400: Tools (vacuum, wand)
+   500: Tooltips
+   600: Help panel backdrop
+   650: Help panel content
+   1000: Dragging widgets (temporary elevation)
    ======================================== */
 :root {
+    /* Legacy CSS vars - kept for components not yet on z-planes */
     --z-copy-source-behind: 1;
     --z-containers: 10;
     --z-values: 20;
@@ -27,9 +31,9 @@
     --z-agents: 40;
     --z-tools: 50;
     --z-tooltip-hover: 100;
-    --z-dragging: 200;
-    --z-help-backdrop: 900;
-    --z-help-panel: 950;
+    --z-dragging: 1000;
+    --z-help-backdrop: 600;
+    --z-help-panel: 650;
 }
 
 html, body {
@@ -730,6 +734,18 @@ body.dragging-active .widget.number:not(.copy-source) {
     font-style: italic;
     padding-top: 0.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Tooltip layer content (rendered on z-plane 500) */
+.tooltip-layer-content {
+    min-width: 180px;
+    max-width: 280px;
+    padding: 0.75rem;
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
 }
 
 /* ========================================

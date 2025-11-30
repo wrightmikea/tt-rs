@@ -229,6 +229,7 @@ These features restore the full experience of the original 1995 ToonTalk:
 - 3D widget rendering
 - Physics-based animations
 - VR/AR exploration
+- **3D Z-Plane Debugging**: Render z-planes as semi-transparent layers spread apart in 3D when viewed at angle, making stacking order visually clear for debugging and potentially useful for 3D "programming" by users
 
 ### Design Pattern Library
 - Pre-built robot patterns (Observer, Iterator, etc.)

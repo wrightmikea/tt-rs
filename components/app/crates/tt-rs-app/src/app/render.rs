@@ -1,26 +1,40 @@
 //! Rendering functions for the app.
+//!
+//! Uses a z-plane architecture for guaranteed widget stacking order.
+//! Each plane is a transparent container with pointer-events: none,
+//! allowing clicks to pass through to elements on lower planes.
+//! Widgets within each plane have pointer-events: auto to receive events.
 
 use tt_rs_core::WidgetId;
 use tt_rs_drag::{CopySource, Draggable, DropEvent, Position};
 use tt_rs_ui::{
-    Footer, HelpButton, HelpPanel, Tooltip, TooltipPosition, UserLevel, UserLevelSelector,
+    Footer, HelpButton, HelpPanel, Tooltip, TooltipLayer, TooltipPosition, UserLevel,
+    UserLevelSelector,
 };
 use yew::prelude::*;
 
 use super::callbacks::Callbacks;
+use super::ZPlanes;
 use crate::box_state::render_box;
 use crate::state::AppState;
 use crate::widget_item::WidgetItem;
 
-type WidgetRefs<'a> = Vec<(&'a WidgetId, &'a WidgetItem)>;
+/// Z-plane indices for guaranteed stacking order.
+/// Higher numbers appear on top.
+/// Help panel uses CSS z-index: 600-650 (see main.css).
+const Z_PLANE_STACKS: i32 = 0;
+const Z_PLANE_BOXES: i32 = 100;
+const Z_PLANE_VALUES: i32 = 200;
+const Z_PLANE_AGENTS: i32 = 300;
+const Z_PLANE_TOOLS: i32 = 400;
+const Z_PLANE_TOOLTIPS: i32 = 500;
 
 pub fn render_app(
     state: &AppState,
     help_open: bool,
     user_level: UserLevel,
     cbs: &Callbacks,
-    copy_sources: &WidgetRefs<'_>,
-    regular: &WidgetRefs<'_>,
+    planes: &ZPlanes<'_>,
 ) -> Html {
     html! {
         <div class="workspace">
@@ -31,11 +45,35 @@ pub fn render_app(
             <HelpButton on_click={cbs.on_help_open.clone()} />
             <HelpPanel is_open={help_open} on_close={cbs.on_help_close.clone()} level={user_level} />
             <div class="workspace-content">
-                { render_boxes(state, cbs) }
-                { render_copy_sources(copy_sources, state, &cbs.on_copy_source_click, &cbs.on_move) }
-                { render_widgets(regular, state, &cbs.on_move, &cbs.on_drop) }
+                // Z-plane 0: Copy source stacks (lowest)
+                { render_z_plane(Z_PLANE_STACKS, render_copy_sources(&planes.copy_sources, state, &cbs.on_copy_source_click, &cbs.on_move)) }
+                // Z-plane 100: Boxes
+                { render_z_plane(Z_PLANE_BOXES, render_boxes(state, cbs)) }
+                // Z-plane 200: Values (numbers, text)
+                { render_z_plane(Z_PLANE_VALUES, render_widgets(&planes.values, state, &cbs.on_move, &cbs.on_drop)) }
+                // Z-plane 300: Agents (robot, bird, nest, scales)
+                { render_z_plane(Z_PLANE_AGENTS, render_widgets(&planes.agents, state, &cbs.on_move, &cbs.on_drop)) }
+                // Z-plane 400: Tools (vacuum, wand)
+                { render_z_plane(Z_PLANE_TOOLS, render_widgets(&planes.tools, state, &cbs.on_move, &cbs.on_drop)) }
+                // Z-plane 500: Tooltips (highest)
+                { render_z_plane(Z_PLANE_TOOLTIPS, html! { <TooltipLayer /> }) }
             </div>
             <Footer />
+        </div>
+    }
+}
+
+/// Renders a z-plane container with the given z-index.
+/// The plane itself is transparent and doesn't capture mouse events,
+/// but its children (the widgets) do.
+fn render_z_plane(z_index: i32, children: Html) -> Html {
+    let style = format!(
+        "position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: {}; pointer-events: none;",
+        z_index
+    );
+    html! {
+        <div class="z-plane" style={style}>
+            { children }
         </div>
     }
 }

@@ -10,7 +10,7 @@
 #   5. Agents (robot, bird, nest): 40
 #   6. Tools (vacuum, wand): 50
 #   7. Tooltips: 100
-#   8. Dragging widgets: 200
+#   8. Dragging widgets: 1000 (above z-planes including tooltips at 500)
 #
 # KEY PRINCIPLE: z-index must be set in CSS, NOT inline in Rust code.
 # This ensures proper layering based on widget type.
@@ -43,7 +43,7 @@ check_var "z-comparison" "30" || ((errors++))
 check_var "z-agents" "40" || ((errors++))
 check_var "z-tools" "50" || ((errors++))
 check_var "z-tooltip-hover" "100" || ((errors++))
-check_var "z-dragging" "200" || ((errors++))
+check_var "z-dragging" "1000" || ((errors++))
 
 # Check that copy-source-stack has z-index rule in CSS
 if grep -A2 '\.copy-source-stack {' "$CSS_FILE" | grep -q "z-index"; then
