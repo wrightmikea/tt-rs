@@ -115,4 +115,61 @@ impl WidgetItem {
             WidgetItem::Bird(bird) => Box::new(bird.clone()),
         }
     }
+
+    /// Converts a boxed trait object back to a WidgetItem.
+    /// Uses description parsing to reconstruct widget state.
+    pub fn from_boxed_widget(widget: Box<dyn Widget>) -> WidgetItem {
+        let desc = widget.description();
+        match widget.type_name() {
+            "number" => {
+                // Parse number from description like "number +5", "number -1", "number *2", "number /2"
+                // All numbers have an operator - Add is the default for plain numbers
+                use tt_rs_number::ArithOperator;
+                let value_str = desc.strip_prefix("number ").unwrap_or("+0");
+
+                // Check for operator prefix (all descriptions now have one)
+                let (operator, num_str) = if let Some(rest) = value_str.strip_prefix('+') {
+                    (ArithOperator::Add, rest)
+                } else if let Some(rest) = value_str.strip_prefix('-') {
+                    (ArithOperator::Subtract, rest)
+                } else if let Some(rest) = value_str.strip_prefix('*') {
+                    (ArithOperator::Multiply, rest)
+                } else if let Some(rest) = value_str.strip_prefix('/') {
+                    (ArithOperator::Divide, rest)
+                } else {
+                    // Fallback for legacy descriptions without operator
+                    (ArithOperator::Add, value_str)
+                };
+
+                // Parse the numeric part (may be rational like "3/4")
+                if let Some((num, denom)) = num_str.split_once('/') {
+                    if let (Ok(n), Ok(d)) = (num.parse::<i64>(), denom.parse::<u64>()) {
+                        return WidgetItem::Number(Number::rational(n, d).with_operator(operator));
+                    }
+                }
+                if let Ok(n) = num_str.parse::<i64>() {
+                    return WidgetItem::Number(Number::new(n).with_operator(operator));
+                }
+                WidgetItem::Number(Number::new(0))
+            }
+            "text" => {
+                // Parse text from description like 'text "hello"'
+                let content = desc
+                    .strip_prefix("text \"")
+                    .and_then(|s| s.strip_suffix('"'))
+                    .unwrap_or("");
+                WidgetItem::Text(Text::new(content))
+            }
+            "scales" => WidgetItem::Scales(Scales::new()),
+            "vacuum" => WidgetItem::Vacuum(Vacuum::new()),
+            "wand" => WidgetItem::Wand(Wand::new()),
+            "robot" => WidgetItem::Robot(Robot::new()),
+            "nest" => WidgetItem::Nest(Nest::new()),
+            "bird" => WidgetItem::Bird(Bird::new()),
+            _ => {
+                log::warn!("Unknown widget type: {}", widget.type_name());
+                WidgetItem::Number(Number::new(0))
+            }
+        }
+    }
 }

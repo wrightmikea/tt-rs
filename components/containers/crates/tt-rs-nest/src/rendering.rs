@@ -4,6 +4,7 @@ use crate::Nest;
 use yew::prelude::*;
 
 /// Renders a Nest as HTML using the tt-nest.svg asset.
+/// If the nest has messages, the top message is rendered overlaid on the nest.
 pub fn render(nest: &Nest) -> Html {
     let widget_id = nest.id.to_string();
     let is_copy_source = nest.is_copy_source();
@@ -15,13 +16,25 @@ pub fn render(nest: &Nest) -> Html {
         "widget nest"
     };
 
+    // Render top message if present
+    let top_message_html = if let Some(top_msg) = nest.peek_top() {
+        html! {
+            <div class="nest-contents">
+                { top_msg.render() }
+            </div>
+        }
+    } else {
+        html! {}
+    };
+
     html! {
         <div class={class}
              data-widget-id={widget_id}
              data-copy-source={is_copy_source.to_string()}>
             <img src="images/tt-nest.svg" alt="Nest" class="nest-img"/>
-            if msg_count > 0 {
-                <div class="nest-badge">{msg_count}</div>
+            { top_message_html }
+            if msg_count > 1 {
+                <div class="nest-badge">{format!("+{}", msg_count - 1)}</div>
             }
         </div>
     }

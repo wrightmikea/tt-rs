@@ -8,6 +8,8 @@ mod slide_panel;
 mod tooltip;
 mod tooltip_layer;
 mod user_level;
+mod workspace_button;
+mod workspace_menu;
 
 pub use accordion::{Accordion, AccordionSection};
 pub use footer::Footer;
@@ -17,3 +19,5 @@ pub use slide_panel::SlidePanel;
 pub use tooltip::{Tooltip, TooltipPosition};
 pub use tooltip_layer::{TooltipLayer, TooltipLayerContext, TooltipLayerProvider};
 pub use user_level::{UserLevel, UserLevelSelector};
+pub use workspace_button::WorkspaceButton;
+pub use workspace_menu::{SaveFormData, WorkspaceMenu, WorkspaceMetadata};

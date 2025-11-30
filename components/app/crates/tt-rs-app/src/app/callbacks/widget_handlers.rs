@@ -6,9 +6,9 @@ use tt_rs_drag::{CopySourceClickEvent, DropEvent, Position};
 use yew::prelude::*;
 
 use crate::ops::{
-    handle_bird_drop, handle_box_hole_drop, handle_drop_on_bird, handle_nest_drop,
-    handle_number_on_number, handle_robot_click, handle_scales_drop, handle_vacuum_drop,
-    handle_wand_drop,
+    handle_bird_drop, handle_box_hole_drop, handle_drop_on_bird, handle_nest_click,
+    handle_nest_drop, handle_number_on_number, handle_robot_click, handle_scales_drop,
+    handle_vacuum_drop, handle_wand_drop,
 };
 use crate::state::AppState;
 use crate::widget_item::WidgetItem;
@@ -96,6 +96,7 @@ pub fn create_widget_drop(state: UseStateHandle<AppState>) -> Callback<DropEvent
         let (mx, my) = (e.mouse_position.x, e.mouse_position.y);
 
         if handle_robot_click(&mut s, id, &e)
+            || handle_nest_click(&mut s, id, &e)  // Click on nest to take message
             || handle_vacuum_drop(&mut s, id, mx, my, &e)
             || handle_wand_drop(&mut s, id, mx, my, &e)
             || handle_drop_on_bird(&mut s, id, mx, my)  // Drop widget ON bird for delivery

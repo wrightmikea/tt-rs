@@ -9,7 +9,7 @@ use tt_rs_core::WidgetId;
 use tt_rs_drag::{CopySource, Draggable, DropEvent, Position};
 use tt_rs_ui::{
     Footer, HelpButton, HelpPanel, Tooltip, TooltipLayer, TooltipPosition, UserLevel,
-    UserLevelSelector,
+    UserLevelSelector, WorkspaceButton, WorkspaceMenu, WorkspaceMetadata,
 };
 use yew::prelude::*;
 
@@ -32,18 +32,32 @@ const Z_PLANE_TOOLTIPS: i32 = 500;
 pub fn render_app(
     state: &AppState,
     help_open: bool,
+    workspace_open: bool,
     user_level: UserLevel,
     cbs: &Callbacks,
     planes: &ZPlanes<'_>,
+    workspaces: &[WorkspaceMetadata],
 ) -> Html {
     html! {
         <div class="workspace">
             <div class="workspace-header">
                 <span class="header-title">{"tt-rs - Visual Programming Environment"}</span>
+                <WorkspaceButton on_click={cbs.on_workspace_open.clone()} />
                 <UserLevelSelector level={user_level} on_change={cbs.on_level_change.clone()} />
             </div>
             <HelpButton on_click={cbs.on_help_open.clone()} />
             <HelpPanel is_open={help_open} on_close={cbs.on_help_close.clone()} level={user_level} />
+            <WorkspaceMenu
+                is_open={workspace_open}
+                on_close={cbs.on_workspace_close.clone()}
+                on_save={cbs.on_workspace_save.clone()}
+                on_load={cbs.on_workspace_load.clone()}
+                on_delete={cbs.on_workspace_delete.clone()}
+                on_export={cbs.on_workspace_export.clone()}
+                on_import={cbs.on_workspace_import.clone()}
+                current_level={user_level}
+                workspaces={workspaces.to_vec()}
+            />
             <div class="workspace-content">
                 // Z-plane 0: Copy source stacks (lowest)
                 { render_z_plane(Z_PLANE_STACKS, render_copy_sources(&planes.copy_sources, state, &cbs.on_copy_source_click, &cbs.on_move)) }

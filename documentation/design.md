@@ -645,6 +645,313 @@ pub enum SemanticData {
 }
 ```
 
+## Workspace Persistence System
+
+### Workspace Data Model
+
+A workspace captures the complete state of the application at a point in time:
+
+```rust
+#[derive(Serialize, Deserialize, Clone)]
+pub struct Workspace {
+    /// Metadata for display in the workspace list
+    pub metadata: WorkspaceMetadata,
+    /// All widgets in the workspace (excluding copy sources)
+    pub widgets: Vec<WidgetData>,
+    /// All boxes in the workspace
+    pub boxes: Vec<BoxData>,
+    /// Widget positions
+    pub positions: HashMap<String, PositionData>,
+    /// Which widgets are in which box holes
+    pub box_contents: HashMap<String, Vec<BoxHoleData>>,
+    /// Schema version for forward compatibility
+    pub version: u32,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct WorkspaceMetadata {
+    /// Unique identifier (UUID)
+    pub id: String,
+    /// User-provided name for the workspace
+    pub name: String,
+    /// User-provided description (purpose, instructions, tutorial goals)
+    pub description: String,
+    /// User level when workspace was saved (tt1, tt2, etc.)
+    pub user_level: String,
+    /// Timestamp when saved
+    pub created_at: String,
+    /// Timestamp when last modified
+    pub modified_at: String,
+    /// Whether this is a bundled example/tutorial (read-only)
+    pub is_bundled: bool,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct PositionData {
+    pub x: f64,
+    pub y: f64,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct BoxHoleData {
+    pub hole_index: usize,
+    pub widget_id: String,
+}
+```
+
+### Widget Serialization
+
+Each widget type implements serialization:
+
+```rust
+#[derive(Serialize, Deserialize, Clone)]
+#[serde(tag = "type")]
+pub enum WidgetData {
+    Number {
+        id: String,
+        numerator: i64,
+        denominator: u64,
+        operator: String,
+        is_copy_source: bool,
+    },
+    Text {
+        id: String,
+        content: String,
+    },
+    Scales {
+        id: String,
+        left_value: Option<i64>,
+        right_value: Option<i64>,
+    },
+    Robot {
+        id: String,
+        actions: Vec<ActionData>,
+        state: String,
+    },
+    Bird {
+        id: String,
+        paired_nest_id: Option<String>,
+    },
+    Nest {
+        id: String,
+        message_count: usize,
+    },
+    Vacuum { id: String },
+    Wand { id: String },
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct BoxData {
+    pub id: String,
+    pub num_holes: usize,
+    pub erased: bool,
+}
+```
+
+### Storage Architecture
+
+Three storage backends with a unified interface:
+
+```rust
+pub trait WorkspaceStorage {
+    /// List all available workspaces
+    fn list(&self) -> Result<Vec<WorkspaceMetadata>, StorageError>;
+    /// Load a workspace by ID
+    fn load(&self, id: &str) -> Result<Workspace, StorageError>;
+    /// Save a workspace (creates or updates)
+    fn save(&mut self, workspace: &Workspace) -> Result<(), StorageError>;
+    /// Delete a workspace by ID
+    fn delete(&mut self, id: &str) -> Result<(), StorageError>;
+}
+```
+
+#### 1. Browser LocalStorage
+
+Primary storage for user workspaces:
+
+```rust
+pub struct LocalStorageBackend {
+    prefix: String,  // "tt-rs-workspace-"
+}
+
+impl LocalStorageBackend {
+    const INDEX_KEY: &'static str = "tt-rs-workspace-index";
+
+    fn workspace_key(&self, id: &str) -> String {
+        format!("{}{}", self.prefix, id)
+    }
+}
+```
+
+**Storage format:**
+- Index: `tt-rs-workspace-index` → JSON array of workspace IDs
+- Workspaces: `tt-rs-workspace-{uuid}` → Full workspace JSON
+
+#### 2. File System (Import/Export)
+
+For sharing and backup:
+
+```rust
+pub struct FileSystemBackend;
+
+impl FileSystemBackend {
+    /// Export workspace to downloadable JSON file
+    pub fn export(workspace: &Workspace) -> Result<(), StorageError> {
+        // Use web_sys to trigger file download
+        // Filename: "{name}-{date}.tt-rs.json"
+    }
+
+    /// Import workspace from user-selected file
+    pub fn import(file: web_sys::File) -> Result<Workspace, StorageError> {
+        // Read file contents, parse JSON, validate schema
+    }
+}
+```
+
+#### 3. Bundled Examples
+
+Built into the application binary:
+
+```rust
+pub struct BundledExamplesBackend {
+    examples: Vec<Workspace>,  // Compiled into WASM
+}
+
+// Examples defined at compile time
+const BUNDLED_EXAMPLES: &[&str] = &[
+    include_str!("../examples/tutorial-arithmetic.json"),
+    include_str!("../examples/tutorial-robot-basics.json"),
+    include_str!("../examples/tutorial-messaging.json"),
+];
+```
+
+### Workspace Menu UI
+
+A modal dialog for workspace management:
+
+```rust
+pub enum WorkspaceDialogMode {
+    List,       // Default: show list of workspaces
+    Save,       // Save current workspace (name + description input)
+    Confirm,    // Confirm overwrite or delete
+}
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct WorkspaceMenuProps {
+    pub is_open: bool,
+    pub on_close: Callback<()>,
+    pub on_save: Callback<WorkspaceMetadata>,
+    pub on_load: Callback<String>,  // workspace ID
+    pub on_delete: Callback<String>,
+    pub on_export: Callback<String>,
+    pub on_import: Callback<web_sys::File>,
+    pub current_level: UserLevel,
+}
+```
+
+### Menu Button Location
+
+A "Workspace" button in the header, next to the user level selector:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ tt-rs - Visual Programming Environment   [Workspace ▼] [tt2 ▼] │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Dialog Layout
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Workspaces                                              [Close] │
+├─────────────────────────────────────────────────────────────────┤
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ [Save Current Workspace]  [Import from File]               │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│ ── My Workspaces ───────────────────────────────────────────── │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ ★ Robot Counter (tt2)                          [Load][Del] │ │
+│ │   A robot that increments by 5 when clicked.               │ │
+│ │   Modified: Nov 29, 2025                                   │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│ ── Examples & Tutorials ────────────────────────────────────── │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ 📚 Basic Arithmetic (tt1)                           [Load] │ │
+│ │   Learn to add, subtract, multiply and divide.             │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ 📚 Training Your First Robot (tt1)                  [Load] │ │
+│ │   Step-by-step guide to teaching a robot.                  │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ 📚 Messaging with Birds (tt2)                       [Load] │ │
+│ │   Send messages between widgets using birds and nests.     │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Save Dialog
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ Save Workspace                                          [Close] │
+├─────────────────────────────────────────────────────────────────┤
+│ Name:                                                           │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ My Robot Counter                                           │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│ Description:                                                    │
+│ ┌─────────────────────────────────────────────────────────────┐ │
+│ │ A robot trained to increment a number by 5 each time      │ │
+│ │ it's clicked. Good for demonstrating basic robot training. │ │
+│ │                                                            │ │
+│ │ Instructions:                                               │ │
+│ │ 1. Click the robot to run it                               │ │
+│ │ 2. Watch the number increase by 5                          │ │
+│ └─────────────────────────────────────────────────────────────┘ │
+│                                                                 │
+│ User Level: tt2 (automatically set)                             │
+│                                                                 │
+│              [Cancel]                    [Save]                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### ID Remapping on Load
+
+When loading a workspace, widget IDs must be remapped to avoid conflicts:
+
+```rust
+impl Workspace {
+    /// Load workspace and remap all IDs to fresh values
+    pub fn load_with_fresh_ids(data: &Workspace) -> (AppState, HashMap<String, WidgetId>) {
+        let mut id_map: HashMap<String, WidgetId> = HashMap::new();
+
+        // Generate new IDs for all widgets
+        for widget in &data.widgets {
+            let old_id = widget.id();
+            let new_id = WidgetId::new();
+            id_map.insert(old_id, new_id);
+        }
+
+        // Remap box contents
+        // Remap bird/nest pairings
+        // Remap robot action targets
+
+        // ...
+    }
+}
+```
+
+### Excluding Copy Sources
+
+Copy sources (palette items) are NOT saved:
+- They are recreated by `demo::init_widgets()` on load
+- Only user-created widgets and their positions are persisted
+- This keeps workspace files small and ensures palette consistency
+
 ## Error Handling
 
 ### Error Types

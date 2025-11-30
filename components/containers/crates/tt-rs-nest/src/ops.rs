@@ -1,6 +1,7 @@
 //! Accessor methods for Nest.
 
 use crate::{Nest, NestColor};
+use tt_rs_core::Widget;
 
 impl Nest {
     /// Returns the nest's color.
@@ -21,6 +22,11 @@ impl Nest {
     /// Returns true if this is a copy source (palette item).
     pub fn is_copy_source(&self) -> bool {
         self.is_copy_source
+    }
+
+    /// Peeks at the top (oldest) message without removing it.
+    pub fn peek_top(&self) -> Option<&dyn Widget> {
+        self.messages.front().map(|m| m.as_ref())
     }
 }
 

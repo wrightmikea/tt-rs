@@ -129,32 +129,107 @@ This document outlines the implementation plan for tt-rs, tracking both current 
 
 ### Iteration 3: Persistence & Sharing
 
-**Goal**: Save and load workspaces so users can continue their work.
+**Goal**: Save and load workspaces so users can continue their work and share tutorials.
 
-#### 3.1 JSON Serialization
-- [ ] Define JSON schema for all widgets
-- [ ] Implement `serialize()` for each widget type
-- [ ] Implement `deserialize()` for each widget type
-- [ ] Handle widget references (birds→nests)
+#### 3.1 Workspace Menu UI (Part 1)
+- [ ] Create `WorkspaceButton` component in tt-rs-ui
+- [ ] Create `WorkspaceMenu` slide panel component
+- [ ] Add workspace button to header (next to user level selector)
+- [ ] Implement open/close state management in App
+- [ ] Style workspace menu CSS (modal dialog style)
 
-#### 3.2 Layout Persistence
-- [ ] Save widget positions to localStorage
-- [ ] Load positions on startup
-- [ ] Reset layout to defaults button
-- [ ] Export/import layout as JSON
+#### 3.2 Workspace Data Structures
+- [ ] Define `Workspace` struct with metadata
+- [ ] Define `WorkspaceMetadata` (id, name, description, user_level, timestamps)
+- [ ] Define `WidgetData` enum for serializable widget state
+- [ ] Define `BoxData` struct for serializable box state
+- [ ] Define `PositionData` struct for x/y coordinates
+- [ ] Add serde Serialize/Deserialize derives
 
-#### 3.3 Workspace Local Storage
-- [ ] Save full workspace to localStorage
-- [ ] Load workspace from localStorage
-- [ ] Auto-save on changes (debounced)
-- [ ] Workspace naming/listing
+#### 3.3 Widget Serialization
+- [ ] Implement `to_widget_data()` for Number
+- [ ] Implement `to_widget_data()` for Text
+- [ ] Implement `to_widget_data()` for Scales
+- [ ] Implement `to_widget_data()` for Robot (with actions)
+- [ ] Implement `to_widget_data()` for Bird (with paired nest)
+- [ ] Implement `to_widget_data()` for Nest
+- [ ] Implement `to_widget_data()` for Vacuum, Wand
+- [ ] Implement `to_box_data()` for BoxState
+- [ ] Implement reverse: `from_widget_data()` for all types
 
-#### 3.4 File Export/Import
-- [ ] Export workspace to JSON file
-- [ ] Import workspace from JSON file
-- [ ] Drag-drop file to import
+#### 3.4 AppState Serialization
+- [ ] Implement `AppState::to_workspace()` method
+- [ ] Filter out copy sources (palette items)
+- [ ] Serialize widget positions
+- [ ] Serialize box contents (widget_in_box mapping)
+- [ ] Implement `AppState::from_workspace()` method
+- [ ] ID remapping on load (fresh IDs to avoid conflicts)
 
-#### 3.4 URL Sharing (Optional)
+#### 3.5 Browser LocalStorage Backend (Part 2a)
+- [ ] Create `LocalStorageBackend` struct
+- [ ] Implement workspace index management
+- [ ] Implement `list()` - return all workspace metadata
+- [ ] Implement `save()` - store workspace JSON
+- [ ] Implement `load()` - retrieve and parse workspace
+- [ ] Implement `delete()` - remove workspace
+
+#### 3.6 Save Dialog UI
+- [ ] Create save form with name input
+- [ ] Create description textarea (multi-line)
+- [ ] Auto-populate user level from current state
+- [ ] Validate name is not empty
+- [ ] Implement save button callback
+- [ ] Implement cancel button callback
+
+#### 3.7 Workspace List UI
+- [ ] Display list of saved workspaces
+- [ ] Show metadata: name, description, user level, date
+- [ ] Group by: My Workspaces vs Examples/Tutorials
+- [ ] Load button for each workspace
+- [ ] Delete button for user workspaces (not bundled)
+- [ ] Confirmation dialog for delete
+
+#### 3.8 File Export/Import (Part 2b)
+- [ ] Implement `export_to_file()` using web_sys
+- [ ] Generate filename: `{name}-{date}.tt-rs.json`
+- [ ] Trigger browser download
+- [ ] Implement file input component
+- [ ] Handle file selection event
+- [ ] Parse and validate imported JSON
+- [ ] Import button in workspace menu
+
+#### 3.9 Bundled Examples (Part 2c)
+- [ ] Create `examples/` directory in tt-rs-app
+- [ ] Create `tutorial-arithmetic.json` (tt1 level)
+- [ ] Create `tutorial-robot-basics.json` (tt1 level)
+- [ ] Create `tutorial-messaging.json` (tt2 level)
+- [ ] Use `include_str!()` to embed examples in WASM
+- [ ] Implement `BundledExamplesBackend`
+- [ ] Mark bundled examples with `is_bundled: true`
+- [ ] Hide delete button for bundled examples
+
+#### 3.10 Description Display (Part 3)
+- [ ] Show description text when workspace is loaded
+- [ ] Create dismissible info panel at top of workspace
+- [ ] Include tutorial instructions in description
+- [ ] Style info panel with clear visual distinction
+- [ ] Close button to dismiss description
+
+#### 3.11 Level Switching on Load
+- [ ] Store user_level in workspace metadata
+- [ ] When loading, switch to workspace's user level
+- [ ] Show confirmation if level will change
+- [ ] Ensure widgets visible at that level are loaded
+
+#### 3.12 Polish & Testing
+- [ ] Test save/load round-trip for all widget types
+- [ ] Test robot with recorded actions
+- [ ] Test bird/nest pairings persistence
+- [ ] Test box contents persistence
+- [ ] Handle storage quota errors gracefully
+- [ ] Handle corrupted workspace JSON gracefully
+
+#### 3.13 URL Sharing (Optional - Lower Priority)
 - [ ] Encode small programs in URL
 - [ ] Decode and load from URL parameter
 
@@ -268,22 +343,22 @@ These features restore the full experience of the original 1995 ToonTalk:
     ┌───────────────┐ ┌───────────────┐ ┌───────────────┐
     │  Bird/Nest    │ │   Pattern     │ │  Persistence  │
     │  (Iter 1)     │ │   Matching    │ │  (Iter 3)     │
-    └───────┬───────┘ │   (Iter 2)    │ └───────────────┘
-            │         └───────┬───────┘
-            │                 │
-            └────────┬────────┘
-                     │
-                     ▼
-            ┌───────────────┐
-            │   Sensors     │
-            │   (Iter 4)    │
-            └───────┬───────┘
-                    │
-                    ▼
-            ┌───────────────┐
-            │  Houses/City  │
-            │  (Phase A)    │
-            └───────┬───────┘
+    └───────┬───────┘ │   (Iter 2)    │ └───────┬───────┘
+            │         └───────┬───────┘         │
+            │                 │                 │
+            └────────┬────────┘                 │
+                     │                          │
+                     ▼                          │
+            ┌───────────────┐                   │
+            │   Sensors     │                   │
+            │   (Iter 4)    │                   │
+            └───────┬───────┘                   │
+                    │                           │
+                    ▼                           │
+            ┌───────────────┐                   │
+            │  Houses/City  │◄──────────────────┘
+            │  (Phase A)    │  (persistence enables
+            └───────┬───────┘   saving complex programs)
                     │
             ┌───────┴───────┐
             │               │
@@ -292,6 +367,35 @@ These features restore the full experience of the original 1995 ToonTalk:
     │ Trucks/Bombs  │ │  Helicopter   │
     │  (Phase B)    │ │  (Phase C)    │
     └───────────────┘ └───────────────┘
+```
+
+### Persistence Implementation Phases
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Part 1: UI Components                        │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │ WorkspaceButton │─▶│  WorkspaceMenu  │─▶│   SaveDialog    │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Part 2: Storage Backends                     │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
+│  │ LocalStorage    │  │ File Import/    │  │ Bundled         │ │
+│  │ (browser)       │  │ Export (share)  │  │ Examples        │ │
+│  └─────────────────┘  └─────────────────┘  └─────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Part 3: Documentation                        │
+│  ┌─────────────────┐  ┌─────────────────┐                      │
+│  │ Description in  │  │ Info Panel      │                      │
+│  │ workspace meta  │─▶│ on load         │                      │
+│  └─────────────────┘  └─────────────────┘                      │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---

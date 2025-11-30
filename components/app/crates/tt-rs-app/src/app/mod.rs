@@ -4,7 +4,7 @@ mod callbacks;
 mod render;
 
 use tt_rs_core::WidgetId;
-use tt_rs_ui::{TooltipLayerProvider, UserLevel};
+use tt_rs_ui::{TooltipLayerProvider, UserLevel, WorkspaceMetadata};
 use wasm_bindgen::{closure::Closure, JsCast};
 use yew::prelude::*;
 
@@ -16,6 +16,7 @@ use crate::widget_item::WidgetItem;
 pub fn app() -> Html {
     let state = use_state(AppState::new);
     let help_open = use_state(|| false);
+    let workspace_open = use_state(|| false);
     let user_level = use_state(UserLevel::default);
     let dragged_box_id = use_mut_ref(|| None::<WidgetId>);
     let pending_new_box = use_mut_ref(|| None::<usize>);
@@ -51,15 +52,19 @@ pub fn app() -> Html {
         state.clone(),
         help_open.clone(),
         user_level.clone(),
+        workspace_open.clone(),
         dragged_box_id.clone(),
         pending_new_box.clone(),
     );
 
     let planes = partition_into_planes(&state, *user_level);
 
+    // Placeholder workspace list - will be populated from storage in Part 2
+    let workspaces: Vec<WorkspaceMetadata> = vec![];
+
     html! {
         <TooltipLayerProvider>
-            { render::render_app(&state, *help_open, *user_level, &cbs, &planes) }
+            { render::render_app(&state, *help_open, *workspace_open, *user_level, &cbs, &planes, &workspaces) }
         </TooltipLayerProvider>
     }
 }

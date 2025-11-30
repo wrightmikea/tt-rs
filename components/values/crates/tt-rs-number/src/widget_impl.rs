@@ -36,10 +36,17 @@ impl Widget for Number {
     fn description(&self) -> String {
         if self.erasure == ErasureLevel::Value {
             "erased number".to_string()
-        } else if self.is_integer() {
-            format!("number {}", self.numerator)
         } else {
-            format!("number {}/{}", self.numerator, self.denominator)
+            // Include operator prefix to preserve full widget state
+            let op_prefix = self.operator.symbol();
+            if self.is_integer() {
+                format!("number {}{}", op_prefix, self.numerator)
+            } else {
+                format!(
+                    "number {}{}/{}",
+                    op_prefix, self.numerator, self.denominator
+                )
+            }
         }
     }
 }

@@ -163,6 +163,10 @@ Goal: Match the core functionality of the 2017 JavaScript version.
 | FR5.2 | Load from localStorage | Must Have | ❌ Pending |
 | FR5.3 | Export to file | Must Have | ❌ Pending |
 | FR5.4 | Import from file | Must Have | ❌ Pending |
+| FR5.5 | Workspace menu (save/list/load dialog) | Must Have | ❌ Pending |
+| FR5.6 | Bundled examples/tutorials | Must Have | ❌ Pending |
+| FR5.7 | Workspace documentation (description text) | Must Have | ❌ Pending |
+| FR5.8 | User level preservation (tt1/tt2) | Must Have | ❌ Pending |
 
 ### Phase 2: Extended MVP
 
@@ -297,13 +301,31 @@ Goal: Go beyond original ToonTalk with modern capabilities.
 
 7. **As a user**, I want to erase parts of a pattern, so my robot can work with many different inputs.
 
+### Workspace Persistence Stories
+
+8. **As a user**, I want to save my current workspace with a name and description, so I can return to it later.
+
+9. **As a user**, I want to see a list of my saved workspaces with their descriptions, so I can choose which one to load.
+
+10. **As a user**, I want to load a saved workspace and have it restore all widgets in their saved positions, so I can continue my work.
+
+11. **As an educator**, I want to create a workspace with a trained robot and save it as a tutorial, so students can learn by example.
+
+12. **As a user**, I want to export a workspace to a file, so I can share it with others or back it up.
+
+13. **As a user**, I want to import a workspace from a file someone shared with me, so I can explore their programs.
+
+14. **As a user**, I want to access bundled example workspaces (tutorials) that demonstrate features, so I can learn how to use the application.
+
+15. **As a user**, I want each saved workspace to remember which user level (tt1/tt2) it was created in, so tutorials can target specific learning stages.
+
 ### Advanced Stories
 
-8. **As an advanced user**, I want to create recursive programs using birds and nests, so I can compute factorials.
+16. **As an advanced user**, I want to create recursive programs using birds and nests, so I can compute factorials.
 
-9. **As an advanced user**, I want multiple robots in different houses, so I can build parallel systems.
+17. **As an advanced user**, I want multiple robots in different houses, so I can build parallel systems.
 
-10. **As an educator**, I want to import ToonTalk Reborn programs, so I can use existing curricula.
+18. **As an educator**, I want to import ToonTalk Reborn programs, so I can use existing curricula.
 
 ## Milestones
 

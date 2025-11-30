@@ -4,10 +4,10 @@
 //! - Birds are created paired with a nest (via "hatching")
 //! - Drop a widget ON a bird to give it a message
 //! - The bird delivers the message to its paired nest
-//! - Messages queue on the nest until retrieved by a robot
+//! - Messages queue on the nest until retrieved (click nest to take top)
 
 use tt_rs_core::WidgetId;
-use tt_rs_drag::Position;
+use tt_rs_drag::{DropEvent, Position};
 use tt_rs_hit_test::find_widget_at_excluding;
 
 use crate::state::AppState;
@@ -45,26 +45,14 @@ pub fn handle_drop_on_bird(state: &mut AppState, id: WidgetId, mx: f64, my: f64)
                 }
             };
 
-            // Remove the dropped widget (bird takes it)
+            // Remove the dropped widget from workspace (bird consumes it)
             state.widgets.remove(&id);
             state.positions.remove(&id);
 
-            // Copy the widget for delivery to the nest
-            let message = dropped.copy_widget();
-            let message_id = message.id();
-
-            // Add message to the nest's queue
+            // Add message to the nest's queue (message goes INTO nest, not as separate widget)
             if let Some(WidgetItem::Nest(nest)) = state.widgets.get_mut(&nest_id) {
-                nest.receive(message.to_boxed_widget());
+                nest.receive(dropped.to_boxed_widget());
             }
-
-            // Place the delivered widget near the nest (visual feedback)
-            let nest_pos = state.positions.get(&nest_id).copied().unwrap_or_default();
-            state.positions.insert(
-                message_id,
-                Position::new(nest_pos.x + 40.0, nest_pos.y + 10.0),
-            );
-            state.widgets.insert(message_id, message);
 
             // Update bird to flying state (animation would go here)
             if let Some(WidgetItem::Bird(b)) = state.widgets.get_mut(&target_id) {
@@ -90,4 +78,57 @@ pub fn handle_bird_drop(_state: &mut AppState, _id: WidgetId, _mx: f64, _my: f64
 pub fn handle_nest_drop(_state: &mut AppState, _id: WidgetId, _mx: f64, _my: f64) -> bool {
     // Nests don't have special drop behavior - they just get repositioned
     false
+}
+
+/// Handle nest click: take the top message if nest has any.
+/// A "click" is detected when the widget barely moved (< 10 pixels).
+pub fn handle_nest_click(state: &mut AppState, id: WidgetId, event: &DropEvent) -> bool {
+    // Check if this is a nest
+    let is_nest = state
+        .widgets
+        .get(&id)
+        .map(|w| matches!(w, WidgetItem::Nest(_)))
+        .unwrap_or(false);
+
+    if !is_nest {
+        return false;
+    }
+
+    // Check if this is a click (not much movement) using start_position from event
+    let start_pos = event.start_position;
+    let final_pos = event.position;
+    let dist = ((start_pos.x - final_pos.x).powi(2) + (start_pos.y - final_pos.y).powi(2)).sqrt();
+
+    if dist >= 10.0 {
+        return false;
+    }
+
+    // Take the top message from the nest
+    let taken = if let Some(WidgetItem::Nest(nest)) = state.widgets.get_mut(&id) {
+        nest.take()
+    } else {
+        None
+    };
+
+    if let Some(message) = taken {
+        // Convert Box<dyn Widget> back to WidgetItem and add to workspace
+        let widget_item = WidgetItem::from_boxed_widget(message);
+        let new_id = widget_item.id();
+
+        // Position the extracted widget near the nest
+        let new_pos = Position::new(start_pos.x + 80.0, start_pos.y);
+        state.positions.insert(new_id, new_pos);
+        state.widgets.insert(new_id, widget_item);
+
+        log::info!("Took message {} from nest {}", new_id, id);
+
+        // Restore nest to its original position (since it was a click, not a drag)
+        state.positions.insert(id, start_pos);
+
+        true
+    } else {
+        // No messages to take, restore position
+        state.positions.insert(id, start_pos);
+        false
+    }
 }

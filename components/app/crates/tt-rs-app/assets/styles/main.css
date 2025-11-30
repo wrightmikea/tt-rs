@@ -997,6 +997,7 @@ body.dragging-active .widget.number:not(.copy-source) {
     padding: 0.25rem;
     width: 70px;
     height: 80px;
+    position: relative;
 }
 
 .widget.nest:hover {
@@ -1039,7 +1040,7 @@ body.dragging-active .widget.number:not(.copy-source) {
     background: #8B4513;
 }
 
-/* Badge showing message count */
+/* Badge showing message count (shows +N when more than 1 message) */
 .nest-badge {
     position: absolute;
     top: 0;
@@ -1056,6 +1057,22 @@ body.dragging-active .widget.number:not(.copy-source) {
     justify-content: center;
     padding: 0 4px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+/* Contents overlay - shows top message on the nest */
+.nest-contents {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    pointer-events: none;
+    z-index: 5;
+}
+
+/* Scale down the nested widget to fit on nest */
+.nest-contents > .widget {
+    transform-origin: center center;
 }
 
 /* Nest in box hole */
@@ -1122,4 +1139,293 @@ body.dragging-active .widget.number:not(.copy-source) {
     width: 35px;
     height: 40px;
     font-size: 0.7rem;
+}
+
+/* ========================================
+   WORKSPACE BUTTON & MENU
+   ======================================== */
+
+.workspace-button {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: 2px solid white;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+    outline: none;
+    margin-right: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.workspace-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.workspace-button:focus {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Workspace list container */
+.workspace-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Action buttons at top */
+.workspace-actions {
+    display: flex;
+    gap: 0.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.workspace-action-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.workspace-action-btn.save-btn {
+    background: linear-gradient(135deg, #4a90d9 0%, #357abd 100%);
+    color: white;
+}
+
+.workspace-action-btn.save-btn:hover {
+    background: linear-gradient(135deg, #5a9fe9 0%, #458acd 100%);
+}
+
+.workspace-action-btn.import-btn {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+}
+
+.workspace-action-btn.import-btn:hover {
+    background: linear-gradient(135deg, #7c858d 0%, #6a7278 100%);
+}
+
+/* Workspace sections */
+.workspace-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.workspace-section-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+/* Individual workspace item */
+.workspace-item {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+}
+
+.workspace-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.workspace-item-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.workspace-icon {
+    font-size: 1rem;
+}
+
+.workspace-name {
+    font-weight: 600;
+    color: #2c3e50;
+    flex: 1;
+}
+
+.workspace-level {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.workspace-description {
+    font-size: 0.85rem;
+    color: #5a6268;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    /* Limit to 3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.workspace-meta {
+    font-size: 0.75rem;
+    color: #adb5bd;
+    margin-bottom: 0.75rem;
+}
+
+.workspace-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.workspace-btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.workspace-btn.load-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.workspace-btn.load-btn:hover {
+    background-color: #218838;
+}
+
+.workspace-btn.export-btn {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.workspace-btn.export-btn:hover {
+    background-color: #138496;
+}
+
+.workspace-btn.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.workspace-btn.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Empty state */
+.workspace-empty {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+}
+
+.workspace-empty p {
+    margin: 0.5rem 0;
+}
+
+/* Save form */
+.save-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.9rem;
+}
+
+.form-input {
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-input:focus {
+    border-color: #4a90d9;
+}
+
+.form-textarea {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    outline: none;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.form-textarea:focus {
+    border-color: #4a90d9;
+}
+
+.form-value {
+    font-size: 0.9rem;
+    color: #5a6268;
+    font-style: italic;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.form-btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.2s;
+}
+
+.form-btn.cancel-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.form-btn.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.form-btn.save-btn {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+}
+
+.form-btn.save-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #34ce57 0%, #28a745 100%);
+}
+
+.form-btn.save-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }

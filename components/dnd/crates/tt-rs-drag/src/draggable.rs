@@ -46,6 +46,8 @@ pub struct DragEndEvent {
 pub struct DropEvent {
     /// The ID of the widget that was dropped.
     pub widget_id: WidgetId,
+    /// The starting position of the widget (before drag).
+    pub start_position: Position,
     /// The final position of the widget.
     pub position: Position,
     /// The mouse position where the drop occurred.
@@ -172,11 +174,11 @@ pub fn draggable(props: &DraggableProps) -> Html {
             let is_dragging_up = is_dragging.clone();
             let up_closure = Closure::wrap(Box::new(move |e: MouseEvent| {
                 // Get current position before stopping drag
-                let final_pos = {
+                let (start_pos, final_pos) = {
                     let state = drag_state_up.borrow();
                     let dx = e.client_x() as f64 - state.start_mouse.x;
                     let dy = e.client_y() as f64 - state.start_mouse.y;
-                    state.start_pos.offset(dx, dy)
+                    (state.start_pos, state.start_pos.offset(dx, dy))
                 };
                 let mouse_pos = Position::new(e.client_x() as f64, e.client_y() as f64);
 
@@ -207,6 +209,7 @@ pub fn draggable(props: &DraggableProps) -> Html {
                 if let Some(ref on_drop_cb) = on_drop_clone {
                     on_drop_cb.emit(DropEvent {
                         widget_id,
+                        start_position: start_pos,
                         position: final_pos,
                         mouse_position: mouse_pos,
                     });

@@ -4,7 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-29
 
-- feat: Box copy on 0 and wand deep copy (`<latest>`)
+- feat: Add workspace menu UI (save/load dialog) for persistence feature (`<latest>`)
+- deploy: Update live demo with box copy on 0 and wand deep copy (`a1bdeb1`)
+- feat: Box copy on 0 and wand deep copy (`f1941b2`)
 - deploy: Update live demo with negative index box splitting (`c781091`)
 - feat: Add negative index box splitting (split from right side) (`093d452`)
 - deploy: Update live demo with box keyboard resize fix (`1c37985`)
