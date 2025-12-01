@@ -31,6 +31,14 @@ pub struct TextPaneProps {
     /// Whether the pane can be collapsed.
     #[prop_or(true)]
     pub collapsible: bool,
+    /// Optional callback for "Show Me" button (for tutorials).
+    /// When provided, a "Show Me" button is displayed.
+    #[prop_or_default]
+    pub on_show_me: Option<Callback<()>>,
+    /// Optional callback for "Reset" button (for tutorials/puzzles).
+    /// When provided, a "Reset" button is displayed.
+    #[prop_or_default]
+    pub on_reset: Option<Callback<()>>,
 }
 
 /// Editable text pane widget.
@@ -169,6 +177,23 @@ pub fn text_pane(props: &TextPaneProps) -> Html {
         props.readonly.then_some("readonly"),
     );
 
+    // Create Show Me button click handler if callback is provided
+    let on_show_me_click = props.on_show_me.clone().map(|cb| {
+        Callback::from(move |_: MouseEvent| {
+            cb.emit(());
+        })
+    });
+
+    // Create Reset button click handler if callback is provided
+    let on_reset_click = props.on_reset.clone().map(|cb| {
+        Callback::from(move |_: MouseEvent| {
+            cb.emit(());
+        })
+    });
+
+    // Check if we have any action buttons to show
+    let has_action_buttons = on_show_me_click.is_some() || on_reset_click.is_some();
+
     html! {
         <div class={pane_class} style={style}>
             <div class="text-pane-header">
@@ -195,6 +220,29 @@ pub fn text_pane(props: &TextPaneProps) -> Html {
                         placeholder="Enter workspace notes..."
                     />
                 </div>
+                // Action buttons for tutorials (Show Me and Reset)
+                if has_action_buttons {
+                    <div class="text-pane-actions">
+                        if let Some(on_click) = on_show_me_click {
+                            <button
+                                class="action-btn show-me-btn"
+                                onclick={on_click}
+                                title="Watch an animated demonstration"
+                            >
+                                { "\u{25B6} Show Me" }
+                            </button>
+                        }
+                        if let Some(on_click) = on_reset_click {
+                            <button
+                                class="action-btn reset-btn"
+                                onclick={on_click}
+                                title="Reset to starting state"
+                            >
+                                { "\u{21BB} Reset" }
+                            </button>
+                        }
+                    </div>
+                }
                 <div class="text-pane-resize-handle" onmousedown={on_resize_start} />
             }
         </div>

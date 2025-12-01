@@ -170,6 +170,8 @@ fn render_text_pane(state: &AppState, cbs: &Callbacks) -> Html {
                 height={height}
                 on_resize={cbs.on_text_pane_resize.clone()}
                 title="Workspace Notes"
+                on_show_me={cbs.on_show_me.clone()}
+                on_reset={cbs.on_reset.clone()}
             />
         </DraggableTextPane>
     }

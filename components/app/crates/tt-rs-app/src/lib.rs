@@ -5,6 +5,7 @@ mod box_state;
 mod demo;
 mod ops;
 mod robot_exec;
+pub mod routing;
 mod state;
 mod widget_item;
 pub mod workspace;

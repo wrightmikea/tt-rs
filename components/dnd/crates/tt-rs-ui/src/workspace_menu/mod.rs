@@ -141,11 +141,33 @@ struct TutorialPuzzle {
     difficulty: &'static str,
 }
 
+/// Two-part tutorials with Show Me examples.
+const TUTORIALS: &[TutorialPuzzle] = &[
+    TutorialPuzzle {
+        id: "tutorial-fill-box",
+        name: "Fill a Box",
+        description: "Learn to put numbers into boxes (with Show Me)",
+        difficulty: "Beginner",
+    },
+    TutorialPuzzle {
+        id: "tutorial-add-numbers",
+        name: "Add Numbers",
+        description: "Learn to add numbers together (with Show Me)",
+        difficulty: "Beginner",
+    },
+    TutorialPuzzle {
+        id: "tutorial-copy-widget",
+        name: "Copy with Wand",
+        description: "Learn to copy widgets with the magic wand (with Show Me)",
+        difficulty: "Beginner",
+    },
+];
+
 /// Classic ToonTalk puzzles from ToonTalk Reborn 2017.
 const CLASSIC_PUZZLES: &[TutorialPuzzle] = &[
     TutorialPuzzle {
         id: "puzzle-fill-box",
-        name: "Fill a Box",
+        name: "Fill a Box (Classic)",
         description: "Put numbers 1 and 2 into a box",
         difficulty: "Easy",
     },
@@ -174,6 +196,30 @@ fn render_tutorials_tab(on_load: Callback<String>) -> Html {
             <p class="workspace-category-desc">
                 { "Step-by-step guided lessons to learn tt-rs concepts." }
             </p>
+
+            <div class="workspace-section">
+                <h4>{ "Getting Started" }</h4>
+                <p class="section-desc">{ "Two-part tutorials with Show Me examples" }</p>
+                <ul class="workspace-list">
+                    { for TUTORIALS.iter().map(|puzzle| {
+                        let puzzle_id = puzzle.id.to_string();
+                        let on_click = {
+                            let on_load = on_load.clone();
+                            let id = puzzle_id.clone();
+                            Callback::from(move |_| on_load.emit(id.clone()))
+                        };
+                        html! {
+                            <li class="workspace-item" onclick={on_click}>
+                                <div class="workspace-item-header">
+                                    <span class="workspace-item-name">{ puzzle.name }</span>
+                                    <span class="workspace-item-difficulty">{ puzzle.difficulty }</span>
+                                </div>
+                                <p class="workspace-item-desc">{ puzzle.description }</p>
+                            </li>
+                        }
+                    }) }
+                </ul>
+            </div>
 
             <div class="workspace-section">
                 <h4>{ "Classic ToonTalk Puzzles" }</h4>

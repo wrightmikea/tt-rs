@@ -1,4 +1,4 @@
-//! Bundled puzzle loading.
+//! Bundled puzzle and tutorial loading.
 
 use super::data::Workspace;
 
@@ -7,19 +7,29 @@ const PUZZLE_FILL_BOX: &str = include_str!("../../assets/puzzles/puzzle-fill-box
 const PUZZLE_MAKE_FOUR: &str = include_str!("../../assets/puzzles/puzzle-make-four.json");
 const PUZZLE_MAKE_NINE: &str = include_str!("../../assets/puzzles/puzzle-make-nine.json");
 
-/// Load a bundled puzzle by ID.
+/// Bundled tutorial JSON strings (compiled into the binary).
+const TUTORIAL_FILL_BOX: &str = include_str!("../../assets/puzzles/tutorial-fill-box.json");
+const TUTORIAL_ADD_NUMBERS: &str = include_str!("../../assets/puzzles/tutorial-add-numbers.json");
+const TUTORIAL_COPY_WIDGET: &str = include_str!("../../assets/puzzles/tutorial-copy-widget.json");
+
+/// Load a bundled puzzle or tutorial by ID.
 pub fn load_bundled_puzzle(id: &str) -> Option<Workspace> {
     let json = match id {
+        // Puzzles
         "puzzle-fill-box" => PUZZLE_FILL_BOX,
         "puzzle-make-four" => PUZZLE_MAKE_FOUR,
         "puzzle-make-nine" => PUZZLE_MAKE_NINE,
+        // Tutorials
+        "tutorial-fill-box" => TUTORIAL_FILL_BOX,
+        "tutorial-add-numbers" => TUTORIAL_ADD_NUMBERS,
+        "tutorial-copy-widget" => TUTORIAL_COPY_WIDGET,
         _ => return None,
     };
 
     match serde_json::from_str(json) {
         Ok(workspace) => Some(workspace),
         Err(e) => {
-            log::error!("Failed to parse puzzle {}: {}", id, e);
+            log::error!("Failed to parse puzzle/tutorial {}: {}", id, e);
             None
         }
     }

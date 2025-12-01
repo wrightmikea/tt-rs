@@ -10,6 +10,8 @@ use tt_rs_drag::{CopySourceClickEvent, DragEndEvent, DragStartEvent, DropEvent, 
 use tt_rs_ui::{SaveFormData, UserLevel};
 use yew::prelude::*;
 
+use super::PendingAction;
+use crate::routing::{set_route, Route};
 use crate::state::{default_notes_for_level, AppState};
 
 pub struct Callbacks {
@@ -34,16 +36,35 @@ pub struct Callbacks {
     pub on_text_pane_change: Callback<String>,
     pub on_text_pane_resize: Callback<(f64, f64)>,
     pub on_text_pane_move: Callback<Position>,
+    // Tutorial action callbacks
+    pub on_show_me: Option<Callback<()>>,
+    pub on_reset: Option<Callback<()>>,
 }
 
-pub fn create_callbacks(
-    state: UseStateHandle<AppState>,
-    help_open: UseStateHandle<bool>,
-    user_level: UseStateHandle<UserLevel>,
-    workspace_open: UseStateHandle<bool>,
-    dragged_box_id: Rc<RefCell<Option<WidgetId>>>,
-    pending_new_box: Rc<RefCell<Option<usize>>>,
-) -> Callbacks {
+/// Configuration for creating callbacks.
+pub struct CallbackConfig {
+    pub state: UseStateHandle<AppState>,
+    pub help_open: UseStateHandle<bool>,
+    pub user_level: UseStateHandle<UserLevel>,
+    pub workspace_open: UseStateHandle<bool>,
+    pub dragged_box_id: Rc<RefCell<Option<WidgetId>>>,
+    pub pending_new_box: Rc<RefCell<Option<usize>>>,
+    pub dirty: UseStateHandle<bool>,
+    pub pending_action: UseStateHandle<Option<PendingAction>>,
+}
+
+#[allow(clippy::too_many_arguments)]
+pub fn create_callbacks(cfg: CallbackConfig) -> Callbacks {
+    let CallbackConfig {
+        state,
+        help_open,
+        user_level,
+        workspace_open,
+        dragged_box_id,
+        pending_new_box,
+        dirty,
+        pending_action,
+    } = cfg;
     Callbacks {
         on_help_open: {
             let h = help_open.clone();
@@ -54,13 +75,24 @@ pub fn create_callbacks(
             Callback::from(move |_| h.set(false))
         },
         on_level_change: {
+            let dirty = dirty.clone();
+            let pending_action = pending_action.clone();
+            let user_level = user_level.clone();
             let s = state.clone();
             Callback::from(move |level: UserLevel| {
-                user_level.set(level);
-                // Update text pane content when level changes
-                let mut new_state = (*s).clone();
-                new_state.text_pane_content = default_notes_for_level(level).to_string();
-                s.set(new_state);
+                if *dirty {
+                    // Ask for confirmation before changing level
+                    pending_action.set(Some(PendingAction::LevelChange(level)));
+                } else {
+                    // Not dirty - change immediately and load sandbox
+                    user_level.set(level);
+                    // Create fresh sandbox state with appropriate notes
+                    let mut new_state = AppState::new();
+                    new_state.text_pane_content = default_notes_for_level(level).to_string();
+                    s.set(new_state);
+                    // Update URL to sandbox
+                    set_route(&Route::Sandbox);
+                }
             })
         },
         on_box_drag_start: box_handlers::create_box_drag_start(
@@ -68,10 +100,10 @@ pub fn create_callbacks(
             pending_new_box.clone(),
         ),
         on_box_drag_end: box_handlers::create_box_drag_end(dragged_box_id, pending_new_box.clone()),
-        on_box_drop: box_handlers::create_box_drop(state.clone(), pending_new_box),
-        on_copy_source_click: widget_handlers::create_copy_source(state.clone()),
-        on_move: widget_handlers::create_move(state.clone()),
-        on_drop: widget_handlers::create_widget_drop(state.clone()),
+        on_box_drop: box_handlers::create_box_drop(state.clone(), pending_new_box, dirty.clone()),
+        on_copy_source_click: widget_handlers::create_copy_source(state.clone(), dirty.clone()),
+        on_move: widget_handlers::create_move(state.clone(), dirty.clone()),
+        on_drop: widget_handlers::create_widget_drop(state.clone(), dirty.clone()),
         // Workspace callbacks
         on_workspace_open: {
             let w = workspace_open.clone();
@@ -88,12 +120,19 @@ pub fn create_callbacks(
         on_workspace_load: {
             let s = state.clone();
             let w = workspace_open;
+            let dirty = dirty.clone();
             Callback::from(move |id: String| {
                 log::info!("Load workspace: {}", id);
                 if let Some(workspace) = crate::workspace::load_bundled_puzzle(&id) {
                     let new_state = crate::workspace::from_workspace(&workspace);
                     s.set(new_state);
                     w.set(false); // Close workspace menu after loading
+                    dirty.set(false); // Fresh load is not dirty
+
+                    // Update URL to reflect loaded puzzle
+                    // Strip "puzzle-" prefix for cleaner URLs
+                    let url_id = id.strip_prefix("puzzle-").unwrap_or(&id);
+                    set_route(&Route::Puzzle(url_id.to_string()));
                 } else {
                     log::warn!("Puzzle not found: {}", id);
                 }
@@ -113,10 +152,12 @@ pub fn create_callbacks(
         }),
         on_text_pane_change: {
             let s = state.clone();
+            let dirty = dirty.clone();
             Callback::from(move |content: String| {
                 let mut new_state = (*s).clone();
                 new_state.text_pane_content = content;
                 s.set(new_state);
+                dirty.set(true);
             })
         },
         on_text_pane_resize: {
@@ -125,15 +166,71 @@ pub fn create_callbacks(
                 let mut new_state = (*s).clone();
                 new_state.text_pane_size = size;
                 s.set(new_state);
+                // Resizing doesn't make it dirty - it's layout, not content
             })
         },
         on_text_pane_move: {
-            let s = state;
+            let s = state.clone();
             Callback::from(move |pos: Position| {
                 let mut new_state = (*s).clone();
                 new_state.text_pane_position = pos;
                 s.set(new_state);
+                // Moving doesn't make it dirty - it's layout, not content
             })
         },
+        // Show Me callback - only present if demo_steps exist
+        on_show_me: if state.demo_steps.is_empty() {
+            None
+        } else {
+            Some(Callback::from(|_| {
+                log::info!("Show Me button clicked - animation demo not yet implemented");
+                // TODO: Implement demo animation playback
+            }))
+        },
+        // Reset callback - always available (sandbox resets to default, puzzles reload)
+        on_reset: Some({
+            let dirty = dirty.clone();
+            let pending_action = pending_action.clone();
+            let s = state;
+            Callback::from(move |_| {
+                log::info!("Reset button clicked");
+                if *dirty {
+                    // Ask for confirmation
+                    pending_action.set(Some(PendingAction::Reset));
+                } else {
+                    // Not dirty - reset immediately
+                    // Get the current route at reset time (not at callback creation time)
+                    let current_id = match crate::routing::current_route() {
+                        Route::Puzzle(id) => {
+                            // Don't double-prefix if ID already has a prefix
+                            if id.starts_with("puzzle-") || id.starts_with("tutorial-") {
+                                Some(id)
+                            } else {
+                                Some(format!("puzzle-{id}"))
+                            }
+                        }
+                        Route::Tutorial(id) => {
+                            if id.starts_with("tutorial-") {
+                                Some(id)
+                            } else {
+                                Some(format!("tutorial-{id}"))
+                            }
+                        }
+                        Route::Sandbox => None,
+                    };
+                    log::info!("Reset (not dirty): current_id = {:?}", current_id);
+
+                    if let Some(ref id) = current_id {
+                        if let Some(workspace) = crate::workspace::load_bundled_puzzle(id) {
+                            let new_state = crate::workspace::from_workspace(&workspace);
+                            s.set(new_state);
+                        }
+                    } else {
+                        // Sandbox - reset to default
+                        s.set(AppState::new());
+                    }
+                }
+            })
+        }),
     }
 }

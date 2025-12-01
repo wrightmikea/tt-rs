@@ -55,6 +55,12 @@ pub fn to_workspace(state: &AppState, metadata: WorkspaceMetadata) -> Workspace 
         widgets,
         boxes,
         notes: state.text_pane_content.clone(),
+        notes_position: Some(PositionData::new(
+            state.text_pane_position.x,
+            state.text_pane_position.y,
+        )),
+        notes_size: Some(state.text_pane_size),
+        demo_steps: state.demo_steps.clone(),
     }
 }
 
@@ -106,6 +112,16 @@ pub fn from_workspace(workspace: &Workspace) -> AppState {
         boxes.insert(box_id, box_state);
     }
 
+    // Use custom notes position if provided, otherwise default to right side
+    let text_pane_position = workspace
+        .notes_position
+        .as_ref()
+        .map(|p| Position::new(p.x, p.y))
+        .unwrap_or_else(|| Position::new(550.0, 60.0));
+
+    // Use custom notes size if provided, otherwise default
+    let text_pane_size = workspace.notes_size.unwrap_or((475.0, 500.0));
+
     AppState {
         widgets,
         boxes,
@@ -113,9 +129,10 @@ pub fn from_workspace(workspace: &Workspace) -> AppState {
         widget_in_box,
         training_robot_id: None,
         text_pane_content: workspace.notes.clone(),
-        text_pane_size: (300.0, 200.0),
-        text_pane_position: Position::new(490.0, 10.0),
+        text_pane_size,
+        text_pane_position,
         dropzone_patterns,
+        demo_steps: workspace.demo_steps.clone(),
     }
 }
 
@@ -256,6 +273,10 @@ fn data_to_widget(data: &WidgetData) -> Option<(WidgetItem, Position)> {
         }
         WidgetData::Box(_) => {
             // Box patterns are only used inside expected patterns, not as standalone widgets
+            None
+        }
+        WidgetData::ShowMe(_) => {
+            // ShowMe buttons are UI elements in the notes pane, not standalone widgets
             None
         }
     }

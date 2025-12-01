@@ -1,0 +1,117 @@
+{
+  "metadata": {
+    "id": "tutorial-fill-box",
+    "name": "Tutorial: Fill a Box",
+    "description": "Learn how to put numbers into boxes by watching an example, then try it yourself.",
+    "user_level": "tt1",
+    "is_bundled": true
+  },
+  "widgets": [
+    {
+      "type": "number",
+      "numerator": 1,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 50, "y": 80 },
+      "is_copy_source": false
+    },
+    {
+      "type": "number",
+      "numerator": 2,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 120, "y": 80 },
+      "is_copy_source": false
+    },
+    {
+      "type": "dropzone",
+      "label": "Example: Drop filled box here",
+      "position": { "x": 100, "y": 220 },
+      "expected": {
+        "type": "box",
+        "num_holes": 2,
+        "contents": [
+          { "hole": 0, "widget": { "type": "number", "numerator": 1, "denominator": 1, "operator": "+", "position": { "x": 0, "y": 0 }, "is_copy_source": false } },
+          { "hole": 1, "widget": { "type": "number", "numerator": 2, "denominator": 1, "operator": "+", "position": { "x": 0, "y": 0 }, "is_copy_source": false } }
+        ]
+      },
+      "on_success_message": "Example complete! Now try the practice task below."
+    },
+    {
+      "type": "number",
+      "numerator": -1,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 50, "y": 380 },
+      "is_copy_source": false
+    },
+    {
+      "type": "number",
+      "numerator": 1,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 120, "y": 380 },
+      "is_copy_source": false
+    },
+    {
+      "type": "number",
+      "numerator": 5,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 190, "y": 380 },
+      "is_copy_source": false
+    },
+    {
+      "type": "dropzone",
+      "label": "Practice: Drop box with -1, 1, 5 here",
+      "position": { "x": 100, "y": 530 },
+      "expected": {
+        "type": "box",
+        "num_holes": 3,
+        "contents": [
+          { "hole": 0, "widget": { "type": "number", "numerator": -1, "denominator": 1, "operator": "+", "position": { "x": 0, "y": 0 }, "is_copy_source": false } },
+          { "hole": 1, "widget": { "type": "number", "numerator": 1, "denominator": 1, "operator": "+", "position": { "x": 0, "y": 0 }, "is_copy_source": false } },
+          { "hole": 2, "widget": { "type": "number", "numerator": 5, "denominator": 1, "operator": "+", "position": { "x": 0, "y": 0 }, "is_copy_source": false } }
+        ]
+      },
+      "on_success_url": "tutorial-add-numbers",
+      "on_success_message": "Great job! You've learned how to fill boxes."
+    }
+  ],
+  "boxes": [
+    {
+      "num_holes": 2,
+      "position": { "x": 50, "y": 130 },
+      "contents": [],
+      "erased": false,
+      "is_copy_source": false
+    },
+    {
+      "num_holes": 3,
+      "position": { "x": 50, "y": 430 },
+      "contents": [],
+      "erased": false,
+      "is_copy_source": false
+    }
+  ],
+  "notes": "Tutorial: Fill a Box\n\nEXAMPLE (top left):\nDrag the numbers 1 and 2 into the 2-hole box, then drop the filled box on the drop zone.\n\nPRACTICE (bottom left):\nPut -1, 1, and 5 into the 3-hole box, then drop it on the drop zone below.\n\nTIP: Drag a number over a box hole and release to place it inside.",
+  "notes_position": { "x": 580, "y": 60 },
+  "notes_size": [475, 500],
+  "demo_steps": [
+    { "action": "wait", "duration": 500 },
+    { "action": "move_to", "x": 50, "y": 80, "duration": 300 },
+    { "action": "drag_start" },
+    { "action": "move_to", "x": 65, "y": 145, "duration": 500 },
+    { "action": "drag_end" },
+    { "action": "wait", "duration": 300 },
+    { "action": "move_to", "x": 120, "y": 80, "duration": 300 },
+    { "action": "drag_start" },
+    { "action": "move_to", "x": 115, "y": 145, "duration": 500 },
+    { "action": "drag_end" },
+    { "action": "wait", "duration": 300 },
+    { "action": "move_to", "x": 90, "y": 145, "duration": 300 },
+    { "action": "drag_start" },
+    { "action": "move_to", "x": 150, "y": 250, "duration": 600 },
+    { "action": "drag_end" }
+  ]
+}

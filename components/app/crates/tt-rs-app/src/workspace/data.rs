@@ -36,6 +36,15 @@ pub struct Workspace {
     /// Workspace notes content.
     #[serde(default)]
     pub notes: String,
+    /// Optional position for the notes pane.
+    #[serde(default)]
+    pub notes_position: Option<PositionData>,
+    /// Optional size for the notes pane (width, height).
+    #[serde(default)]
+    pub notes_size: Option<(f64, f64)>,
+    /// Demo steps for "Show Me" animation (for tutorials).
+    #[serde(default)]
+    pub demo_steps: Vec<DemoStep>,
 }
 
 /// Position in the workspace.
@@ -76,6 +85,9 @@ pub enum WidgetData {
     /// Box as a widget (for expected patterns in drop zones).
     #[serde(rename = "box")]
     Box(BoxPatternData),
+    /// ShowMe button for tutorials.
+    #[serde(rename = "showme")]
+    ShowMe(ShowMeButtonData),
 }
 
 /// Box pattern data (for use in expected patterns).
@@ -245,4 +257,32 @@ pub struct DropZoneData {
     /// Message to show on success (optional).
     #[serde(default)]
     pub on_success_message: Option<String>,
+}
+
+/// ShowMe button widget data for tutorials.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ShowMeButtonData {
+    /// Position in workspace.
+    pub position: PositionData,
+    /// Demo steps to animate when clicked.
+    #[serde(default)]
+    pub demo_steps: Vec<DemoStep>,
+}
+
+/// A single step in a "Show Me" demo animation.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "action")]
+pub enum DemoStep {
+    /// Wait for a duration (milliseconds).
+    #[serde(rename = "wait")]
+    Wait { duration: u32 },
+    /// Move cursor to a position (smooth animation).
+    #[serde(rename = "move_to")]
+    MoveTo { x: f64, y: f64, duration: u32 },
+    /// Start dragging from current position.
+    #[serde(rename = "drag_start")]
+    DragStart,
+    /// End dragging at current position.
+    #[serde(rename = "drag_end")]
+    DragEnd,
 }

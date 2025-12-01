@@ -4,7 +4,10 @@ All notable changes to tt-rs.
 
 ## 2025-11-30
 
-- feat: Add puzzle drop verification with visual feedback for correct/incorrect answers (`<latest>`)
+- Fix Reset button, level dropdown, larger Workspace Notes (`<latest>`)
+- docs: Add puzzle usability requirements and design for Reset, URL routing, Undo, Show Me (`2e42c94`)
+- deploy: Update live demo with puzzle drop verification and visual feedback (`6943a8e`)
+- feat: Add puzzle drop verification with visual feedback for correct/incorrect answers (`9f66bdc`)
 - deploy: Update live demo with DropZone widget and puzzle infrastructure (`c368ed7`)
 - feat: Add DropZone widget and puzzle infrastructure with classic ToonTalk puzzles (`841b963`)
 

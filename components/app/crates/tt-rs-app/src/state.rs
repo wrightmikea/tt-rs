@@ -64,6 +64,8 @@ pub struct AppState {
     pub text_pane_position: Position,
     /// Expected patterns for drop zones (dropzone_id -> pattern).
     pub dropzone_patterns: HashMap<WidgetId, WidgetData>,
+    /// Demo steps for "Show Me" animation (for tutorials).
+    pub demo_steps: Vec<crate::workspace::DemoStep>,
 }
 
 impl AppState {
@@ -80,11 +82,12 @@ impl AppState {
             training_robot_id: None,
             // Initialize with tt1 content (default level)
             text_pane_content: TT1_DEFAULT_NOTES.to_string(),
-            text_pane_size: (300.0, 200.0),
-            // Center horizontally (assume ~1280px viewport, 300px width): (1280-300)/2 = 490
-            // Near the top: y = 10
-            text_pane_position: Position::new(490.0, 10.0),
+            // Default size for sandbox mode (tutorials may override this)
+            text_pane_size: (475.0, 500.0),
+            // Position on right side of screen
+            text_pane_position: Position::new(550.0, 60.0),
             dropzone_patterns: HashMap::new(),
+            demo_steps: Vec::new(),
         }
     }
 

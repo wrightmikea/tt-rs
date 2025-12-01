@@ -32,10 +32,13 @@ pub fn create_box_drag_end(
 pub fn create_box_drop(
     state: UseStateHandle<AppState>,
     p: Rc<RefCell<Option<usize>>>,
+    dirty: UseStateHandle<bool>,
 ) -> Callback<DropEvent> {
     Callback::from(move |e: DropEvent| {
         let mut s = (*state).clone();
         handle_box_drop(&mut s, &e, p.borrow_mut().take());
         state.set(s);
+        // Box operations modify content
+        dirty.set(true);
     })
 }

@@ -1,6 +1,7 @@
 //! tt-rs-ui: UI components for the visual programming environment.
 
 mod accordion;
+mod confirm_dialog;
 mod footer;
 mod help_button;
 mod help_panel;
@@ -13,6 +14,7 @@ mod workspace_button;
 mod workspace_menu;
 
 pub use accordion::{Accordion, AccordionSection};
+pub use confirm_dialog::ConfirmDialog;
 pub use footer::Footer;
 pub use help_button::HelpButton;
 pub use help_panel::HelpPanel;

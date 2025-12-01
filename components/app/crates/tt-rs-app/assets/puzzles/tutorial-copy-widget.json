@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "id": "tutorial-copy-widget",
+    "name": "Tutorial: Copy with Wand",
+    "description": "Learn how to use the magic wand to copy widgets.",
+    "user_level": "tt1",
+    "is_bundled": true
+  },
+  "widgets": [
+    {
+      "type": "number",
+      "numerator": 7,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 100, "y": 100 },
+      "is_copy_source": false
+    },
+    {
+      "type": "wand",
+      "position": { "x": 50, "y": 100 }
+    },
+    {
+      "type": "dropzone",
+      "label": "Example: Drop a 14 here (7 + copy of 7)",
+      "position": { "x": 100, "y": 220 },
+      "expected": {
+        "type": "number",
+        "numerator": 14,
+        "denominator": 1,
+        "operator": "+",
+        "position": { "x": 0, "y": 0 },
+        "is_copy_source": false
+      },
+      "on_success_message": "Example complete! Now try the practice task below."
+    },
+    {
+      "type": "number",
+      "numerator": 5,
+      "denominator": 1,
+      "operator": "+",
+      "position": { "x": 100, "y": 360 },
+      "is_copy_source": false
+    },
+    {
+      "type": "wand",
+      "position": { "x": 50, "y": 360 }
+    },
+    {
+      "type": "dropzone",
+      "label": "Practice: Create 15 (5 + 5 + 5) and drop it here",
+      "position": { "x": 100, "y": 480 },
+      "expected": {
+        "type": "number",
+        "numerator": 15,
+        "denominator": 1,
+        "operator": "+",
+        "position": { "x": 0, "y": 0 },
+        "is_copy_source": false
+      },
+      "on_success_message": "Congratulations! You've completed all the basic tutorials!"
+    }
+  ],
+  "boxes": [],
+  "notes": "Tutorial: Copy with Wand\n\nEXAMPLE (top left):\nDrag the wand onto the number 7 to copy it. Then drag the copy and drop it onto the original 7 to add them. Drop the result (14) on the drop zone.\n\nPRACTICE (bottom left):\nUse the wand to make 2 copies of 5, then add all three together to get 15. Drop the result on the drop zone.\n\nTIP: The magic wand copies any widget it touches.",
+  "notes_position": { "x": 580, "y": 60 },
+  "notes_size": [475, 500],
+  "demo_steps": [
+    { "action": "wait", "duration": 500 },
+    { "action": "move_to", "x": 50, "y": 100, "duration": 300 },
+    { "action": "drag_start" },
+    { "action": "move_to", "x": 100, "y": 100, "duration": 500 },
+    { "action": "drag_end" },
+    { "action": "wait", "duration": 300 },
+    { "action": "move_to", "x": 170, "y": 100, "duration": 300 },
+    { "action": "drag_start" },
+    { "action": "move_to", "x": 100, "y": 100, "duration": 500 },
+    { "action": "drag_end" },
+    { "action": "wait", "duration": 300 },
+    { "action": "move_to", "x": 100, "y": 100, "duration": 300 },
+    { "action": "drag_start" },
+    { "action": "move_to", "x": 150, "y": 250, "duration": 500 },
+    { "action": "drag_end" }
+  ]
+}
