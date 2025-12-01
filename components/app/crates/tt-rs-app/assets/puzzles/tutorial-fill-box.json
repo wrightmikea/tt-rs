@@ -9,6 +9,7 @@
   "widgets": [
     {
       "type": "number",
+      "name": "example-num1",
       "numerator": 1,
       "denominator": 1,
       "operator": "+",
@@ -17,6 +18,7 @@
     },
     {
       "type": "number",
+      "name": "example-num2",
       "numerator": 2,
       "denominator": 1,
       "operator": "+",
@@ -27,6 +29,7 @@
       "type": "dropzone",
       "label": "Example: Drop filled box here",
       "position": { "x": 100, "y": 220 },
+      "role": "example",
       "expected": {
         "type": "box",
         "num_holes": 2,
@@ -39,6 +42,7 @@
     },
     {
       "type": "number",
+      "name": "practice-num1",
       "numerator": -1,
       "denominator": 1,
       "operator": "+",
@@ -47,6 +51,7 @@
     },
     {
       "type": "number",
+      "name": "practice-num2",
       "numerator": 1,
       "denominator": 1,
       "operator": "+",
@@ -55,6 +60,7 @@
     },
     {
       "type": "number",
+      "name": "practice-num3",
       "numerator": 5,
       "denominator": 1,
       "operator": "+",
@@ -65,6 +71,7 @@
       "type": "dropzone",
       "label": "Practice: Drop box with -1, 1, 5 here",
       "position": { "x": 100, "y": 530 },
+      "role": "practice",
       "expected": {
         "type": "box",
         "num_holes": 3,
@@ -80,6 +87,7 @@
   ],
   "boxes": [
     {
+      "name": "example-box",
       "num_holes": 2,
       "position": { "x": 50, "y": 130 },
       "contents": [],
@@ -87,6 +95,7 @@
       "is_copy_source": false
     },
     {
+      "name": "practice-box",
       "num_holes": 3,
       "position": { "x": 50, "y": 430 },
       "contents": [],
@@ -99,19 +108,19 @@
   "notes_size": [475, 500],
   "demo_steps": [
     { "action": "wait", "duration": 500 },
-    { "action": "move_to", "x": 50, "y": 80, "duration": 300 },
+    { "action": "move_to_target", "target": { "type": "widget", "name": "example-num1" }, "duration": 300 },
     { "action": "drag_start" },
-    { "action": "move_to", "x": 65, "y": 145, "duration": 500 },
+    { "action": "move_to_target", "target": { "type": "box_hole", "name": "example-box", "hole": 0 }, "duration": 500 },
     { "action": "drag_end" },
     { "action": "wait", "duration": 300 },
-    { "action": "move_to", "x": 120, "y": 80, "duration": 300 },
+    { "action": "move_to_target", "target": { "type": "widget", "name": "example-num2" }, "duration": 300 },
     { "action": "drag_start" },
-    { "action": "move_to", "x": 115, "y": 145, "duration": 500 },
+    { "action": "move_to_target", "target": { "type": "box_hole", "name": "example-box", "hole": 1 }, "duration": 500 },
     { "action": "drag_end" },
     { "action": "wait", "duration": 300 },
-    { "action": "move_to", "x": 90, "y": 145, "duration": 300 },
+    { "action": "move_to_target", "target": { "type": "box", "name": "example-box" }, "duration": 300 },
     { "action": "drag_start" },
-    { "action": "move_to", "x": 150, "y": 250, "duration": 600 },
+    { "action": "move_to_target", "target": { "type": "dropzone", "role": "example" }, "duration": 600 },
     { "action": "drag_end" }
   ]
 }

@@ -4,7 +4,9 @@ All notable changes to tt-rs.
 
 ## 2025-11-30
 
-- Fix Reset button, level dropdown, larger Workspace Notes (`<latest>`)
+- Add Show Me animated demo for puzzles/tutorials (`<latest>`)
+- deploy: Update live demo with URL routing, Reset, and larger Workspace Notes (`d7868c2`)
+- feat: Add URL routing, Reset button, confirmation dialogs, larger Workspace Notes (`a8bbe19`)
 - docs: Add puzzle usability requirements and design for Reset, URL routing, Undo, Show Me (`2e42c94`)
 - deploy: Update live demo with puzzle drop verification and visual feedback (`6943a8e`)
 - feat: Add puzzle drop verification with visual feedback for correct/incorrect answers (`9f66bdc`)

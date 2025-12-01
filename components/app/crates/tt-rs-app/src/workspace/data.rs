@@ -103,6 +103,9 @@ pub struct BoxPatternData {
 /// Number widget data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct NumberData {
+    /// Unique name for semantic targeting in demos.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
     /// Numerator of the rational number.
     pub numerator: i64,
     /// Denominator (default 1 for integers).
@@ -217,6 +220,9 @@ pub struct BirdData {
 /// Box widget data.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BoxData {
+    /// Unique name for semantic targeting in demos.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
     /// Number of holes in the box.
     pub num_holes: usize,
     /// Position in workspace.
@@ -248,6 +254,9 @@ pub struct DropZoneData {
     pub label: String,
     /// Position in workspace.
     pub position: PositionData,
+    /// Role name for semantic targeting (e.g., "example", "practice").
+    #[serde(default)]
+    pub role: Option<String>,
     /// Expected pattern to match against.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub expected: Option<Box<WidgetData>>,
@@ -269,16 +278,38 @@ pub struct ShowMeButtonData {
     pub demo_steps: Vec<DemoStep>,
 }
 
+/// Semantic target reference for demo animations.
+/// Resolved at runtime to get actual widget center coordinates.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "type")]
+pub enum DemoTarget {
+    /// Target a widget by its unique name.
+    #[serde(rename = "widget")]
+    Widget { name: String },
+    /// Target a box by its unique name.
+    #[serde(rename = "box")]
+    Box { name: String },
+    /// Target a specific hole in a named box.
+    #[serde(rename = "box_hole")]
+    BoxHole { name: String, hole: usize },
+    /// Target a dropzone by its role name.
+    #[serde(rename = "dropzone")]
+    DropZone { role: String },
+}
+
 /// A single step in a "Show Me" demo animation.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "action")]
 pub enum DemoStep {
     /// Wait for a duration (milliseconds).
     #[serde(rename = "wait")]
     Wait { duration: u32 },
-    /// Move cursor to a position (smooth animation).
+    /// Move cursor to a position (smooth animation) - raw coordinates.
     #[serde(rename = "move_to")]
     MoveTo { x: f64, y: f64, duration: u32 },
+    /// Move cursor to a semantic target (resolved to center at runtime).
+    #[serde(rename = "move_to_target")]
+    MoveToTarget { target: DemoTarget, duration: u32 },
     /// Start dragging from current position.
     #[serde(rename = "drag_start")]
     DragStart,

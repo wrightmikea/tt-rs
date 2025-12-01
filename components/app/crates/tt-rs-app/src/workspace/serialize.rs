@@ -64,6 +64,16 @@ pub fn to_workspace(state: &AppState, metadata: WorkspaceMetadata) -> Workspace 
     }
 }
 
+/// Extract name from widget data if present.
+fn get_widget_name(data: &WidgetData) -> Option<String> {
+    match data {
+        WidgetData::Number(n) => n.name.clone(),
+        WidgetData::DropZone(dz) => dz.role.clone(),
+        // Other widget types don't have names yet (add as needed)
+        _ => None,
+    }
+}
+
 /// Convert a Workspace to AppState.
 pub fn from_workspace(workspace: &Workspace) -> AppState {
     let mut widgets = HashMap::new();
@@ -71,28 +81,44 @@ pub fn from_workspace(workspace: &Workspace) -> AppState {
     let mut boxes = HashMap::new();
     let mut widget_in_box = HashMap::new();
     let mut dropzone_patterns = HashMap::new();
+    let mut widget_names = HashMap::new();
+    let mut box_names = HashMap::new();
+    let mut dropzone_roles = HashMap::new();
 
     // Deserialize standalone widgets
     for widget_data in &workspace.widgets {
-        // Extract dropzone expected patterns before converting
+        // Extract name for semantic targeting
+        let name = get_widget_name(widget_data);
+
+        // Extract dropzone expected patterns and roles before converting
         if let WidgetData::DropZone(dz_data) = widget_data {
-            if let Some(ref expected) = dz_data.expected {
-                // Store the pattern - we'll associate it with the ID after creation
-                if let Some((item, pos)) = data_to_widget(widget_data) {
-                    let id = item.id();
-                    positions.insert(id, pos);
-                    widgets.insert(id, item);
-                    // Store the expected pattern for this dropzone
+            if let Some((item, pos)) = data_to_widget(widget_data) {
+                let id = item.id();
+                positions.insert(id, pos);
+                widgets.insert(id, item);
+
+                // Register dropzone role for semantic targeting
+                if let Some(ref role) = dz_data.role {
+                    dropzone_roles.insert(role.clone(), id);
+                }
+
+                // Store expected pattern if present
+                if let Some(ref expected) = dz_data.expected {
                     dropzone_patterns.insert(id, expected.as_ref().clone());
                 }
-                continue;
             }
+            continue;
         }
 
         if let Some((item, pos)) = data_to_widget(widget_data) {
             let id = item.id();
             positions.insert(id, pos);
             widgets.insert(id, item);
+
+            // Register widget name for semantic targeting
+            if let Some(n) = name {
+                widget_names.insert(n, id);
+            }
         }
     }
 
@@ -101,6 +127,11 @@ pub fn from_workspace(workspace: &Workspace) -> AppState {
         let (box_state, box_pos, contents) = data_to_box(box_data);
         let box_id = box_state.id();
         positions.insert(box_id, box_pos);
+
+        // Register box name for semantic targeting
+        if let Some(ref name) = box_data.name {
+            box_names.insert(name.clone(), box_id);
+        }
 
         // Add box contents
         for (hole, item) in contents {
@@ -133,6 +164,9 @@ pub fn from_workspace(workspace: &Workspace) -> AppState {
         text_pane_position,
         dropzone_patterns,
         demo_steps: workspace.demo_steps.clone(),
+        widget_names,
+        box_names,
+        dropzone_roles,
     }
 }
 
@@ -142,6 +176,7 @@ fn widget_to_data(widget: &WidgetItem, pos: &Position) -> Option<WidgetData> {
 
     match widget {
         WidgetItem::Number(n) => Some(WidgetData::Number(NumberData {
+            name: None, // Name is only loaded from puzzle files
             numerator: n.numerator(),
             denominator: n.denominator(),
             operator: operator_to_string(n.operator()),
@@ -177,6 +212,7 @@ fn widget_to_data(widget: &WidgetItem, pos: &Position) -> Option<WidgetData> {
         WidgetItem::DropZone(dz) => Some(WidgetData::DropZone(DropZoneData {
             label: dz.label().to_string(),
             position,
+            role: None,     // Role is only loaded from puzzle files
             expected: None, // Expected pattern is only loaded from puzzle files
             on_success_url: dz.on_success_url().map(|s| s.to_string()),
             on_success_message: dz.on_success_message().map(|s| s.to_string()),
@@ -303,6 +339,7 @@ fn box_to_data(box_state: &BoxState, pos: &Position, state: &AppState) -> BoxDat
     }
 
     BoxData {
+        name: None, // Name is only loaded from puzzle files
         num_holes: box_state.num_holes,
         position,
         contents,

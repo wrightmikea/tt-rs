@@ -197,11 +197,11 @@ Goal: Match the core functionality of the 2017 JavaScript version.
 
 | ID | Feature | Priority | Status |
 |----|---------|----------|--------|
-| FR5D.1 | Reset button to restart puzzle | Must Have | ❌ Pending |
-| FR5D.2 | URL-based routing for puzzles | Should Have | ❌ Pending |
-| FR5D.3 | Bookmarkable/shareable puzzle URLs | Should Have | ❌ Pending |
-| FR5D.4 | Browser reload stays on same puzzle | Should Have | ❌ Pending |
-| FR5D.5 | "Show Me" animated solution demo | Could Have | ❌ Pending |
+| FR5D.1 | Reset button to restart puzzle | Must Have | ✅ Done |
+| FR5D.2 | URL-based routing for puzzles | Should Have | ✅ Done |
+| FR5D.3 | Bookmarkable/shareable puzzle URLs | Should Have | ✅ Done |
+| FR5D.4 | Browser reload stays on same puzzle | Should Have | ✅ Done |
+| FR5D.5 | "Show Me" animated solution demo | Could Have | ✅ Done |
 | FR5D.6 | Hint system for puzzles | Could Have | ❌ Pending |
 | FR5D.7 | Undo last action | Should Have | ❌ Pending |
 

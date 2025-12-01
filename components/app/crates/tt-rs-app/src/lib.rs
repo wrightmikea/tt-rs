@@ -3,6 +3,8 @@
 mod app;
 mod box_state;
 mod demo;
+mod demo_ops;
+mod demo_runner;
 mod ops;
 mod robot_exec;
 pub mod routing;

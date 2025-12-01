@@ -25,6 +25,7 @@ This is a derived work based on ToonTalk by Ken Kahn. See COPYRIGHT and LICENSE 
 - Help panel with tutorials and user levels (tt1/tt2)
 - Tooltips on all widgets
 - Compact footer with GitHub/License/Changelog links
+- Puzzle system with URL routing, Reset button, and "Show Me" animated demos
 
 **In Progress:**
 - Bird/Nest pairing and message delivery
@@ -211,9 +212,12 @@ Run `./scripts/build-all.sh` or manually:
 ### Code Quality
 
 - Zero clippy warnings
+- **NEVER use `#[allow(...)]` to suppress warnings** - always fix the underlying issue
 - All public APIs have doc comments
 - Rust 2024 edition idioms
 - Use inline format args: `format!("{name}")` not `format!("{}", name)`
+
+**CRITICAL: Never bypass clippy or compiler warnings with `#[allow(unused_imports)]`, `#[allow(dead_code)]`, or similar attributes. These warnings exist for a reason - fix the actual problem by removing unused code, fixing the issue, or restructuring. The only exception is `#[allow(clippy::too_many_arguments)]` for complex callback configuration structs where refactoring would reduce clarity.**
 
 ### Adding New Features
 

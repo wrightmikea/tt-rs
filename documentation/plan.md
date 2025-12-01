@@ -355,12 +355,12 @@ This uses the existing `CopySource` component from tt-rs-drag, which already:
 - [ ] Single undo (Ctrl+Z or Undo button)
 - [ ] Undo restores previous state
 
-#### 4B.5 "Show Me" Animated Demo (LOW PRIORITY)
-- [ ] Define `DemoStep` enum (Wait, MoveTo, DragStart, DragMove, DragEnd, ShowTooltip)
-- [ ] Add `demo` field to puzzle JSON format
-- [ ] Implement animation playback system
-- [ ] "Show Me" button plays solution animation
-- [ ] Smooth interpolation for drag movements
+#### 4B.5 "Show Me" Animated Demo (DONE)
+- [x] Define `DemoStep` enum (Wait, MoveTo, DragStart, DragEnd)
+- [x] Add `demo_steps` field to puzzle JSON format
+- [x] Implement animation playback system with demo cursor
+- [x] "Show Me" button plays solution animation
+- [x] Smooth interpolation for drag movements
 
 #### 4B.6 Hint System (LOW PRIORITY)
 - [ ] Add `hints` field to puzzle JSON format

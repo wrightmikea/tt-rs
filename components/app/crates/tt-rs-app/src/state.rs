@@ -66,6 +66,12 @@ pub struct AppState {
     pub dropzone_patterns: HashMap<WidgetId, WidgetData>,
     /// Demo steps for "Show Me" animation (for tutorials).
     pub demo_steps: Vec<crate::workspace::DemoStep>,
+    /// Map of widget names to their IDs (for semantic demo targeting).
+    pub widget_names: HashMap<String, WidgetId>,
+    /// Map of box names to their IDs (for semantic demo targeting).
+    pub box_names: HashMap<String, WidgetId>,
+    /// Map of dropzone roles to their IDs (e.g., "example" -> dropzone_id).
+    pub dropzone_roles: HashMap<String, WidgetId>,
 }
 
 impl AppState {
@@ -88,6 +94,10 @@ impl AppState {
             text_pane_position: Position::new(550.0, 60.0),
             dropzone_patterns: HashMap::new(),
             demo_steps: Vec::new(),
+            // Empty for sandbox mode (populated from puzzle JSON)
+            widget_names: HashMap::new(),
+            box_names: HashMap::new(),
+            dropzone_roles: HashMap::new(),
         }
     }
 

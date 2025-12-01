@@ -2,6 +2,7 @@
 
 mod accordion;
 mod confirm_dialog;
+mod demo_cursor;
 mod footer;
 mod help_button;
 mod help_panel;
@@ -15,6 +16,7 @@ mod workspace_menu;
 
 pub use accordion::{Accordion, AccordionSection};
 pub use confirm_dialog::ConfirmDialog;
+pub use demo_cursor::DemoCursor;
 pub use footer::Footer;
 pub use help_button::HelpButton;
 pub use help_panel::HelpPanel;

@@ -11,6 +11,7 @@ use tt_rs_ui::{SaveFormData, UserLevel};
 use yew::prelude::*;
 
 use super::PendingAction;
+use crate::demo_runner::{resolve_steps, DemoState, WORKSPACE_OFFSET_Y};
 use crate::routing::{set_route, Route};
 use crate::state::{default_notes_for_level, AppState};
 
@@ -51,6 +52,7 @@ pub struct CallbackConfig {
     pub pending_new_box: Rc<RefCell<Option<usize>>>,
     pub dirty: UseStateHandle<bool>,
     pub pending_action: UseStateHandle<Option<PendingAction>>,
+    pub demo_state: UseStateHandle<DemoState>,
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -64,6 +66,7 @@ pub fn create_callbacks(cfg: CallbackConfig) -> Callbacks {
         pending_new_box,
         dirty,
         pending_action,
+        demo_state,
     } = cfg;
     Callbacks {
         on_help_open: {
@@ -182,9 +185,38 @@ pub fn create_callbacks(cfg: CallbackConfig) -> Callbacks {
         on_show_me: if state.demo_steps.is_empty() {
             None
         } else {
-            Some(Callback::from(|_| {
-                log::info!("Show Me button clicked - animation demo not yet implemented");
-                // TODO: Implement demo animation playback
+            let demo_state_clone = demo_state.clone();
+            let app_state_clone = state.clone();
+            let steps = state.demo_steps.clone();
+            Some(Callback::from(move |_| {
+                log::info!("Show Me button clicked - starting demo animation");
+
+                // Don't start if already playing
+                if demo_state_clone.is_playing {
+                    log::info!("Demo already playing, ignoring click");
+                    return;
+                }
+
+                // Resolve any semantic targets in the steps to concrete coordinates
+                let resolved_steps = resolve_steps(&steps, &app_state_clone);
+                log::info!(
+                    "Demo: {} steps to play ({} after resolving)",
+                    steps.len(),
+                    resolved_steps.len()
+                );
+
+                // Set the demo state with resolved steps - the use_effect hook will drive the animation
+                demo_state_clone.set(DemoState {
+                    is_playing: true,
+                    cursor_x: 100.0, // Start at a visible position
+                    cursor_y: 100.0 + WORKSPACE_OFFSET_Y,
+                    is_dragging: false,
+                    transition_ms: 0,
+                    step_index: 0,
+                    steps: resolved_steps,
+                    dragged_widget_id: None,
+                    dragged_is_box: false,
+                });
             }))
         },
         // Reset callback - always available (sandbox resets to default, puzzles reload)

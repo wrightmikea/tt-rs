@@ -3,11 +3,14 @@
 mod callbacks;
 mod render;
 
+use std::cell::RefCell;
+use std::rc::Rc;
 use tt_rs_core::WidgetId;
-use tt_rs_ui::{ConfirmDialog, TooltipLayerProvider, UserLevel, WorkspaceMetadata};
+use tt_rs_ui::{ConfirmDialog, DemoCursor, TooltipLayerProvider, UserLevel, WorkspaceMetadata};
 use wasm_bindgen::{closure::Closure, JsCast};
 use yew::prelude::*;
 
+use crate::demo_runner::DemoState;
 use crate::routing::{current_route, Route};
 use crate::state::AppState;
 use crate::widget_item::WidgetItem;
@@ -85,6 +88,145 @@ pub fn app() -> Html {
     // Track pending action that needs confirmation
     let pending_action: UseStateHandle<Option<PendingAction>> = use_state(|| None);
 
+    // Demo animation state
+    let demo_state = use_state(DemoState::default);
+
+    // Demo animation effect - runs when demo is playing
+    // This effect handles both cursor animation AND actual widget operations
+    {
+        let demo_state = demo_state.clone();
+        let app_state = state.clone();
+        let dirty_for_demo = dirty.clone();
+        let ds_clone = (*demo_state).clone();
+        use_effect_with(ds_clone.clone(), move |ds| {
+            // Store timeout handle for cleanup (None if no timeout scheduled)
+            let cleanup_handle: Rc<RefCell<Option<i32>>> = Rc::new(RefCell::new(None));
+
+            if ds.is_playing && ds.step_index < ds.steps.len() {
+                log::info!(
+                    "Demo effect: playing step {}/{}",
+                    ds.step_index,
+                    ds.steps.len()
+                );
+
+                let delay = crate::demo_runner::get_step_delay(ds);
+                let ds_for_timeout = ds.clone();
+                let demo_state_for_timeout = demo_state.clone();
+                let app_state_for_timeout = app_state.clone();
+                let dirty_for_timeout = dirty_for_demo.clone();
+
+                let window = web_sys::window().unwrap();
+                let closure = Closure::once(Box::new(move || {
+                    // Process demo step for cursor animation
+                    if let Some(mut new_demo_state) =
+                        crate::demo_runner::process_next_step(&ds_for_timeout)
+                    {
+                        log::info!(
+                            "Demo: processed step, cursor at ({}, {}), dragging={}",
+                            new_demo_state.cursor_x,
+                            new_demo_state.cursor_y,
+                            new_demo_state.is_dragging
+                        );
+
+                        // Handle actual widget operations based on current step
+                        let step_index = ds_for_timeout.step_index;
+                        if step_index < ds_for_timeout.steps.len() {
+                            let step = &ds_for_timeout.steps[step_index];
+                            match step {
+                                crate::workspace::DemoStep::DragStart => {
+                                    // Find widget at cursor position using hit testing
+                                    let cursor_x = ds_for_timeout.cursor_x;
+                                    let cursor_y = ds_for_timeout.cursor_y;
+                                    if let Some((widget_id, is_box)) =
+                                        crate::demo_ops::find_widget_at(cursor_x, cursor_y)
+                                    {
+                                        log::info!(
+                                            "Demo DragStart: found widget {:?} (is_box={})",
+                                            widget_id,
+                                            is_box
+                                        );
+                                        new_demo_state.dragged_widget_id = Some(widget_id);
+                                        new_demo_state.dragged_is_box = is_box;
+                                    }
+                                }
+                                crate::workspace::DemoStep::MoveTo { x, y, .. } => {
+                                    // If dragging a widget, update its position
+                                    if new_demo_state.is_dragging {
+                                        if let Some(widget_id) = new_demo_state.dragged_widget_id {
+                                            let mut new_app_state =
+                                                (*app_state_for_timeout).clone();
+                                            let pos = tt_rs_drag::Position::new(*x, *y);
+                                            new_app_state.positions.insert(widget_id, pos);
+                                            app_state_for_timeout.set(new_app_state);
+                                            log::info!(
+                                                "Demo MoveTo: moved widget {:?} to ({}, {})",
+                                                widget_id,
+                                                x,
+                                                y
+                                            );
+                                        }
+                                    }
+                                }
+                                crate::workspace::DemoStep::DragEnd => {
+                                    // Perform drop operation
+                                    if let Some(widget_id) = ds_for_timeout.dragged_widget_id {
+                                        let cursor_x = new_demo_state.cursor_x;
+                                        let cursor_y = new_demo_state.cursor_y;
+                                        log::info!(
+                                            "Demo DragEnd: dropping widget {:?} at ({}, {})",
+                                            widget_id,
+                                            cursor_x,
+                                            cursor_y
+                                        );
+                                        crate::demo_ops::perform_drop(
+                                            &app_state_for_timeout,
+                                            &dirty_for_timeout,
+                                            widget_id,
+                                            ds_for_timeout.dragged_is_box,
+                                            cursor_x,
+                                            cursor_y,
+                                        );
+                                    }
+                                    new_demo_state.dragged_widget_id = None;
+                                    new_demo_state.dragged_is_box = false;
+                                }
+                                crate::workspace::DemoStep::Wait { .. } => {
+                                    // No widget operation needed
+                                }
+                                crate::workspace::DemoStep::MoveToTarget { .. } => {
+                                    // Should be resolved before playback - skip
+                                    log::warn!("MoveToTarget not resolved - skipping");
+                                }
+                            }
+                        }
+
+                        demo_state_for_timeout.set(new_demo_state);
+                    }
+                }) as Box<dyn FnOnce()>);
+
+                let handle = window
+                    .set_timeout_with_callback_and_timeout_and_arguments_0(
+                        closure.as_ref().unchecked_ref(),
+                        delay as i32,
+                    )
+                    .unwrap();
+                closure.forget();
+
+                *cleanup_handle.borrow_mut() = Some(handle);
+            }
+
+            // Single cleanup closure - handles both cases
+            let cleanup_handle_clone = cleanup_handle.clone();
+            move || {
+                if let Some(h) = cleanup_handle_clone.borrow_mut().take() {
+                    if let Some(window) = web_sys::window() {
+                        window.clear_timeout_with_handle(h);
+                    }
+                }
+            }
+        });
+    }
+
     // Set up hashchange listener for URL navigation
     {
         let state = state.clone();
@@ -146,6 +288,7 @@ pub fn app() -> Html {
         pending_new_box: pending_new_box.clone(),
         dirty: dirty.clone(),
         pending_action: pending_action.clone(),
+        demo_state: demo_state.clone(),
     });
 
     let planes = partition_into_planes(&state, *user_level);
@@ -235,6 +378,9 @@ pub fn app() -> Html {
         }
     });
 
+    // Get demo state values for rendering
+    let ds = (*demo_state).clone();
+
     html! {
         <TooltipLayerProvider>
             { render::render_app(&state, *help_open, *workspace_open, *user_level, &cbs, &planes, &workspaces) }
@@ -246,6 +392,15 @@ pub fn app() -> Html {
                     cancel_label="Keep Working"
                     on_confirm={on_confirm}
                     on_cancel={on_cancel}
+                />
+            }
+            // Show demo cursor when demo is playing
+            if ds.is_playing {
+                <DemoCursor
+                    x={ds.cursor_x}
+                    y={ds.cursor_y}
+                    is_dragging={ds.is_dragging}
+                    transition_duration={ds.transition_ms}
                 />
             }
         </TooltipLayerProvider>
